@@ -1,328 +1,1588 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>IELTS Copilot Pro</title>
-<style>
-  :root { --bg: #0a0a0c; --text: #e2e8f0; --accent: #10b981; --panel: #18181b; --danger: #ef4444; --warning: #facc15; --premium: #8b5cf6; }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-  
-  .view { display: none; width: 100%; max-width: 500px; padding: 20px; flex-direction: column; height: 100vh; overflow-y: auto; }
-  .view.active { display: flex; animation: fadeIn 0.3s ease; }
-  
-  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #27272a; flex-shrink: 0; }
-  .logo { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
-  .pro-badge { background: var(--warning); color: #000; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; margin-left: 5px; }
-
-  /* UI 元件 */
-  button { width: 100%; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
-  .btn-primary { background: #fff; color: #000; }
-  .btn-primary:active { background: #d4d4d8; }
-  .btn-danger { background: var(--danger); color: white; }
-  .btn-ai { background: rgba(16, 185, 129, 0.15); color: var(--accent); border: 1px solid rgba(16, 185, 129, 0.4); }
-  .btn-premium { background: linear-gradient(135deg, #8b5cf6, #c084fc); color: #fff; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
-
-  /* 首頁卡片 */
-  .menu-card { background: var(--panel); border: 1px solid #27272a; border-radius: 16px; padding: 25px; margin-bottom: 15px; cursor: pointer; position: relative; }
-  .menu-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
-  .menu-desc { font-size: 14px; color: #a1a1aa; line-height: 1.4; }
-  .tag { position: absolute; top: 15px; right: 15px; font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
-
-  /* 題庫列表 */
-  .tabs { display: flex; margin-bottom: 15px; background: #18181b; border-radius: 12px; padding: 5px; }
-  .tab { flex: 1; text-align: center; padding: 10px; font-size: 14px; color: #a1a1aa; cursor: pointer; border-radius: 8px; }
-  .tab.active { background: #27272a; color: #fff; font-weight: 600; }
-  .topic-card { background: var(--panel); border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid #27272a; cursor: pointer; }
-  .topic-card:active { background: #27272a; }
-
-  /* 練習與模考面板 */
-  .panel-card { background: var(--panel); border-radius: 16px; padding: 25px; border: 1px solid #27272a; margin-bottom: 20px; }
-  .topic-text { font-size: 16px; line-height: 1.6; font-weight: 500; white-space: pre-line; }
-  .timer-display { font-size: 48px; font-weight: 200; text-align: center; margin: 20px 0; font-variant-numeric: tabular-nums; }
-  
-  /* AI 救命框架 */
-  .ai-copilot-area { margin-top: 20px; border-top: 1px dashed #3f3f46; padding-top: 20px; display: none; }
-  .ai-copilot-area.active { display: block; animation: fadeIn 0.5s ease; }
-  .bullet-point { background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; color: #d4d4d8; border-left: 3px solid var(--accent); }
-
-  /* 考官設定 */
-  .exam-opt { padding: 15px; border: 1px solid #3f3f46; border-radius: 12px; display: flex; justify-content: space-between; margin-bottom: 10px; cursor: pointer; }
-  .exam-opt.selected { border-color: var(--warning); background: rgba(250, 204, 21, 0.05); }
-
-  /* 報告與付費牆 */
-  .score-circle { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--danger); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; color: var(--danger); margin: 0 auto 20px; }
-  .stat-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #27272a; font-size: 14px; }
-  .paywall-container { position: relative; margin-top: 15px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(139, 92, 246, 0.3); }
-  .paywall-content { padding: 20px; filter: blur(6px); opacity: 0.6; background: #18181b; }
-  .paywall-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(to bottom, rgba(10,10,12,0.2), rgba(10,10,12,0.95)); padding: 20px; text-align: center; }
-
-  /* 載入動畫 */
-  .loader { border: 4px solid #27272a; border-top: 4px solid var(--accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
-
-  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-</style>
-</head>
-<body>
-
-<div id="view-home" class="view active">
-  <div class="header">
-    <div class="logo">COPILOT<span class="pro-badge">Pro</span></div>
-  </div>
-  <div class="menu-card" onclick="startFlow('learning')">
-    <div class="tag" style="background: rgba(16, 185, 129, 0.2); color: var(--accent);">Learning</div>
-    <div class="menu-title">🧠 引導練習 (無壓力)</div>
-    <div class="menu-desc">不限時。不會開口？隨時呼叫 AI 獲取高分故事框架，逐步建立自信。</div>
-  </div>
-  <div class="menu-card" onclick="startFlow('mock')">
-    <div class="tag" style="background: rgba(239, 68, 68, 0.2); color: var(--danger);">Hardcore</div>
-    <div class="menu-title">⚠️ 高壓模考 (實戰)</div>
-    <div class="menu-desc">自選「極端考官」測試心理素質。考後生成 AI 深度診斷報告與 8.0 重寫。</div>
-  </div>
-</div>
-
-<div id="view-setup" class="view">
-  <div class="header">
-    <div style="font-weight: 600;">選擇考官風格</div>
-    <div style="font-size: 24px; cursor: pointer;" onclick="nav('view-home')">×</div>
-  </div>
-  <div class="exam-opt selected" onclick="selectExam(this, 'normal')">
-    <div><div style="font-weight: 600;">Standard (標準考官)</div><div style="font-size: 12px; color: #a1a1aa;">語速適中，標準流程。</div></div><div>🙂</div>
-  </div>
-  <div class="exam-opt" onclick="selectExam(this, 'impatient')">
-    <div><div style="font-weight: 600;">Impatient (沒耐性)</div><div style="font-size: 12px; color: #a1a1aa;">語速快，時間未到可能打斷。</div></div><div>😒</div>
-  </div>
-  <button class="btn-danger" style="margin-top: auto;" onclick="nav('view-library')">確認並選擇題目</button>
-</div>
-
-<div id="view-library" class="view">
-  <div class="header">
-    <div style="font-weight: 600;" id="lib-title">選擇題目</div>
-    <div style="font-size: 24px; cursor: pointer;" onclick="nav('view-home')">×</div>
-  </div>
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('p1', this)">Part 1 新題</div>
-    <div class="tab" onclick="switchTab('p2', this)">Part 2&3 必考</div>
-  </div>
-  <div id="topic-list" style="flex:1; overflow-y:auto;"></div>
-</div>
-
-<div id="view-practice" class="view">
-  <div class="header">
-    <div style="font-weight: 600; color: var(--accent);">Learning Mode</div>
-    <div style="font-size: 24px; cursor: pointer;" onclick="nav('view-library')">×</div>
-  </div>
-  <div class="panel-card">
-    <div class="topic-text" id="prac-text"></div>
-    <div class="ai-copilot-area" id="ai-framework">
-      <div style="font-size: 14px; color: var(--accent); margin-bottom: 10px; font-weight:600;">✨ AI 高分思路 (Band 7.5+)</div>
-      <div class="bullet-point"><strong>Context:</strong> University project, zero budget.</div>
-      <div class="bullet-point"><strong>Action:</strong> Used AI tools to generate visuals.</div>
-      <div class="bullet-point"><strong>Result:</strong> Won 1st place, felt resourceful.</div>
-    </div>
-  </div>
-  <div style="margin-top: auto;">
-    <button class="btn-ai" id="btn-get-ai" onclick="showAI()">⚡ 腦袋空白？獲取 AI 框架</button>
-    <button class="btn-primary" onclick="alert('錄音完畢，返回列表。'); nav('view-library');">結束錄音</button>
-  </div>
-</div>
-
-<div id="view-exam" class="view">
-  <div class="header">
-    <div style="font-weight: 600; color: var(--danger);">Live Exam</div>
-    <div id="exam-label" style="font-size: 12px; color: #a1a1aa;"></div>
-  </div>
-  <div class="panel-card">
-    <div class="topic-text" id="exam-text"></div>
-  </div>
-  <div style="text-align: center; color: var(--warning); font-weight: 500;" id="mock-status">準備時間</div>
-  <div class="timer-display" id="mock-timer">00:00</div>
-  <div style="margin-top: auto;">
-    <button class="btn-danger" onclick="finishExam()">強制結束作答</button>
-  </div>
-</div>
-
-<div id="view-analyzing" class="view" style="justify-content: center; align-items: center; text-align: center;">
-  <div class="loader"></div>
-  <div style="font-size: 18px; font-weight: 600;">AI 考官分析中...</div>
-  <div style="font-size: 13px; color: #a1a1aa; margin-top: 10px;">提取文法結構與評估連貫性</div>
-</div>
-
-<div id="view-report" class="view">
-  <div class="header">
-    <div style="font-weight: 600;">Diagnostic Report</div>
-    <div style="font-size: 24px; cursor: pointer;" onclick="nav('view-home')">×</div>
-  </div>
-  <div class="panel-card">
-    <div style="text-align: center; font-size: 12px; color: #a1a1aa; margin-bottom: 10px;">預估 Band Score</div>
-    <div class="score-circle">5.5</div>
-    <div class="stat-row"><span>流暢度</span><span style="color: var(--danger);">12 次 "Um/Uh"</span></div>
-    <div class="stat-row"><span>語法錯誤 (GRA)</span><span style="color: var(--danger);">檢測到 4 處錯誤</span></div>
-  </div>
-  <div class="paywall-container">
-    <div class="paywall-content">
-      <div style="color: #8b5cf6; font-weight: 600; margin-bottom: 10px;">✨ 專屬 8.0 替換範文</div>
-      <div style="font-size: 14px;">Instead of saying "I <span style="color:red">go</span>...", say: "I <span style="color:#10b981">visited</span> the boutique, which offered an <span style="color:#10b981">exceptionally delightful</span> experience..."</div>
-    </div>
-    <div class="paywall-overlay">
-      <div style="font-size: 24px; margin-bottom: 10px;">💎</div>
-      <div style="font-weight: 600; color: #fff; margin-bottom: 8px;">你想知道怎麼拿 7.0 嗎？</div>
-      <div style="font-size: 12px; color: #a1a1aa; margin-bottom: 15px;">解鎖 AI 深度診斷，將你的真實錄音重寫成 8.0 高級範文。</div>
-      <button class="btn-premium" onclick="alert('跳轉支付 (Mock)')">解鎖重寫報告 (1 Credit)</button>
-    </div>
-  </div>
-</div>
-
 <script>
-// --- 資料庫 (2026 最新真題精簡版) ---
-const db = {
-  p1: [
-    { title: "Gifts (1-4月新題)", text: "Do you often give gifts to people?\nWhat was the best gift you have ever received?" },
-    { title: "Morning routines (新題)", text: "What do you do in the morning?\nIs breakfast important to you?" }
-  ],
-  p2: [
-    { title: "Describe a time when you used imagination", text: "Describe a time when you used imagination.\nYou should say:\n- What the situation was\n- Why you needed to use imagination\n- What the result was" },
-    { title: "Describe a successful person", text: "Describe a successful person you know.\nYou should say:\n- Who this person is\n- What they do\n- How you know them" }
-  ]
+/* ========= 1–4月題庫補充：直接追加在你原本 script 最後面 ========= */
+
+const EXTRA_P1_TOPICS = [
+  {
+    title: 'Art',
+    tags: ['new'],
+    questions: [
+      'Do you like art?',
+      'Did you enjoy art classes at school?',
+      'Have you ever been to an art exhibition?',
+      'Do you think art is important in daily life?'
+    ]
+  },
+  {
+    title: 'Animals',
+    tags: ['new'],
+    questions: [
+      'Do you like animals?',
+      'Did you have a pet when you were young?',
+      'What is your favourite animal?',
+      'Do you think people should protect wild animals?'
+    ]
+  },
+  {
+    title: 'Birthdays',
+    tags: ['new'],
+    questions: [
+      'Do you usually celebrate your birthday?',
+      'What did you do on your last birthday?',
+      'Do you think birthdays are important?',
+      'How do people in your country usually celebrate birthdays?'
+    ]
+  },
+  {
+    title: 'Chocolate',
+    tags: ['new'],
+    questions: [
+      'Do you like chocolate?',
+      'How often do you eat chocolate?',
+      'Did you like chocolate when you were a child?',
+      'Why do you think chocolate is so popular?'
+    ]
+  },
+  {
+    title: 'Crowded Places',
+    tags: ['new'],
+    questions: [
+      'Do you like going to crowded places?',
+      'When was the last time you went to a crowded place?',
+      'What kinds of places are usually crowded in your city?',
+      'Do you think crowded places are a problem?'
+    ]
+  },
+  {
+    title: 'Evening Time',
+    tags: ['new'],
+    questions: [
+      'What do you usually do in the evening?',
+      'Do you prefer evenings or mornings?',
+      'What is the best thing to do in the evening?',
+      'Do you think evenings are important for relaxation?'
+    ]
+  },
+  {
+    title: 'Films / Movies',
+    tags: ['new'],
+    questions: [
+      'Do you enjoy watching films?',
+      'What kind of films do you like?',
+      'Do you prefer watching films at home or in the cinema?',
+      'Did you watch a lot of films when you were younger?'
+    ]
+  },
+  {
+    title: 'Flowers',
+    tags: ['new'],
+    questions: [
+      'Do you like flowers?',
+      'Have you ever bought flowers for someone?',
+      'What kinds of flowers are popular in your country?',
+      'Do you think flowers are important in daily life?'
+    ]
+  },
+  {
+    title: 'Keys',
+    tags: ['new'],
+    questions: [
+      'Do you often carry keys with you?',
+      'Have you ever lost your keys?',
+      'What do your keys look like?',
+      'Do you think people will use fewer keys in the future?'
+    ]
+  },
+  {
+    title: 'Laughing',
+    tags: ['new'],
+    questions: [
+      'Do you like laughing?',
+      'What kinds of things make you laugh?',
+      'Do you think laughing is good for health?',
+      'Who is the funniest person you know?'
+    ]
+  },
+  {
+    title: 'Libraries',
+    tags: ['new'],
+    questions: [
+      'Do you often go to libraries?',
+      'Did you use libraries when you were younger?',
+      'What kind of people usually go to libraries?',
+      'Do you think libraries are still important nowadays?'
+    ]
+  },
+  {
+    title: 'Names',
+    tags: ['new'],
+    questions: [
+      'Does your name have any special meaning?',
+      'Who gave you your name?',
+      'Do people in your country care a lot about names?',
+      'Would you ever change your name?'
+    ]
+  },
+  {
+    title: 'Parks',
+    tags: ['new'],
+    questions: [
+      'Do you like visiting parks?',
+      'Are there many parks in your city?',
+      'What do people usually do in parks?',
+      'Did you often go to parks as a child?'
+    ]
+  },
+  {
+    title: 'Pens and Pencils',
+    tags: ['new'],
+    questions: [
+      'Do you prefer using a pen or a pencil?',
+      'When was the last time you bought a pen or pencil?',
+      'Do you like collecting stationery?',
+      'Do you think handwriting is still important?'
+    ]
+  },
+  {
+    title: 'Photos / Photography',
+    tags: ['new'],
+    questions: [
+      'Do you like taking photos?',
+      'What do you usually take photos of?',
+      'Do you prefer taking photos yourself or being photographed by others?',
+      'Has photography changed a lot in recent years?'
+    ]
+  },
+  {
+    title: 'Science',
+    tags: ['new'],
+    questions: [
+      'Did you enjoy science at school?',
+      'Are you interested in science now?',
+      'Do you think science is important?',
+      'What scientific development do you find most interesting?'
+    ]
+  },
+  {
+    title: 'Staying Up Late',
+    tags: ['new'],
+    questions: [
+      'Do you often stay up late?',
+      'Did you stay up late when you were younger?',
+      'What do you usually do when you stay up late?',
+      'Do you think staying up late is unhealthy?'
+    ]
+  },
+  {
+    title: 'Teachers',
+    tags: ['new'],
+    questions: [
+      'Do you have a favourite teacher?',
+      'What qualities make a good teacher?',
+      'Would you ever like to become a teacher?',
+      'Do you think teachers are respected in your country?'
+    ]
+  },
+  {
+    title: 'Weekends',
+    tags: ['new'],
+    questions: [
+      'What do you usually do on weekends?',
+      'Do you prefer busy weekends or relaxing weekends?',
+      'Did you spend weekends differently as a child?',
+      'What is your ideal weekend like?'
+    ]
+  },
+  {
+    title: 'Writing',
+    tags: ['new'],
+    questions: [
+      'Do you enjoy writing?',
+      'What kind of things do you usually write?',
+      'Did you like writing when you were a child?',
+      'Do you think writing by hand is still useful?'
+    ]
+  },
+  {
+    title: 'Public Transport',
+    tags: ['must'],
+    questions: [
+      'Do you often use public transport?',
+      'What kind of public transport is available in your city?',
+      'Is public transport convenient in your area?',
+      'Do you think more people will use public transport in the future?'
+    ]
+  },
+  {
+    title: 'Weather',
+    tags: ['must'],
+    questions: [
+      'What kind of weather do you like?',
+      'What is the weather usually like in your city?',
+      'Does the weather affect your mood?',
+      'Do you often check the weather forecast?'
+    ]
+  },
+  {
+    title: 'Teachers from Childhood',
+    tags: [],
+    questions: [
+      'Do you still remember your primary school teachers?',
+      'Did any teacher have a strong influence on you?',
+      'What kind of teacher did you like when you were young?',
+      'Do children today need different kinds of teachers?'
+    ]
+  }
+];
+
+const EXTRA_P23_TOPICS = [
+  {
+    title: 'Describe a person who likes to dress well',
+    tags: ['new'],
+    p2: [
+      'Describe a person who likes to dress well.',
+      'You should say:',
+      'Who this person is',
+      'How you know this person',
+      'What kind of clothes this person likes to wear',
+      'And explain why you think this person dresses well'
+    ],
+    p3: [
+      'Do people judge others by their clothes?',
+      'Why do some people pay a lot of attention to fashion?',
+      'Will young people in the future care more about clothes than now?'
+    ]
+  },
+  {
+    title: 'Describe a place with beautiful natural scenery',
+    tags: ['new', 'must'],
+    p2: [
+      'Describe a place with beautiful natural scenery.',
+      'You should say:',
+      'Where this place is',
+      'When you went there',
+      'What you saw there',
+      'And explain why you think it is beautiful'
+    ],
+    p3: [
+      'Why do people like visiting places with natural beauty?',
+      'Should governments protect natural places more carefully?',
+      'Do young people appreciate nature as much as older people?'
+    ]
+  },
+  {
+    title: 'Describe a person who encouraged you to achieve a goal',
+    tags: ['new'],
+    p2: [
+      'Describe a person who encouraged you to achieve a goal.',
+      'You should say:',
+      'Who this person is',
+      'What goal you wanted to achieve',
+      'How this person encouraged you',
+      'And explain how you felt about it'
+    ],
+    p3: [
+      'Why do some people need encouragement more than others?',
+      'Is encouragement from family more important than from friends?',
+      'How can teachers encourage students effectively?'
+    ]
+  },
+  {
+    title: 'Describe a difficult thing you did successfully',
+    tags: ['new', 'must'],
+    p2: [
+      'Describe a difficult thing you did successfully.',
+      'You should say:',
+      'What it was',
+      'Why it was difficult',
+      'How you managed to do it',
+      'And explain how you felt afterwards'
+    ],
+    p3: [
+      'Why do people feel proud after overcoming difficulties?',
+      'Should parents let children face difficulties by themselves?',
+      'Do people become stronger after difficult experiences?'
+    ]
+  },
+  {
+    title: 'Describe an interesting conversation you had with someone',
+    tags: ['new'],
+    p2: [
+      'Describe an interesting conversation you had with someone.',
+      'You should say:',
+      'Who you talked to',
+      'Where you had the conversation',
+      'What you talked about',
+      'And explain why you found it interesting'
+    ],
+    p3: [
+      'Why are some conversations more memorable than others?',
+      'Do people today communicate differently from the past?',
+      'Is face-to-face communication better than online communication?'
+    ]
+  },
+  {
+    title: 'Describe a time when someone gave you positive advice',
+    tags: ['new'],
+    p2: [
+      'Describe a time when someone gave you positive advice.',
+      'You should say:',
+      'Who gave you the advice',
+      'What the advice was',
+      'Why they gave it to you',
+      'And explain how it helped you'
+    ],
+    p3: [
+      'Why is advice important in life?',
+      'Who usually gives better advice, parents or friends?',
+      'Why do some people ignore good advice?'
+    ]
+  },
+  {
+    title: 'Describe a place in your country that you would like to recommend',
+    tags: ['new', 'must'],
+    p2: [
+      'Describe a place in your country that you would like to recommend.',
+      'You should say:',
+      'What the place is',
+      'Where it is',
+      'What people can do there',
+      'And explain why you would recommend it'
+    ],
+    p3: [
+      'Why do some places become popular tourist destinations?',
+      'Should governments spend more money promoting tourism?',
+      'How can tourism benefit local people?'
+    ]
+  },
+  {
+    title: 'Describe a time when you were very busy',
+    tags: ['new'],
+    p2: [
+      'Describe a time when you were very busy.',
+      'You should say:',
+      'When it was',
+      'What made you so busy',
+      'How you dealt with everything',
+      'And explain how you felt at that time'
+    ],
+    p3: [
+      'Why are people busier nowadays?',
+      'Do young people manage time well?',
+      'Is being busy always a good thing?'
+    ]
+  },
+  {
+    title: 'Describe a useful website or app',
+    tags: ['new', 'must'],
+    p2: [
+      'Describe a useful website or app.',
+      'You should say:',
+      'What it is',
+      'How often you use it',
+      'What you use it for',
+      'And explain why you think it is useful'
+    ],
+    p3: [
+      'Why are apps so important in modern life?',
+      'Do people rely too much on apps?',
+      'Will websites become less important in the future?'
+    ]
+  },
+  {
+    title: 'Describe a time when you learned something from a mistake',
+    tags: ['new'],
+    p2: [
+      'Describe a time when you learned something from a mistake.',
+      'You should say:',
+      'What the mistake was',
+      'When it happened',
+      'What you learned from it',
+      'And explain how it affected you'
+    ],
+    p3: [
+      'Why do mistakes help people learn?',
+      'Should children be allowed to make mistakes?',
+      'Do schools teach students enough about learning from failure?'
+    ]
+  },
+  {
+    title: 'Describe a person who is good at making people feel welcome',
+    tags: ['new'],
+    p2: [
+      'Describe a person who is good at making people feel welcome.',
+      'You should say:',
+      'Who this person is',
+      'How you know them',
+      'What they do to make others comfortable',
+      'And explain why you think they are good at it'
+    ],
+    p3: [
+      'Why are social skills important?',
+      'Do people become more welcoming as they get older?',
+      'How can schools help students develop social confidence?'
+    ]
+  },
+  {
+    title: 'Describe a piece of good news you heard',
+    tags: ['new'],
+    p2: [
+      'Describe a piece of good news you heard.',
+      'You should say:',
+      'What the news was',
+      'When you heard it',
+      'Who told you about it',
+      'And explain how you felt'
+    ],
+    p3: [
+      'Why do people like sharing good news?',
+      'Is good news spread differently nowadays because of technology?',
+      'Do people remember good news longer than bad news?'
+    ]
+  },
+  {
+    title: 'Describe a famous person you would like to meet',
+    tags: ['must'],
+    p2: [
+      'Describe a famous person you would like to meet.',
+      'You should say:',
+      'Who this person is',
+      'What this person is famous for',
+      'Why you would like to meet them',
+      'And explain what you would talk about'
+    ],
+    p3: [
+      'Why do people admire famous people?',
+      'Do famous people have too much influence on young people?',
+      'Is being famous always a positive thing?'
+    ]
+  },
+  {
+    title: 'Describe a city you think is interesting',
+    tags: ['must'],
+    p2: [
+      'Describe a city you think is interesting.',
+      'You should say:',
+      'What city it is',
+      'When you went there or learned about it',
+      'What the city is like',
+      'And explain why you think it is interesting'
+    ],
+    p3: [
+      'Why do young people prefer living in cities?',
+      'What problems do cities often have?',
+      'Will cities become better places to live in the future?'
+    ]
+  },
+  {
+    title: 'Describe a person who gave a clever solution to a problem',
+    tags: ['must'],
+    p2: [
+      'Describe a person who gave a clever solution to a problem.',
+      'You should say:',
+      'Who the person is',
+      'What the problem was',
+      'What solution the person gave',
+      'And explain why you thought it was clever'
+    ],
+    p3: [
+      'Why are problem-solving skills important?',
+      'Do children and adults solve problems differently?',
+      'Can teamwork lead to better solutions?'
+    ]
+  }
+];
+
+/* ========= 去重追加 ========= */
+function mergeTopicBank(base, extra) {
+  const titles = new Set(base.map(item => item.title));
+  extra.forEach(item => {
+    if (!titles.has(item.title)) {
+      base.push(item);
+      titles.add(item.title);
+    }
+  });
+}
+
+mergeTopicBank(P1_BANK, EXTRA_P1_TOPICS);
+mergeTopicBank(P23_BANK, EXTRA_P23_TOPICS);
+
+/* ========= 左側補一個 P3 單獨練習按鈕 ========= */
+(function addP3NavButton() {
+  const nav = document.querySelector('.nav');
+  if (!nav) return;
+  if (nav.querySelector('[data-nav="p3Standalone"]')) return;
+
+  const btn = document.createElement('button');
+  btn.className = 'nav-btn';
+  btn.dataset.nav = 'p3Standalone';
+  btn.textContent = 'P3 單獨練習';
+  btn.addEventListener('click', () => openView('p3Standalone'));
+
+  const mockBtn = nav.querySelector('[data-nav="mock"]');
+  if (mockBtn) {
+    nav.insertBefore(btn, mockBtn);
+  } else {
+    nav.appendChild(btn);
+  }
+})();
+
+/* ========= 主頁 4 個選項文案微調 ========= */
+(function polishHomeCards() {
+  const cards = document.querySelectorAll('.cta-grid .card-btn');
+  if (cards.length >= 4) {
+    cards[0].querySelector('.title').textContent = 'P1 題庫';
+    cards[1].querySelector('.title').textContent = 'P2 / P3 題庫';
+    cards[2].querySelector('.title').textContent = 'P3 單獨練習';
+    cards[3].querySelector('.title').textContent = '模擬真實考試';
+  }
+})();
+
+/* ========= 題庫重新渲染 ========= */
+renderP1Topics();
+renderP23Topics();
+renderP3StandaloneTopics();
+
+if (P1_BANK.length && (!APP_STATE.practice.type || APP_STATE.practice.type === 'p1')) {
+  selectP1Topic(0);
+}
+if (P23_BANK.length && (!APP_STATE.practice.type || APP_STATE.practice.type === 'p23')) {
+  selectP23Topic(0);
+  selectP3StandaloneTopic(0);
+}
+
+/* ========= 錄音能力提示 ========= */
+(function recorderHint() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('你的瀏覽器目前不支援錄音，建議使用最新版 Safari 或 Chrome。');
+  }
+})();
+</script>
+<script>
+/* =========================
+   IELTS Copilot Pro 扩充包
+   直接贴到原文件最后面
+   ========================= */
+
+/* ---------- 題庫補充：P1 ---------- */
+const EXTRA_P1_TOPICS_FULL = [
+  {
+    title: 'Art',
+    tags: ['new'],
+    questions: [
+      'Are you interested in art in general?',
+      'Did you enjoy drawing or painting when you were a child?',
+      'Have you visited any art exhibitions recently?',
+      'Do you think art should be taught in school?'
+    ]
+  },
+  {
+    title: 'Animals / Pets',
+    tags: ['new'],
+    questions: [
+      'Do you like animals?',
+      'Did you keep any pets when you were younger?',
+      'What kind of animal do you find most interesting?',
+      'Do you think people should do more to protect animals?'
+    ]
+  },
+  {
+    title: 'Birthdays',
+    tags: ['new'],
+    questions: [
+      'Do you usually celebrate your birthday?',
+      'What did you do on your last birthday?',
+      'Are birthdays important to you?',
+      'How do people in your country usually celebrate birthdays?'
+    ]
+  },
+  {
+    title: 'Breakfast',
+    tags: ['new'],
+    questions: [
+      'What do you usually eat for breakfast?',
+      'Do you think breakfast is important?',
+      'Has your breakfast habit changed over time?',
+      'Would you like to change anything about your morning meals?'
+    ]
+  },
+  {
+    title: 'Boredom',
+    tags: ['new'],
+    questions: [
+      'Do you often feel bored?',
+      'What kinds of things make you feel bored?',
+      'What do you usually do when you are bored?',
+      'Did you get bored more easily when you were a child?'
+    ]
+  },
+  {
+    title: 'Cars / Driving',
+    tags: ['new'],
+    questions: [
+      'Do you own a car or would you like to own one?',
+      'How often do you travel by car?',
+      'Is learning to drive important where you live?',
+      'Are traffic problems serious in your city?'
+    ]
+  },
+  {
+    title: 'Chocolate',
+    tags: ['new'],
+    questions: [
+      'Do you enjoy eating chocolate?',
+      'How often do you buy chocolate?',
+      'Did you like chocolate more when you were young?',
+      'Why do you think chocolate is popular in many countries?'
+    ]
+  },
+  {
+    title: 'Colours',
+    tags: ['new'],
+    questions: [
+      'What is your favourite colour?',
+      'Are there any colours you dislike?',
+      'Do colours affect how you feel?',
+      'Have your colour preferences changed over time?'
+    ]
+  },
+  {
+    title: 'Computers',
+    tags: ['new'],
+    questions: [
+      'When did you first use a computer?',
+      'In what situations do you usually use a computer?',
+      'Would life be difficult without computers?',
+      'Do you think people depend too much on computers today?'
+    ]
+  },
+  {
+    title: 'Cooking / Food',
+    tags: ['new'],
+    questions: [
+      'Do you like cooking?',
+      'What kind of food do you usually cook or eat at home?',
+      'Did you learn cooking from your family or somewhere else?',
+      'Do people in your country cook at home as often as before?'
+    ]
+  },
+  {
+    title: 'Crowded Places',
+    tags: ['new'],
+    questions: [
+      'Do you enjoy going to crowded places?',
+      'What kinds of places are usually crowded in your city?',
+      'When was the last time you went somewhere crowded?',
+      'Do crowded places make you feel excited or uncomfortable?'
+    ]
+  },
+  {
+    title: 'Evening Time',
+    tags: ['new'],
+    questions: [
+      'What do you usually do in the evening?',
+      'Do you prefer evenings or mornings?',
+      'What is the most relaxing way to spend an evening?',
+      'Do you think evenings are important for family time?'
+    ]
+  },
+  {
+    title: 'Films / Movies',
+    tags: ['new'],
+    questions: [
+      'Do you enjoy watching films?',
+      'What type of films do you like most?',
+      'Do you prefer watching films at home or in the cinema?',
+      'Did you watch more films in the past than you do now?'
+    ]
+  },
+  {
+    title: 'Flowers',
+    tags: ['new'],
+    questions: [
+      'Do you like flowers?',
+      'Have you ever bought flowers for someone?',
+      'Are flowers important in celebrations in your country?',
+      'Do you think flowers make places look better?'
+    ]
+  },
+  {
+    title: 'Geography',
+    tags: ['new'],
+    questions: [
+      'Did you enjoy studying geography at school?',
+      'Are you good at reading maps?',
+      'Do you think geography is useful in daily life?',
+      'Would you like to visit a place because of its geography?'
+    ]
+  },
+  {
+    title: 'Keys',
+    tags: ['new'],
+    questions: [
+      'Do you usually carry a lot of keys with you?',
+      'Have you ever lost your keys?',
+      'Do you prefer traditional keys or digital locks?',
+      'Do you think keys will become less common in the future?'
+    ]
+  },
+  {
+    title: 'Laughing',
+    tags: ['new'],
+    questions: [
+      'Do you enjoy laughing a lot?',
+      'What kinds of things usually make you laugh?',
+      'Do you think laughing is important for health?',
+      'Who is the funniest person you know?'
+    ]
+  },
+  {
+    title: 'Libraries',
+    tags: ['new'],
+    questions: [
+      'Do you still go to libraries?',
+      'Did you go to libraries when you were younger?',
+      'What kinds of people usually go to libraries?',
+      'Are libraries still necessary nowadays?'
+    ]
+  },
+  {
+    title: 'Names',
+    tags: ['new'],
+    questions: [
+      'Does your name have a special meaning?',
+      'Who chose your name?',
+      'Do people in your country care a lot about names?',
+      'Would you like to change your name in the future?'
+    ]
+  },
+  {
+    title: 'Old Buildings',
+    tags: ['new'],
+    questions: [
+      'Are there many old buildings in your city?',
+      'Do you think old buildings should be protected?',
+      'Would you prefer to live in an old building or a modern one?',
+      'Are there any historic buildings you would like to visit?'
+    ]
+  },
+  {
+    title: 'Parks',
+    tags: ['new'],
+    questions: [
+      'Do you like going to parks?',
+      'Are there many parks in your area?',
+      'What do people usually do in parks?',
+      'Did you go to parks often as a child?'
+    ]
+  },
+  {
+    title: 'Pens / Handwriting',
+    tags: ['new'],
+    questions: [
+      'Do you often write by hand?',
+      'Do you prefer using a pen or a pencil?',
+      'When was the last time you bought stationery?',
+      'Do you think handwriting is still important nowadays?'
+    ]
+  },
+  {
+    title: 'Photos / Photography',
+    tags: ['new'],
+    questions: [
+      'Do you enjoy taking photos?',
+      'What do you usually photograph?',
+      'Do you prefer taking pictures or appearing in them?',
+      'Has photography become more important because of smartphones?'
+    ]
+  },
+  {
+    title: 'Science',
+    tags: ['new'],
+    questions: [
+      'Are you interested in science?',
+      'Did you enjoy science classes at school?',
+      'What area of science do you find most interesting?',
+      'Do you think science changes people’s lives a lot?'
+    ]
+  },
+  {
+    title: 'Sitting',
+    tags: ['new'],
+    questions: [
+      'What is your favourite place to sit?',
+      'Do you sit down for long periods every day?',
+      'Do you feel sleepy when you sit for too long?',
+      'Did you often sit on the floor when you were younger?'
+    ]
+  },
+  {
+    title: 'Staying Up Late',
+    tags: ['new'],
+    questions: [
+      'Do you often stay up late?',
+      'What do you usually do when you stay up late?',
+      'Did you stay up late more often as a child or now?',
+      'Do you think staying up late is harmful?'
+    ]
+  },
+  {
+    title: 'Teachers',
+    tags: ['new'],
+    questions: [
+      'What kind of teachers do you like most?',
+      'Who was your favourite teacher when you were young?',
+      'Would you like to be a teacher in the future?',
+      'Do you think teachers are respected in your country?'
+    ]
+  },
+  {
+    title: 'Views from Windows',
+    tags: ['new'],
+    questions: [
+      'What can you see from the window of your room?',
+      'Do you enjoy looking out of the window?',
+      'Would you like to live somewhere with a better view?',
+      'Does the view from a room affect how people feel?'
+    ]
+  },
+  {
+    title: 'Weekends',
+    tags: ['new'],
+    questions: [
+      'What do you usually do on weekends?',
+      'Do you prefer busy weekends or quiet ones?',
+      'Did you spend weekends differently when you were younger?',
+      'What would your ideal weekend be like?'
+    ]
+  },
+  {
+    title: 'Writing',
+    tags: ['new'],
+    questions: [
+      'Do you write a lot in daily life?',
+      'What kinds of things do you usually write?',
+      'Do you prefer typing or handwriting?',
+      'Do you think the way people write will continue to change?'
+    ]
+  },
+  {
+    title: 'Weather',
+    tags: ['must'],
+    questions: [
+      'What kind of weather do you like most?',
+      'What is the weather usually like where you live?',
+      'Does weather affect your mood?',
+      'Do you check the weather forecast often?'
+    ]
+  },
+  {
+    title: 'Public Transport',
+    tags: ['must'],
+    questions: [
+      'Do you often use public transport?',
+      'What type of public transport is common in your city?',
+      'Is public transport convenient where you live?',
+      'Do you think more people will use public transport in the future?'
+    ]
+  },
+  {
+    title: 'Health / Exercise',
+    tags: ['must'],
+    questions: [
+      'Do you usually do any exercise?',
+      'What kind of exercise do you prefer?',
+      'Do you think people are healthier now than before?',
+      'How important is exercise in daily life?'
+    ]
+  },
+  {
+    title: 'Video Games',
+    tags: ['new'],
+    questions: [
+      'Do you play video games?',
+      'What kinds of video games do you like?',
+      'Do you think games are good for young people?',
+      'Did you spend more time on games in the past?'
+    ]
+  },
+  {
+    title: 'Ideal Person',
+    tags: ['new'],
+    questions: [
+      'Do you have someone you admire a lot?',
+      'Why do you admire this person?',
+      'Has this person influenced your life in any way?',
+      'Do you think having an ideal person is helpful?'
+    ]
+  }
+];
+
+/* ---------- 題庫補充：P2 / P3 ---------- */
+const EXTRA_P23_TOPICS_FULL = [
+  {
+    title: 'Describe a person who likes dressing well',
+    tags: ['new'],
+    p2: [
+      'Describe a person who likes dressing well.',
+      'You should say:',
+      'Who this person is',
+      'How you know this person',
+      'What kind of clothes they like',
+      'And explain why you think this person dresses well'
+    ],
+    p3: [
+      'Do people judge others by the way they dress?',
+      'Why do some people care a lot about fashion?',
+      'Do clothes influence confidence?'
+    ]
+  },
+  {
+    title: 'Describe a place with beautiful natural scenery',
+    tags: ['new', 'must'],
+    p2: [
+      'Describe a place with beautiful natural scenery.',
+      'You should say:',
+      'Where it is',
+      'When you visited it',
+      'What you saw there',
+      'And explain why you think it is beautiful'
+    ],
+    p3: [
+      'Why do people like visiting natural places?',
+      'Should governments do more to protect natural scenery?',
+      'Do young people appreciate nature as much as older people?'
+    ]
+  },
+  {
+    title: 'Describe a person who encouraged you to achieve a goal',
+    tags: ['new'],
+    p2: [
+      'Describe a person who encouraged you to achieve a goal.',
+      'You should say:',
+      'Who this person is',
+      'What goal you wanted to achieve',
+      'How this person encouraged you',
+      'And explain how you felt about that support'
+    ],
+    p3: [
+      'Why do some people need more encouragement than others?',
+      'Is family support more important than support from friends?',
+      'How can teachers motivate students effectively?'
+    ]
+  },
+  {
+    title: 'Describe a difficult thing you did successfully',
+    tags: ['new', 'must'],
+    p2: [
+      'Describe a difficult thing you did successfully.',
+      'You should say:',
+      'What it was',
+      'Why it was difficult',
+      'How you managed to do it',
+      'And explain how you felt afterwards'
+    ],
+    p3: [
+      'Why do people feel proud after overcoming difficulties?',
+      'Should children deal with some problems by themselves?',
+      'Do difficult experiences make people stronger?'
+    ]
+  },
+  {
+    title: 'Describe an interesting conversation you had',
+    tags: ['new'],
+    p2: [
+      'Describe an interesting conversation you had.',
+      'You should say:',
+      'Who you spoke with',
+      'Where the conversation happened',
+      'What you talked about',
+      'And explain why you found it interesting'
+    ],
+    p3: [
+      'Why are some conversations more memorable than others?',
+      'Do people communicate differently now compared with the past?',
+      'Is face-to-face communication still the best form of communication?'
+    ]
+  },
+  {
+    title: 'Describe a time when someone gave you positive advice',
+    tags: ['new'],
+    p2: [
+      'Describe a time when someone gave you positive advice.',
+      'You should say:',
+      'Who gave you the advice',
+      'What the advice was',
+      'Why they gave it to you',
+      'And explain how it helped you'
+    ],
+    p3: [
+      'Why is advice important in life?',
+      'Who usually gives better advice, parents or friends?',
+      'Why do some people ignore good advice?'
+    ]
+  },
+  {
+    title: 'Describe a place in your country you would recommend',
+    tags: ['new', 'must'],
+    p2: [
+      'Describe a place in your country you would recommend.',
+      'You should say:',
+      'What the place is',
+      'Where it is',
+      'What people can do there',
+      'And explain why you would recommend it'
+    ],
+    p3: [
+      'Why do some places become popular tourist attractions?',
+      'Should governments spend money promoting tourism?',
+      'How can tourism benefit local communities?'
+    ]
+  },
+  {
+    title: 'Describe a time when you were very busy',
+    tags: ['new'],
+    p2: [
+      'Describe a time when you were very busy.',
+      'You should say:',
+      'When it happened',
+      'Why you were busy',
+      'What you had to do',
+      'And explain how you felt at that time'
+    ],
+    p3: [
+      'Why are people busier nowadays?',
+      'Do young people manage time well?',
+      'Is being busy always a positive thing?'
+    ]
+  },
+  {
+    title: 'Describe a useful website or app',
+    tags: ['new', 'must'],
+    p2: [
+      'Describe a useful website or app.',
+      'You should say:',
+      'What it is',
+      'How often you use it',
+      'What you use it for',
+      'And explain why you think it is useful'
+    ],
+    p3: [
+      'Why are apps important in modern life?',
+      'Do people depend too much on apps?',
+      'Will websites become less important in the future?'
+    ]
+  },
+  {
+    title: 'Describe a time when you learned from a mistake',
+    tags: ['new'],
+    p2: [
+      'Describe a time when you learned from a mistake.',
+      'You should say:',
+      'What mistake you made',
+      'When it happened',
+      'What you learned',
+      'And explain how it influenced you'
+    ],
+    p3: [
+      'Why do mistakes help people grow?',
+      'Should children be allowed to make mistakes?',
+      'Do schools teach enough about learning from failure?'
+    ]
+  },
+  {
+    title: 'Describe a person who makes others feel welcome',
+    tags: ['new'],
+    p2: [
+      'Describe a person who makes others feel welcome.',
+      'You should say:',
+      'Who this person is',
+      'How you know them',
+      'What they do',
+      'And explain why they make others comfortable'
+    ],
+    p3: [
+      'Why are social skills important?',
+      'Are some people naturally more welcoming than others?',
+      'Can schools help students become more socially confident?'
+    ]
+  },
+  {
+    title: 'Describe a piece of good news you heard',
+    tags: ['new'],
+    p2: [
+      'Describe a piece of good news you heard.',
+      'You should say:',
+      'What the news was',
+      'When you heard it',
+      'Who told you',
+      'And explain how you felt'
+    ],
+    p3: [
+      'Why do people enjoy sharing good news?',
+      'Is good news spread faster now because of technology?',
+      'Do people remember good news longer than bad news?'
+    ]
+  },
+  {
+    title: 'Describe a challenge you overcame',
+    tags: ['new', 'must'],
+    p2: [
+      'Describe a challenge you overcame.',
+      'You should say:',
+      'What the challenge was',
+      'When it happened',
+      'What you did to deal with it',
+      'And explain why this experience was important'
+    ],
+    p3: [
+      'Why do some people deal with challenges better than others?',
+      'Should schools prepare students for real-life challenges?',
+      'Can difficult experiences improve confidence?'
+    ]
+  },
+  {
+    title: 'Describe something that saves your time',
+    tags: ['new'],
+    p2: [
+      'Describe something that saves your time.',
+      'You should say:',
+      'What it is',
+      'How you use it',
+      'When you started using it',
+      'And explain why it saves you time'
+    ],
+    p3: [
+      'Why is saving time important nowadays?',
+      'Do modern technologies really save time?',
+      'Why do many people still feel busy even with useful tools?'
+    ]
+  },
+  {
+    title: 'Describe an outdoor activity you did',
+    tags: ['new'],
+    p2: [
+      'Describe an outdoor activity you did.',
+      'You should say:',
+      'What the activity was',
+      'Where you did it',
+      'Who you did it with',
+      'And explain why you enjoyed it'
+    ],
+    p3: [
+      'Why should people spend more time outdoors?',
+      'Do children today do enough outdoor activities?',
+      'What are the benefits of outdoor exercise?'
+    ]
+  },
+  {
+    title: 'Describe a drawing or painting you like',
+    tags: ['new'],
+    p2: [
+      'Describe a drawing or painting you like.',
+      'You should say:',
+      'What it is',
+      'Where you saw it',
+      'What it looks like',
+      'And explain why you like it'
+    ],
+    p3: [
+      'Why do people appreciate visual art?',
+      'Should art education be more common in schools?',
+      'Is modern art easier or harder to understand than traditional art?'
+    ]
+  },
+  {
+    title: 'Describe something important that you lost',
+    tags: ['new'],
+    p2: [
+      'Describe something important that you lost.',
+      'You should say:',
+      'What it was',
+      'When you lost it',
+      'How you lost it',
+      'And explain how you felt about it'
+    ],
+    p3: [
+      'Why do people often lose things?',
+      'Do people care more about practical value or emotional value when they lose something?',
+      'How can technology help people avoid losing important items?'
+    ]
+  },
+  {
+    title: 'Describe a person who likes buying cheap goods',
+    tags: ['new'],
+    p2: [
+      'Describe a person who likes buying cheap goods.',
+      'You should say:',
+      'Who the person is',
+      'What kinds of things they buy',
+      'Why they like low prices',
+      'And explain what you think about this habit'
+    ],
+    p3: [
+      'Why do some people care more about price than quality?',
+      'Is being careful with money always a good thing?',
+      'Do young people spend money differently from older people?'
+    ]
+  },
+  {
+    title: 'Describe a popular person in your country',
+    tags: ['new'],
+    p2: [
+      'Describe a popular person in your country.',
+      'You should say:',
+      'Who this person is',
+      'Why they are popular',
+      'What they are known for',
+      'And explain why people like them'
+    ],
+    p3: [
+      'Why do some people become widely admired?',
+      'Can popularity change quickly nowadays?',
+      'Do famous people have social responsibilities?'
+    ]
+  },
+  {
+    title: 'Describe a famous person you would like to meet',
+    tags: ['must'],
+    p2: [
+      'Describe a famous person you would like to meet.',
+      'You should say:',
+      'Who the person is',
+      'What they are famous for',
+      'Why you want to meet them',
+      'And explain what you would talk about'
+    ],
+    p3: [
+      'Why do people admire famous people?',
+      'Do famous people influence young people too much?',
+      'Is fame always a good thing?'
+    ]
+  },
+  {
+    title: 'Describe a city you think is interesting',
+    tags: ['must'],
+    p2: [
+      'Describe a city you think is interesting.',
+      'You should say:',
+      'What city it is',
+      'When you visited or learned about it',
+      'What the city is like',
+      'And explain why it is interesting'
+    ],
+    p3: [
+      'Why do many young people prefer living in cities?',
+      'What problems are common in cities?',
+      'Will cities become better places to live in the future?'
+    ]
+  },
+  {
+    title: 'Describe a person who gave a clever solution to a problem',
+    tags: ['must'],
+    p2: [
+      'Describe a person who gave a clever solution to a problem.',
+      'You should say:',
+      'Who the person is',
+      'What the problem was',
+      'What solution they suggested',
+      'And explain why you thought it was clever'
+    ],
+    p3: [
+      'Why are problem-solving skills important?',
+      'Do adults and children solve problems differently?',
+      'Can teamwork lead to better solutions?'
+    ]
+  },
+  {
+    title: 'Describe something you do to keep fit and healthy',
+    tags: ['new'],
+    p2: [
+      'Describe something you do to keep fit and healthy.',
+      'You should say:',
+      'What it is',
+      'How often you do it',
+      'Why you do it',
+      'And explain how it helps you'
+    ],
+    p3: [
+      'Why are people more concerned about health now?',
+      'Should governments promote healthy lifestyles more actively?',
+      'Do young people take health seriously enough?'
+    ]
+  },
+  {
+    title: 'Describe a time when you needed to search for information',
+    tags: ['new'],
+    p2: [
+      'Describe a time when you needed to search for information.',
+      'You should say:',
+      'What information you needed',
+      'Why you needed it',
+      'How you searched for it',
+      'And explain whether you found it easily'
+    ],
+    p3: [
+      'Why is finding reliable information important?',
+      'Do people trust online information too easily?',
+      'How has technology changed the way people search for knowledge?'
+    ]
+  }
+];
+
+/* ---------- 追加並去重 ---------- */
+function mergeTopicBank(base, extra) {
+  const seen = new Set(base.map(x => x.title));
+  extra.forEach(item => {
+    if (!seen.has(item.title)) {
+      base.push(item);
+      seen.add(item.title);
+    }
+  });
+}
+
+mergeTopicBank(P1_BANK, EXTRA_P1_TOPICS_FULL);
+mergeTopicBank(P23_BANK, EXTRA_P23_TOPICS_FULL);
+
+/* ---------- 覆蓋主頁卡片：改成 P1 / P2 / P3 / 模考 ---------- */
+(function rebuildHomeCards() {
+  const grid = document.querySelector('.cta-grid');
+  if (!grid) return;
+
+  grid.innerHTML = `
+    <button class="card-btn" onclick="openView('p1')">
+      <div class="title">P1 題庫</div>
+      <div class="desc">固定主題練習 · 播放問題 · 題幹隱藏 · 每題 45 秒</div>
+    </button>
+    <button class="card-btn" onclick="openView('p2')">
+      <div class="title">P2 題庫</div>
+      <div class="desc">顯示 Cue Card · 固定內容 · 可直接錄音練習</div>
+    </button>
+    <button class="card-btn" onclick="openView('p3Standalone')">
+      <div class="title">P3 題庫</div>
+      <div class="desc">延伸討論練習 · 語音播放 · 題幹隱藏 · 每題 80 秒</div>
+    </button>
+    <button class="card-btn" onclick="openView('mock')">
+      <div class="title">模擬真實考試</div>
+      <div class="desc">P1 → P2 → P3 完整流程 · 抽題 · 錄音 · 考後反饋</div>
+    </button>
+  `;
+})();
+
+/* ---------- 左側新增 P3 單獨練習入口 ---------- */
+(function ensureP3NavButton() {
+  const nav = document.querySelector('.nav');
+  if (!nav) return;
+  if (nav.querySelector('[data-nav="p3Standalone"]')) return;
+
+  const btn = document.createElement('button');
+  btn.className = 'nav-btn';
+  btn.dataset.nav = 'p3Standalone';
+  btn.textContent = 'P3 題庫';
+  btn.addEventListener('click', () => openView('p3Standalone'));
+
+  const mockBtn = nav.querySelector('[data-nav="mock"]');
+  if (mockBtn) {
+    nav.insertBefore(btn, mockBtn);
+  } else {
+    nav.appendChild(btn);
+  }
+})();
+
+/* ---------- 修正导航列表 ---------- */
+(function refreshNavBinding() {
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.onclick = null;
+    btn.addEventListener('click', () => openView(btn.dataset.nav));
+  });
+})();
+
+/* ---------- 題庫重新渲染 ---------- */
+renderP1Topics();
+renderP23Topics();
+renderP3StandaloneTopics();
+
+/* ---------- 如果還沒選題，預設載入第一題 ---------- */
+if (!APP_STATE.practice.type || APP_STATE.practice.type === 'p1') {
+  if (P1_BANK.length) selectP1Topic(0);
+}
+if (!APP_STATE.practice.type || APP_STATE.practice.type === 'p23') {
+  if (P23_BANK.length) selectP23Topic(0);
+}
+if (P23_BANK.length) {
+  selectP3StandaloneTopic(0);
+}
+
+/* ---------- 模考增強：讓 P2 後必接同一主題 P3，並含準備階段 ---------- */
+window.startMockExam = function () {
+  APP_STATE.mock.queue = [];
+  APP_STATE.mock.currentIndex = -1;
+  APP_STATE.mock.logs = ['考試開始。'];
+  APP_STATE.mock.transcripts = [];
+  APP_STATE.mock.started = true;
+
+  const p1Topics = [...P1_BANK].sort(() => Math.random() - 0.5).slice(0, 3);
+  p1Topics.forEach(topic => {
+    const selected = [...topic.questions].sort(() => Math.random() - 0.5).slice(0, 2);
+    selected.forEach(q => {
+      APP_STATE.mock.queue.push({
+        part: 'P1',
+        topic: topic.title,
+        prompt: q,
+        hidden: true,
+        maxSeconds: 45
+      });
+    });
+  });
+
+  const chosenP23 = P23_BANK[Math.floor(Math.random() * P23_BANK.length)];
+  APP_STATE.mock.queue.push({
+    part: 'P2',
+    topic: chosenP23.title,
+    prompt: chosenP23.p2.join('\n'),
+    hidden: false,
+    maxSeconds: 150
+  });
+
+  chosenP23.p3.slice(0, 3).forEach(q => {
+    APP_STATE.mock.queue.push({
+      part: 'P3',
+      topic: chosenP23.title,
+      prompt: q,
+      hidden: true,
+      maxSeconds: 80
+    });
+  });
+
+  document.getElementById('mockFeedback').textContent = '考試進行中，完成後生成反饋。';
+  document.getElementById('mockStageLabel').textContent = 'Preparation';
+  document.getElementById('mockTitle').textContent = '請準備開始考試';
+  document.getElementById('mockMeta').textContent = '系統將先進入簡短準備提示，然後開始正式流程。';
+  document.getElementById('mockPromptArea').innerHTML = `
+    <div class="hidden-prompt">
+      <div class="label">Get Ready</div>
+      <div class="big">即將開始模考</div>
+    </div>
+  `;
+  document.getElementById('mockTimer').textContent = '00:05';
+  document.getElementById('mockSubtle').textContent = '請確認麥克風已開啟，環境安靜。';
+  document.getElementById('mockProgress').style.width = '0%';
+
+  let prep = 5;
+  if (APP_STATE.mock.timer) clearInterval(APP_STATE.mock.timer);
+  APP_STATE.mock.timer = setInterval(() => {
+    prep--;
+    document.getElementById('mockTimer').textContent = `00:0${prep}`;
+    document.getElementById('mockProgress').style.width = `${(5 - prep) * 20}%`;
+    if (prep <= 0) {
+      clearInterval(APP_STATE.mock.timer);
+      APP_STATE.mock.timer = null;
+      moveToNextMockQuestion();
+    }
+  }, 1000);
 };
 
-let mode = 'learning'; // 'learning' 或 'mock'
-let currentExam = 'normal';
-let synth = window.speechSynthesis;
-let timerInterval;
+/* ---------- 模考即時日誌更完整 ---------- */
+window.updateMockLog = function () {
+  const logBox = document.getElementById('mockLiveLog');
+  if (!logBox) return;
+  logBox.textContent = APP_STATE.mock.logs.join('\n');
+};
 
-// --- 導航與流程控制 ---
-function nav(viewId) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById(viewId).classList.add('active');
-  stopAll();
-}
-
-function startFlow(selectedMode) {
-  mode = selectedMode;
-  if(mode === 'learning') {
-    nav('view-library');
-    switchTab('p2', document.querySelectorAll('.tab')[1]);
-  } else {
-    nav('view-setup');
+/* ---------- 考後反饋增強：按部分輸出 ---------- */
+window.generateMockFeedback = function (items) {
+  if (!items.length) {
+    return '這次沒有成功錄到有效內容。請先檢查瀏覽器麥克風權限，再重新進行完整模考。';
   }
-}
 
-function selectExam(el, type) {
-  document.querySelectorAll('.exam-opt').forEach(opt => opt.classList.remove('selected'));
-  el.classList.add('selected');
-  currentExam = type;
-}
+  const allText = items.map(i => i.transcript || '').join(' ').trim();
+  const totalDuration = items.reduce((sum, i) => sum + (i.duration || 0), 0);
+  const wordCount = allText ? allText.split(/\s+/).filter(Boolean).length : 0;
+  const wpm = totalDuration > 0 ? Math.round(wordCount / (totalDuration / 60)) : 0;
+  const fillers = allText.match(/\b(um|uh|like|you know|well)\b/gi) || [];
 
-// --- 題庫列表渲染 ---
-function switchTab(type, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  const list = document.getElementById('topic-list');
-  list.innerHTML = '';
-  db[type].forEach(item => {
-    let div = document.createElement('div');
-    div.className = 'topic-card';
-    div.innerText = item.title;
-    div.onclick = () => loadTopic(item.text);
-    list.appendChild(div);
-  });
-}
+  const p1 = items.filter(i => i.part === 'P1');
+  const p2 = items.find(i => i.part === 'P2');
+  const p3 = items.filter(i => i.part === 'P3');
 
-function loadTopic(text) {
-  if(mode === 'learning') {
-    nav('view-practice');
-    document.getElementById('prac-text').innerText = text;
-    document.getElementById('ai-framework').classList.remove('active');
-    document.getElementById('btn-get-ai').style.display = 'block';
-    document.getElementById('btn-get-ai').innerText = "⚡ 腦袋空白？獲取 AI 框架";
-  } else {
-    nav('view-exam');
-    document.getElementById('exam-text').innerText = text;
-    document.getElementById('exam-label').innerText = currentExam === 'normal' ? 'Examiner: Standard' : 'Examiner: Impatient';
-    runMockExam();
+  const notes = [];
+
+  if (!allText) {
+    notes.push('1. 幾乎沒有有效轉錄內容，先優先解決錄音與收音問題。');
+    notes.push('2. 建議使用安靜環境，並讓麥克風靠近嘴巴一些。');
+    notes.push('3. 完成收音後再做一次完整模考，反饋會準確得多。');
+    return notes.join('\n');
   }
-}
 
-// --- Learning 模式功能 ---
-function showAI() {
-  document.getElementById('btn-get-ai').innerText = "生成中...";
-  setTimeout(() => {
-    document.getElementById('ai-framework').classList.add('active');
-    document.getElementById('btn-get-ai').style.display = 'none';
-  }, 500);
-}
+  if (wpm < 85) {
+    notes.push('1. 整體語速偏慢，開頭思考時間稍長。建議每題先直接表態，再補原因與例子。');
+  } else if (wpm > 165) {
+    notes.push('1. 整體語速偏快，部分內容可能不夠清楚。建議在轉折點和例子前放慢一點。');
+  } else {
+    notes.push('1. 整體語速區間不錯，基本接近正常應試節奏。');
+  }
 
-// --- Mock 模式功能 (計時與打斷) ---
-function runMockExam() {
-  const isImpatient = currentExam === 'impatient';
-  const intro = isImpatient ? "One minute prep. Go." : "You have one minute to prepare.";
-  
-  speak(intro, isImpatient ? 1.2 : 0.9, () => {
-    let timeLeft = 60;
-    document.getElementById('mock-status').innerText = "準備時間";
-    updateTimer(timeLeft);
-    
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      updateTimer(timeLeft);
-      if(timeLeft <= 0) {
-        clearInterval(timerInterval);
-        startSpeakingPhase(isImpatient);
-      }
-    }, 1000);
-  });
-}
+  if (fillers.length >= 8) {
+    notes.push('2. 填充詞偏多，例如 um / uh / like。可以把填充詞改成短停頓，聽感會更成熟。');
+  } else if (fillers.length >= 3) {
+    notes.push('2. 填充詞有一些，但仍可控制。多做「先想 1 秒再說」的節奏訓練會有幫助。');
+  } else {
+    notes.push('2. 填充詞控制得不錯，輸出相對乾淨。');
+  }
 
-function startSpeakingPhase(isImpatient) {
-  speak("Please start speaking now.", isImpatient ? 1.2 : 0.9, () => {
-    let timePassed = 0;
-    document.getElementById('mock-status').innerText = "🔴 作答中";
-    document.getElementById('mock-timer').style.color = "var(--danger)";
-    updateTimer(0);
-    
-    timerInterval = setInterval(() => {
-      timePassed++;
-      updateTimer(timePassed);
-      // 沒耐性的考官 15秒 就打斷 (展示用，實戰約 90秒)
-      const limit = isImpatient ? 15 : 120; 
-      if(timePassed >= limit) {
-        clearInterval(timerInterval);
-        document.getElementById('mock-status').innerText = "考官打斷";
-        speak(isImpatient ? "Okay, stop there." : "Thank you.", isImpatient ? 1.2 : 0.9, finishExam);
-      }
-    }, 1000);
-  });
-}
+  const p1Short = p1.filter(x => x.duration < 15).length;
+  if (p1Short >= 2) {
+    notes.push('3. P1 有幾題偏短，說明延伸不足。建議每題至少用 2 到 4 句回答。');
+  } else {
+    notes.push('3. P1 整體回答長度還可以，基本不會顯得太單薄。');
+  }
 
-function updateTimer(seconds) {
-  let m = Math.floor(seconds / 60).toString().padStart(2, '0');
-  let s = (seconds % 60).toString().padStart(2, '0');
-  document.getElementById('mock-timer').innerText = `${m}:${s}`;
-}
+  if (p2) {
+    const p2Words = (p2.transcript || '').split(/\s+/).filter(Boolean).length;
+    if (p2Words < 90) {
+      notes.push('4. P2 內容偏短。建議固定用「背景 → 細節 → 感受 → 結果」四段式撐滿主體。');
+    } else if (p2Words < 140) {
+      notes.push('4. P2 已有基本內容，但細節還可以更具體，比如時間、人物、場景與你的感受。');
+    } else {
+      notes.push('4. P2 內容厚度不錯，接下來可以加強連接詞與故事線，讓整段更順。');
+    }
+  }
 
-function speak(text, rate, callback) {
-  if(synth.speaking) synth.cancel();
-  let utter = new SpeechSynthesisUtterance(text);
-  utter.lang = 'en-GB'; utter.rate = rate;
-  utter.onend = () => { if(callback) callback(); };
-  synth.speak(utter);
-}
+  const p3Short = p3.filter(x => x.duration < 18).length;
+  if (p3Short >= 2) {
+    notes.push('5. P3 延伸偏短，代表分析層次還不夠。建議至少做到「觀點 + 原因 + 例子」。');
+  } else {
+    notes.push('5. P3 基本能延伸，這對整體口語表現很有幫助。');
+  }
 
-function stopAll() {
-  clearInterval(timerInterval);
-  if(synth.speaking) synth.cancel();
-  document.getElementById('mock-timer').style.color = "var(--text)";
-}
+  notes.push('6. 目前暫時不給分數，建議先把節奏、完整度、延伸能力和語音清晰度穩定下來。');
 
-// --- 報告生成流程 ---
-function finishExam() {
-  stopAll();
-  nav('view-analyzing');
-  setTimeout(() => nav('view-report'), 2500);
-}
+  return notes.join('\n');
+};
+
+/* ---------- 額外：模考題目重播修正 ---------- */
+window.playCurrentMockQuestion = function () {
+  if (!APP_STATE.mock.started) return;
+  const current = APP_STATE.mock.queue[APP_STATE.mock.currentIndex];
+  if (!current) return;
+  speak(current.prompt.replace(/\n/g, '. '));
+};
+
+/* ---------- 額外：手動跳題修正 ---------- */
+window.skipMockQuestion = function () {
+  if (!APP_STATE.mock.started) return;
+  stopAnyRecording();
+  APP_STATE.mock.logs.push(`手動跳過：${APP_STATE.mock.currentPromptText}`);
+  updateMockLog();
+  moveToNextMockQuestion();
+};
+
+/* ---------- 移動端瀏覽器錄音提示 ---------- */
+(function mobileRecorderHint() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    alert('你的瀏覽器目前不支援錄音。建議使用最新版 Safari 或 Chrome。');
+  }
+})();
+
+/* ---------- 重新渲染錄音庫 ---------- */
+renderAllRecordings();
 </script>
-</body>
-</html>
