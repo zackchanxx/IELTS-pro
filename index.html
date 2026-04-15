@@ -2,256 +2,326 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IELTS Speaking Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>IELTS Copilot Pro</title>
 <style>
-  :root { --bg: #fbfbfd; --text: #1d1d1f; --blue: #0071e3; --card-bg: #ffffff; --red: #ff3b30; }
-  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; background: var(--bg); color: var(--text); padding: 20px; text-align: center; }
-  .view { display: none; max-width: 600px; margin: 50px auto; }
-  .view.active { display: block; }
-  h1 { font-size: 36px; font-weight: 600; }
-  h2 { font-size: 24px; color: #86868b; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
-  .card { background: var(--card-bg); border-radius: 18px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; }
-  .card:active { transform: scale(0.96); }
-  .tag { font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 6px; margin-right: 5px; }
-  .tag.req { background: #fee2e2; color: #991b1b; } 
-  .tag.new { background: #dcfce7; color: #166534; } 
-  button { background: var(--blue); color: white; border: none; border-radius: 980px; padding: 14px 28px; font-size: 17px; cursor: pointer; margin-top: 20px; width: 100%; max-width: 300px; }
-  button:hover { background: #0077ED; }
-  .recording { color: var(--red); font-weight: bold; animation: pulse 1.5s infinite; }
-  @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-  #p2-text { text-align: left; font-size: 18px; line-height: 1.5; background: #f4f4f5; padding: 15px; border-radius: 10px; margin-bottom: 20px; display:none; }
-  .feedback-box { text-align: left; background: white; padding: 25px; border-radius: 18px; margin-top: 20px; font-size: 15px; box-shadow: 0 4px 24px rgba(0,0,0,0.04); }
-  .score-item { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
-  .score-item:last-child { border-bottom: none; }
-  .transcript-box { background: #f4f4f5; padding: 15px; border-radius: 8px; font-style: italic; color: #555; margin-top: 10px; word-break: break-word; }
+  :root { --bg: #0a0a0c; --text: #e2e8f0; --accent: #10b981; --panel: #18181b; --danger: #ef4444; --warning: #facc15; --premium: #8b5cf6; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+  
+  .view { display: none; width: 100%; max-width: 500px; padding: 20px; flex-direction: column; height: 100vh; overflow-y: auto; }
+  .view.active { display: flex; animation: fadeIn 0.3s ease; }
+  
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #27272a; flex-shrink: 0; }
+  .logo { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+  .pro-badge { background: var(--warning); color: #000; font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; margin-left: 5px; }
+
+  /* UI 元件 */
+  button { width: 100%; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; margin-bottom: 10px; }
+  .btn-primary { background: #fff; color: #000; }
+  .btn-primary:active { background: #d4d4d8; }
+  .btn-danger { background: var(--danger); color: white; }
+  .btn-ai { background: rgba(16, 185, 129, 0.15); color: var(--accent); border: 1px solid rgba(16, 185, 129, 0.4); }
+  .btn-premium { background: linear-gradient(135deg, #8b5cf6, #c084fc); color: #fff; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
+
+  /* 首頁卡片 */
+  .menu-card { background: var(--panel); border: 1px solid #27272a; border-radius: 16px; padding: 25px; margin-bottom: 15px; cursor: pointer; position: relative; }
+  .menu-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+  .menu-desc { font-size: 14px; color: #a1a1aa; line-height: 1.4; }
+  .tag { position: absolute; top: 15px; right: 15px; font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
+
+  /* 題庫列表 */
+  .tabs { display: flex; margin-bottom: 15px; background: #18181b; border-radius: 12px; padding: 5px; }
+  .tab { flex: 1; text-align: center; padding: 10px; font-size: 14px; color: #a1a1aa; cursor: pointer; border-radius: 8px; }
+  .tab.active { background: #27272a; color: #fff; font-weight: 600; }
+  .topic-card { background: var(--panel); border-radius: 12px; padding: 15px; margin-bottom: 10px; border: 1px solid #27272a; cursor: pointer; }
+  .topic-card:active { background: #27272a; }
+
+  /* 練習與模考面板 */
+  .panel-card { background: var(--panel); border-radius: 16px; padding: 25px; border: 1px solid #27272a; margin-bottom: 20px; }
+  .topic-text { font-size: 16px; line-height: 1.6; font-weight: 500; white-space: pre-line; }
+  .timer-display { font-size: 48px; font-weight: 200; text-align: center; margin: 20px 0; font-variant-numeric: tabular-nums; }
+  
+  /* AI 救命框架 */
+  .ai-copilot-area { margin-top: 20px; border-top: 1px dashed #3f3f46; padding-top: 20px; display: none; }
+  .ai-copilot-area.active { display: block; animation: fadeIn 0.5s ease; }
+  .bullet-point { background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: 8px; margin-bottom: 8px; font-size: 14px; color: #d4d4d8; border-left: 3px solid var(--accent); }
+
+  /* 考官設定 */
+  .exam-opt { padding: 15px; border: 1px solid #3f3f46; border-radius: 12px; display: flex; justify-content: space-between; margin-bottom: 10px; cursor: pointer; }
+  .exam-opt.selected { border-color: var(--warning); background: rgba(250, 204, 21, 0.05); }
+
+  /* 報告與付費牆 */
+  .score-circle { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--danger); display: flex; align-items: center; justify-content: center; font-size: 28px; font-weight: 700; color: var(--danger); margin: 0 auto 20px; }
+  .stat-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #27272a; font-size: 14px; }
+  .paywall-container { position: relative; margin-top: 15px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(139, 92, 246, 0.3); }
+  .paywall-content { padding: 20px; filter: blur(6px); opacity: 0.6; background: #18181b; }
+  .paywall-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(to bottom, rgba(10,10,12,0.2), rgba(10,10,12,0.95)); padding: 20px; text-align: center; }
+
+  /* 載入動畫 */
+  .loader { border: 4px solid #27272a; border-top: 4px solid var(--accent); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
 
 <div id="view-home" class="view active">
-  <h1>Speaking Pro</h1>
-  <h2>Choose your practice mode</h2>
-  <button onclick="nav('view-p1')">Part 1 Topics</button><br>
-  <button onclick="nav('view-p23')">Part 2 & 3 Topics</button><br>
-  <button onclick="startMockTest()" style="background:#1d1d1f;">Mock Test (模擬考試)</button>
+  <div class="header">
+    <div class="logo">COPILOT<span class="pro-badge">Pro</span></div>
+  </div>
+  <div class="menu-card" onclick="startFlow('learning')">
+    <div class="tag" style="background: rgba(16, 185, 129, 0.2); color: var(--accent);">Learning</div>
+    <div class="menu-title">🧠 引導練習 (無壓力)</div>
+    <div class="menu-desc">不限時。不會開口？隨時呼叫 AI 獲取高分故事框架，逐步建立自信。</div>
+  </div>
+  <div class="menu-card" onclick="startFlow('mock')">
+    <div class="tag" style="background: rgba(239, 68, 68, 0.2); color: var(--danger);">Hardcore</div>
+    <div class="menu-title">⚠️ 高壓模考 (實戰)</div>
+    <div class="menu-desc">自選「極端考官」測試心理素質。考後生成 AI 深度診斷報告與 8.0 重寫。</div>
+  </div>
 </div>
 
-<div id="view-p1" class="view">
-  <h1>Part 1</h1>
-  <button onclick="nav('view-home')" style="background:#86868b; padding: 8px 16px; font-size: 14px;">Back</button>
-  <div class="grid" id="p1-list"></div>
+<div id="view-setup" class="view">
+  <div class="header">
+    <div style="font-weight: 600;">選擇考官風格</div>
+    <div style="font-size: 24px; cursor: pointer;" onclick="nav('view-home')">×</div>
+  </div>
+  <div class="exam-opt selected" onclick="selectExam(this, 'normal')">
+    <div><div style="font-weight: 600;">Standard (標準考官)</div><div style="font-size: 12px; color: #a1a1aa;">語速適中，標準流程。</div></div><div>🙂</div>
+  </div>
+  <div class="exam-opt" onclick="selectExam(this, 'impatient')">
+    <div><div style="font-weight: 600;">Impatient (沒耐性)</div><div style="font-size: 12px; color: #a1a1aa;">語速快，時間未到可能打斷。</div></div><div>😒</div>
+  </div>
+  <button class="btn-danger" style="margin-top: auto;" onclick="nav('view-library')">確認並選擇題目</button>
 </div>
 
-<div id="view-p23" class="view">
-  <h1>Part 2 & 3</h1>
-  <button onclick="nav('view-home')" style="background:#86868b; padding: 8px 16px; font-size: 14px;">Back</button>
-  <div class="grid" id="p23-list"></div>
+<div id="view-library" class="view">
+  <div class="header">
+    <div style="font-weight: 600;" id="lib-title">選擇題目</div>
+    <div style="font-size: 24px; cursor: pointer;" onclick="nav('view-home')">×</div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('p1', this)">Part 1 新題</div>
+    <div class="tab" onclick="switchTab('p2', this)">Part 2&3 必考</div>
+  </div>
+  <div id="topic-list" style="flex:1; overflow-y:auto;"></div>
+</div>
+
+<div id="view-practice" class="view">
+  <div class="header">
+    <div style="font-weight: 600; color: var(--accent);">Learning Mode</div>
+    <div style="font-size: 24px; cursor: pointer;" onclick="nav('view-library')">×</div>
+  </div>
+  <div class="panel-card">
+    <div class="topic-text" id="prac-text"></div>
+    <div class="ai-copilot-area" id="ai-framework">
+      <div style="font-size: 14px; color: var(--accent); margin-bottom: 10px; font-weight:600;">✨ AI 高分思路 (Band 7.5+)</div>
+      <div class="bullet-point"><strong>Context:</strong> University project, zero budget.</div>
+      <div class="bullet-point"><strong>Action:</strong> Used AI tools to generate visuals.</div>
+      <div class="bullet-point"><strong>Result:</strong> Won 1st place, felt resourceful.</div>
+    </div>
+  </div>
+  <div style="margin-top: auto;">
+    <button class="btn-ai" id="btn-get-ai" onclick="showAI()">⚡ 腦袋空白？獲取 AI 框架</button>
+    <button class="btn-primary" onclick="alert('錄音完畢，返回列表。'); nav('view-library');">結束錄音</button>
+  </div>
 </div>
 
 <div id="view-exam" class="view">
-  <h2 id="exam-part">Part 1</h2>
-  <div class="card">
-    <div id="p2-text"></div>
-    <div id="exam-status" style="font-size: 22px; font-weight: 500; min-height: 80px;">Listen to the examiner...</div>
-    <div id="timer-display" style="color:#86868b; margin-top:10px;"></div>
+  <div class="header">
+    <div style="font-weight: 600; color: var(--danger);">Live Exam</div>
+    <div id="exam-label" style="font-size: 12px; color: #a1a1aa;"></div>
   </div>
-  <button id="btn-next" onclick="nextAction()">Next</button>
+  <div class="panel-card">
+    <div class="topic-text" id="exam-text"></div>
+  </div>
+  <div style="text-align: center; color: var(--warning); font-weight: 500;" id="mock-status">準備時間</div>
+  <div class="timer-display" id="mock-timer">00:00</div>
+  <div style="margin-top: auto;">
+    <button class="btn-danger" onclick="finishExam()">強制結束作答</button>
+  </div>
 </div>
 
-<div id="view-feedback" class="view">
-  <h1>Performance Report</h1>
-  <h2>IELTS Band Score Analysis</h2>
-  
-  <div class="feedback-box">
-    <div class="score-item">
-      <strong>📝 Your Transcript (作答逐字稿):</strong>
-      <div class="transcript-box" id="transcript-content"></div>
+<div id="view-analyzing" class="view" style="justify-content: center; align-items: center; text-align: center;">
+  <div class="loader"></div>
+  <div style="font-size: 18px; font-weight: 600;">AI 考官分析中...</div>
+  <div style="font-size: 13px; color: #a1a1aa; margin-top: 10px;">提取文法結構與評估連貫性</div>
+</div>
+
+<div id="view-report" class="view">
+  <div class="header">
+    <div style="font-weight: 600;">Diagnostic Report</div>
+    <div style="font-size: 24px; cursor: pointer;" onclick="nav('view-home')">×</div>
+  </div>
+  <div class="panel-card">
+    <div style="text-align: center; font-size: 12px; color: #a1a1aa; margin-bottom: 10px;">預估 Band Score</div>
+    <div class="score-circle">5.5</div>
+    <div class="stat-row"><span>流暢度</span><span style="color: var(--danger);">12 次 "Um/Uh"</span></div>
+    <div class="stat-row"><span>語法錯誤 (GRA)</span><span style="color: var(--danger);">檢測到 4 處錯誤</span></div>
+  </div>
+  <div class="paywall-container">
+    <div class="paywall-content">
+      <div style="color: #8b5cf6; font-weight: 600; margin-bottom: 10px;">✨ 專屬 8.0 替換範文</div>
+      <div style="font-size: 14px;">Instead of saying "I <span style="color:red">go</span>...", say: "I <span style="color:#10b981">visited</span> the boutique, which offered an <span style="color:#10b981">exceptionally delightful</span> experience..."</div>
     </div>
-    <div class="score-item">
-      <strong>🗣 流暢度與連貫性 (FC):</strong> <span id="fc-feedback"></span>
-    </div>
-    <div class="score-item">
-      <strong>📚 詞彙多樣性 (LR):</strong> <span style="color:#86868b">[Pro 功能] 需解鎖 AI 分析詞彙替換率</span>
-    </div>
-    <div class="score-item">
-      <strong>⚙️ 語法準確性 (GRA):</strong> <span style="color:#86868b">[Pro 功能] 需解鎖 AI 語法錯誤糾正</span>
-    </div>
-    <div class="score-item">
-      <strong>🎙 發音 (PR):</strong> <span style="color:#86868b">[Pro 功能] 需解鎖聲學模型精確打分</span>
+    <div class="paywall-overlay">
+      <div style="font-size: 24px; margin-bottom: 10px;">💎</div>
+      <div style="font-weight: 600; color: #fff; margin-bottom: 8px;">你想知道怎麼拿 7.0 嗎？</div>
+      <div style="font-size: 12px; color: #a1a1aa; margin-bottom: 15px;">解鎖 AI 深度診斷，將你的真實錄音重寫成 8.0 高級範文。</div>
+      <button class="btn-premium" onclick="alert('跳轉支付 (Mock)')">解鎖重寫報告 (1 Credit)</button>
     </div>
   </div>
-
-  <button onclick="copyForAI()" style="background:#1d1d1f;">一鍵獲取 AI 深度評分</button>
-  <button onclick="nav('view-home')" style="background:#86868b;">Back to Home</button>
 </div>
 
 <script>
-const p1Data = [
-  { id: '1', title: 'Work/Study', tags: ['必考'], qs: ["Do you work or are you a student?", "What do you study?", "Do you like your subject?"] },
-  { id: '2', title: 'Hometown', tags: ['必考'], qs: ["Where is your hometown?", "Is that a big city or a small place?", "What do you like most about it?"] },
-  { id: '3', title: 'Accommodation', tags: ['必考'], qs: ["Do you live in a house or a flat?", "Who do you live with?", "What is your favourite room?"] },
-  { id: '4', title: 'Keys', tags: ['新題'], qs: ["Do you always bring a lot of keys with you?", "Have you ever lost your keys?", "Do you often forget your keys?"] },
-  { id: '5', title: 'Music', tags: [], qs: ["What kind of music do you like?", "Did you learn to play a musical instrument when you were a child?"] }
-];
+// --- 資料庫 (2026 最新真題精簡版) ---
+const db = {
+  p1: [
+    { title: "Gifts (1-4月新題)", text: "Do you often give gifts to people?\nWhat was the best gift you have ever received?" },
+    { title: "Morning routines (新題)", text: "What do you do in the morning?\nIs breakfast important to you?" }
+  ],
+  p2: [
+    { title: "Describe a time when you used imagination", text: "Describe a time when you used imagination.\nYou should say:\n- What the situation was\n- Why you needed to use imagination\n- What the result was" },
+    { title: "Describe a successful person", text: "Describe a successful person you know.\nYou should say:\n- Who this person is\n- What they do\n- How you know them" }
+  ]
+};
 
-const p23Data = [
-  { id: '1', title: 'A beautiful city', tags: ['必考'], 
-    p2: "Describe a beautiful city you have visited.\nYou should say:\n- Where it is\n- When you went there\n- What you did there\n- And explain why you think it is beautiful.", 
-    p3: ["Why do some people like to visit historical cities?", "Do you think preserving historic buildings is important?", "How does tourism affect a city?"] },
-  { id: '2', title: 'A successful person', tags: ['新題'], 
-    p2: "Describe a successful person you know.\nYou should say:\n- Who this person is\n- How you know them\n- What they do\n- And explain why you think they are successful.", 
-    p3: ["What makes a person successful?", "Is money the only measure of success?", "Do you think failures are necessary for success?"] }
-];
-
+let mode = 'learning'; // 'learning' 或 'mock'
+let currentExam = 'normal';
 let synth = window.speechSynthesis;
-let SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognizer = SpeechRec ? new SpeechRec() : null;
-if(recognizer) { recognizer.continuous = true; recognizer.interimResults = true; }
+let timerInterval;
 
-let currentQueue = []; 
-let qIndex = 0;
-let transcriptData = "";
-let timer;
-
-function renderList(data, containerId, isP1) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = '';
-  data.forEach(item => {
-    let tagHtml = item.tags.map(t => `<span class="tag ${t==='必考'?'req':'new'}">${t}</span>`).join('');
-    let div = document.createElement('div');
-    div.className = 'card';
-    div.innerHTML = `<div style="margin-bottom:8px">${tagHtml}</div><div style="font-weight:500">${item.title}</div>`;
-    div.onclick = () => startPractice(item, isP1);
-    container.appendChild(div);
-  });
-}
-renderList(p1Data, 'p1-list', true);
-renderList(p23Data, 'p23-list', false);
-
+// --- 導航與流程控制 ---
 function nav(viewId) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.getElementById(viewId).classList.add('active');
-  if(synth.speaking) synth.cancel();
-  if(recognizer) recognizer.stop();
-  clearTimeout(timer);
+  stopAll();
 }
 
-function startPractice(item, isP1) {
-  currentQueue = [];
-  if (isP1) {
-    item.qs.forEach(q => currentQueue.push({ part: 'Part 1', q: q, limit: 45 }));
+function startFlow(selectedMode) {
+  mode = selectedMode;
+  if(mode === 'learning') {
+    nav('view-library');
+    switchTab('p2', document.querySelectorAll('.tab')[1]);
   } else {
-    currentQueue.push({ part: 'Part 2', q: "Please describe the topic on the card.", p2text: item.p2, limit: 150 });
-    item.p3.forEach(q => currentQueue.push({ part: 'Part 3', q: q, limit: 80 }));
+    nav('view-setup');
   }
-  runQueue();
 }
 
-function startMockTest() {
-  let p1 = p1Data[Math.floor(Math.random()*p1Data.length)];
-  let p23 = p23Data[Math.floor(Math.random()*p23Data.length)];
-  currentQueue = [];
-  p1.qs.forEach(q => currentQueue.push({ part: 'Part 1', q: q, limit: 45 }));
-  currentQueue.push({ part: 'Part 2', q: "Now I will give you a topic to talk about.", p2text: p23.p2, limit: 150 });
-  p23.p3.forEach(q => currentQueue.push({ part: 'Part 3', q: q, limit: 80 }));
-  runQueue();
+function selectExam(el, type) {
+  document.querySelectorAll('.exam-opt').forEach(opt => opt.classList.remove('selected'));
+  el.classList.add('selected');
+  currentExam = type;
 }
 
-function runQueue() {
-  qIndex = 0;
-  transcriptData = "";
-  nav('view-exam');
-  playNext();
-}
-
-function playNext() {
-  clearTimeout(timer);
-  if(recognizer) recognizer.stop();
-  
-  if (qIndex >= currentQueue.length) {
-    showFeedback();
-    return;
-  }
-
-  const current = currentQueue[qIndex];
-  document.getElementById('exam-part').innerText = current.part;
-  document.getElementById('exam-status').innerText = "Examiner is speaking...";
-  document.getElementById('timer-display').innerText = "";
-  
-  const p2box = document.getElementById('p2-text');
-  if (current.p2text) {
-    p2box.style.display = 'block';
-    p2box.innerText = current.p2text;
-  } else {
-    p2box.style.display = 'none';
-  }
-
-  let utterThis = new SpeechSynthesisUtterance(current.q);
-  utterThis.lang = 'en-GB';
-  utterThis.rate = 0.9;
-  utterThis.onend = () => { startRecording(current.limit); };
-  synth.speak(utterThis);
-}
-
-function startRecording(limitSeconds) {
-  document.getElementById('exam-status').innerHTML = '<span class="recording">● Recording... Please speak.</span>';
-  
-  if(recognizer) {
-    recognizer.onresult = (e) => {
-      let finalStr = "";
-      for (let i = e.resultIndex; i < e.results.length; ++i) {
-        if (e.results[i].isFinal) finalStr += e.results[i][0].transcript + " ";
-      }
-      transcriptData += finalStr;
-    };
-    try { recognizer.start(); } catch(e){}
-  }
-
-  let timeLeft = limitSeconds;
-  document.getElementById('timer-display').innerText = `Time limit: ${timeLeft}s`;
-  
-  timer = setInterval(() => {
-    timeLeft--;
-    document.getElementById('timer-display').innerText = `Time limit: ${timeLeft}s`;
-    if (timeLeft <= 0) {
-      clearInterval(timer);
-      document.getElementById('exam-status').innerText = "Time's up! Moving to next...";
-      if(synth.speaking) synth.cancel();
-      let interrupt = new SpeechSynthesisUtterance("Thank you.");
-      interrupt.lang = 'en-GB';
-      synth.speak(interrupt);
-      setTimeout(nextAction, 1500);
-    }
-  }, 1000);
-}
-
-function nextAction() {
-  clearInterval(timer);
-  qIndex++;
-  playNext();
-}
-
-function showFeedback() {
-  nav('view-feedback');
-  let words = transcriptData.split(' ').filter(w => w.length > 0).length;
-  let hasUm = (transcriptData.match(/\bum\b|\buh\b|\bah\b/gi) || []).length;
-  
-  document.getElementById('transcript-content').innerText = transcriptData || "未檢測到聲音作答。請確保允許瀏覽器使用麥克風。";
-  document.getElementById('fc-feedback').innerText = `總字數 ${words} 字。檢測到 ${hasUm} 次無效語氣詞。`;
-}
-
-function copyForAI() {
-  if(!transcriptData) {
-    alert("沒有偵測到您的作答內容喔！");
-    return;
-  }
-  let prompt = `請扮演一位嚴格的雅思考官。這是我剛剛進行口語模擬測驗的逐字稿，請幫我針對「語法多樣性(GRA)、詞彙多樣性(LR)、連貫性(FC)」進行打分(0-9分)，並指出文法錯誤與提供高階替換詞：\n\n${transcriptData}`;
-  
-  navigator.clipboard.writeText(prompt).then(() => {
-    alert("✅ 評分指令已複製！請打開 ChatGPT 或其他 AI 貼上此訊息，即可獲得深度雅思報告。");
+// --- 題庫列表渲染 ---
+function switchTab(type, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const list = document.getElementById('topic-list');
+  list.innerHTML = '';
+  db[type].forEach(item => {
+    let div = document.createElement('div');
+    div.className = 'topic-card';
+    div.innerText = item.title;
+    div.onclick = () => loadTopic(item.text);
+    list.appendChild(div);
   });
+}
+
+function loadTopic(text) {
+  if(mode === 'learning') {
+    nav('view-practice');
+    document.getElementById('prac-text').innerText = text;
+    document.getElementById('ai-framework').classList.remove('active');
+    document.getElementById('btn-get-ai').style.display = 'block';
+    document.getElementById('btn-get-ai').innerText = "⚡ 腦袋空白？獲取 AI 框架";
+  } else {
+    nav('view-exam');
+    document.getElementById('exam-text').innerText = text;
+    document.getElementById('exam-label').innerText = currentExam === 'normal' ? 'Examiner: Standard' : 'Examiner: Impatient';
+    runMockExam();
+  }
+}
+
+// --- Learning 模式功能 ---
+function showAI() {
+  document.getElementById('btn-get-ai').innerText = "生成中...";
+  setTimeout(() => {
+    document.getElementById('ai-framework').classList.add('active');
+    document.getElementById('btn-get-ai').style.display = 'none';
+  }, 500);
+}
+
+// --- Mock 模式功能 (計時與打斷) ---
+function runMockExam() {
+  const isImpatient = currentExam === 'impatient';
+  const intro = isImpatient ? "One minute prep. Go." : "You have one minute to prepare.";
+  
+  speak(intro, isImpatient ? 1.2 : 0.9, () => {
+    let timeLeft = 60;
+    document.getElementById('mock-status').innerText = "準備時間";
+    updateTimer(timeLeft);
+    
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimer(timeLeft);
+      if(timeLeft <= 0) {
+        clearInterval(timerInterval);
+        startSpeakingPhase(isImpatient);
+      }
+    }, 1000);
+  });
+}
+
+function startSpeakingPhase(isImpatient) {
+  speak("Please start speaking now.", isImpatient ? 1.2 : 0.9, () => {
+    let timePassed = 0;
+    document.getElementById('mock-status').innerText = "🔴 作答中";
+    document.getElementById('mock-timer').style.color = "var(--danger)";
+    updateTimer(0);
+    
+    timerInterval = setInterval(() => {
+      timePassed++;
+      updateTimer(timePassed);
+      // 沒耐性的考官 15秒 就打斷 (展示用，實戰約 90秒)
+      const limit = isImpatient ? 15 : 120; 
+      if(timePassed >= limit) {
+        clearInterval(timerInterval);
+        document.getElementById('mock-status').innerText = "考官打斷";
+        speak(isImpatient ? "Okay, stop there." : "Thank you.", isImpatient ? 1.2 : 0.9, finishExam);
+      }
+    }, 1000);
+  });
+}
+
+function updateTimer(seconds) {
+  let m = Math.floor(seconds / 60).toString().padStart(2, '0');
+  let s = (seconds % 60).toString().padStart(2, '0');
+  document.getElementById('mock-timer').innerText = `${m}:${s}`;
+}
+
+function speak(text, rate, callback) {
+  if(synth.speaking) synth.cancel();
+  let utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-GB'; utter.rate = rate;
+  utter.onend = () => { if(callback) callback(); };
+  synth.speak(utter);
+}
+
+function stopAll() {
+  clearInterval(timerInterval);
+  if(synth.speaking) synth.cancel();
+  document.getElementById('mock-timer').style.color = "var(--text)";
+}
+
+// --- 報告生成流程 ---
+function finishExam() {
+  stopAll();
+  nav('view-analyzing');
+  setTimeout(() => nav('view-report'), 2500);
 }
 </script>
 </body>
