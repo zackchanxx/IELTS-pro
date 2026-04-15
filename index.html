@@ -5,84 +5,254 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>IELTS Speaking Pro</title>
 <style>
-  :root { --bg: #fbfbfd; --text: #1d1d1f; --blue: #0071e3; --card-bg: #ffffff; }
-  body { 
-    margin: 0; 
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif; 
-    background-color: var(--bg); 
-    color: var(--text); 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    justify-content: center; 
-    min-height: 100vh; 
-    padding: 20px; 
-    box-sizing: border-box; 
-  }
-  .container { max-width: 600px; width: 100%; text-align: center; }
-  h1 { font-size: 48px; font-weight: 600; letter-spacing: -0.003em; margin-bottom: 10px; }
-  p.subtitle { font-size: 24px; color: #86868b; margin-bottom: 40px; font-weight: 400; }
-  .card { 
-    background: var(--card-bg); 
-    border-radius: 18px; 
-    padding: 40px; 
-    box-shadow: 0 4px 24px rgba(0,0,0,0.04); 
-    margin-bottom: 30px; 
-  }
-  .tag { font-size: 12px; font-weight: 600; color: #86868b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 15px; display: block; }
-  .question { font-size: 28px; font-weight: 500; line-height: 1.3; min-height: 100px; display: flex; align-items: center; justify-content: center; }
-  button { 
-    background-color: var(--blue); 
-    color: white; 
-    border: none; 
-    border-radius: 980px; 
-    padding: 14px 28px; 
-    font-size: 17px; 
-    font-weight: 400; 
-    cursor: pointer; 
-    transition: background 0.2s; 
-  }
-  button:hover { background-color: #0077ED; }
-  button:active { transform: scale(0.98); }
+  :root { --bg: #fbfbfd; --text: #1d1d1f; --blue: #0071e3; --card-bg: #ffffff; --red: #ff3b30; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; background: var(--bg); color: var(--text); padding: 20px; text-align: center; }
+  .view { display: none; max-width: 600px; margin: 50px auto; }
+  .view.active { display: block; }
+  h1 { font-size: 36px; font-weight: 600; }
+  h2 { font-size: 24px; color: #86868b; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 30px; }
+  .card { background: var(--card-bg); border-radius: 18px; padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; }
+  .card:active { transform: scale(0.96); }
+  .tag { font-size: 12px; font-weight: 600; padding: 4px 8px; border-radius: 6px; margin-right: 5px; }
+  .tag.req { background: #fee2e2; color: #991b1b; } 
+  .tag.new { background: #dcfce7; color: #166534; } 
+  button { background: var(--blue); color: white; border: none; border-radius: 980px; padding: 14px 28px; font-size: 17px; cursor: pointer; margin-top: 20px; width: 100%; max-width: 300px; }
+  button:hover { background: #0077ED; }
+  .recording { color: var(--red); font-weight: bold; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+  #p2-text { text-align: left; font-size: 18px; line-height: 1.5; background: #f4f4f5; padding: 15px; border-radius: 10px; margin-bottom: 20px; display:none; }
+  .feedback-box { text-align: left; background: white; padding: 25px; border-radius: 18px; margin-top: 20px; font-size: 15px; box-shadow: 0 4px 24px rgba(0,0,0,0.04); }
+  .score-item { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+  .score-item:last-child { border-bottom: none; }
+  .transcript-box { background: #f4f4f5; padding: 15px; border-radius: 8px; font-style: italic; color: #555; margin-top: 10px; word-break: break-word; }
 </style>
 </head>
 <body>
-<div class="container">
+
+<div id="view-home" class="view active">
   <h1>Speaking Pro</h1>
-  <p class="subtitle">Your personal examiner.</p>
+  <h2>Choose your practice mode</h2>
+  <button onclick="nav('view-p1')">Part 1 Topics</button><br>
+  <button onclick="nav('view-p23')">Part 2 & 3 Topics</button><br>
+  <button onclick="startMockTest()" style="background:#1d1d1f;">Mock Test (模擬考試)</button>
+</div>
+
+<div id="view-p1" class="view">
+  <h1>Part 1</h1>
+  <button onclick="nav('view-home')" style="background:#86868b; padding: 8px 16px; font-size: 14px;">Back</button>
+  <div class="grid" id="p1-list"></div>
+</div>
+
+<div id="view-p23" class="view">
+  <h1>Part 2 & 3</h1>
+  <button onclick="nav('view-home')" style="background:#86868b; padding: 8px 16px; font-size: 14px;">Back</button>
+  <div class="grid" id="p23-list"></div>
+</div>
+
+<div id="view-exam" class="view">
+  <h2 id="exam-part">Part 1</h2>
   <div class="card">
-    <span class="tag" id="part-tag">Welcome</span>
-    <div class="question" id="question-text">Click "Next Question" to start your mock test.</div>
+    <div id="p2-text"></div>
+    <div id="exam-status" style="font-size: 22px; font-weight: 500; min-height: 80px;">Listen to the examiner...</div>
+    <div id="timer-display" style="color:#86868b; margin-top:10px;"></div>
   </div>
-  <button onclick="nextQuestion()">Next Question</button>
+  <button id="btn-next" onclick="nextAction()">Next</button>
+</div>
+
+<div id="view-feedback" class="view">
+  <h1>Performance Report</h1>
+  <h2>IELTS Band Score Analysis</h2>
+  
+  <div class="feedback-box">
+    <div class="score-item">
+      <strong>📝 Your Transcript (作答逐字稿):</strong>
+      <div class="transcript-box" id="transcript-content"></div>
+    </div>
+    <div class="score-item">
+      <strong>🗣 流暢度與連貫性 (FC):</strong> <span id="fc-feedback"></span>
+    </div>
+    <div class="score-item">
+      <strong>📚 詞彙多樣性 (LR):</strong> <span style="color:#86868b">[Pro 功能] 需解鎖 AI 分析詞彙替換率</span>
+    </div>
+    <div class="score-item">
+      <strong>⚙️ 語法準確性 (GRA):</strong> <span style="color:#86868b">[Pro 功能] 需解鎖 AI 語法錯誤糾正</span>
+    </div>
+    <div class="score-item">
+      <strong>🎙 發音 (PR):</strong> <span style="color:#86868b">[Pro 功能] 需解鎖聲學模型精確打分</span>
+    </div>
+  </div>
+
+  <button onclick="copyForAI()" style="background:#1d1d1f;">一鍵獲取 AI 深度評分</button>
+  <button onclick="nav('view-home')" style="background:#86868b;">Back to Home</button>
 </div>
 
 <script>
-  // 雅思近期高頻題庫
-  const questions = [
-    { part: "Part 1 - Work or Study", text: "Do you work or are you a student?" },
-    { part: "Part 1 - Hometown", text: "Please describe your hometown a little." },
-    { part: "Part 1 - Music", text: "What kind of music do you like listening to?" },
-    { part: "Part 1 - Technology", text: "How often do you use social media?" },
-    { part: "Part 2 - Cue Card", text: "Describe a person who inspired you. You should say: who it is, what they did, and explain how you feel about this person." },
-    { part: "Part 3 - Inspiration", text: "Do you think children are easily inspired by their teachers?" },
-    { part: "Part 3 - Inspiration", text: "What role do famous people play in inspiring the youth?" }
-  ];
+const p1Data = [
+  { id: '1', title: 'Work/Study', tags: ['必考'], qs: ["Do you work or are you a student?", "What do you study?", "Do you like your subject?"] },
+  { id: '2', title: 'Hometown', tags: ['必考'], qs: ["Where is your hometown?", "Is that a big city or a small place?", "What do you like most about it?"] },
+  { id: '3', title: 'Accommodation', tags: ['必考'], qs: ["Do you live in a house or a flat?", "Who do you live with?", "What is your favourite room?"] },
+  { id: '4', title: 'Keys', tags: ['新題'], qs: ["Do you always bring a lot of keys with you?", "Have you ever lost your keys?", "Do you often forget your keys?"] },
+  { id: '5', title: 'Music', tags: [], qs: ["What kind of music do you like?", "Did you learn to play a musical instrument when you were a child?"] }
+];
 
-  let synth = window.speechSynthesis;
+const p23Data = [
+  { id: '1', title: 'A beautiful city', tags: ['必考'], 
+    p2: "Describe a beautiful city you have visited.\nYou should say:\n- Where it is\n- When you went there\n- What you did there\n- And explain why you think it is beautiful.", 
+    p3: ["Why do some people like to visit historical cities?", "Do you think preserving historic buildings is important?", "How does tourism affect a city?"] },
+  { id: '2', title: 'A successful person', tags: ['新題'], 
+    p2: "Describe a successful person you know.\nYou should say:\n- Who this person is\n- How you know them\n- What they do\n- And explain why you think they are successful.", 
+    p3: ["What makes a person successful?", "Is money the only measure of success?", "Do you think failures are necessary for success?"] }
+];
 
-  function nextQuestion() {
-    const q = questions[Math.floor(Math.random() * questions.length)];
-    document.getElementById('part-tag').innerText = q.part;
-    document.getElementById('question-text').innerText = q.text;
-    
-    // 呼叫瀏覽器語音 (英式口音)
-    if (synth.speaking) { synth.cancel(); }
-    let utterThis = new SpeechSynthesisUtterance(q.text);
-    utterThis.lang = 'en-GB'; 
-    utterThis.rate = 0.9; // 調整語速模仿真實考官
-    synth.speak(utterThis);
+let synth = window.speechSynthesis;
+let SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognizer = SpeechRec ? new SpeechRec() : null;
+if(recognizer) { recognizer.continuous = true; recognizer.interimResults = true; }
+
+let currentQueue = []; 
+let qIndex = 0;
+let transcriptData = "";
+let timer;
+
+function renderList(data, containerId, isP1) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  data.forEach(item => {
+    let tagHtml = item.tags.map(t => `<span class="tag ${t==='必考'?'req':'new'}">${t}</span>`).join('');
+    let div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `<div style="margin-bottom:8px">${tagHtml}</div><div style="font-weight:500">${item.title}</div>`;
+    div.onclick = () => startPractice(item, isP1);
+    container.appendChild(div);
+  });
+}
+renderList(p1Data, 'p1-list', true);
+renderList(p23Data, 'p23-list', false);
+
+function nav(viewId) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+  if(synth.speaking) synth.cancel();
+  if(recognizer) recognizer.stop();
+  clearTimeout(timer);
+}
+
+function startPractice(item, isP1) {
+  currentQueue = [];
+  if (isP1) {
+    item.qs.forEach(q => currentQueue.push({ part: 'Part 1', q: q, limit: 45 }));
+  } else {
+    currentQueue.push({ part: 'Part 2', q: "Please describe the topic on the card.", p2text: item.p2, limit: 150 });
+    item.p3.forEach(q => currentQueue.push({ part: 'Part 3', q: q, limit: 80 }));
   }
+  runQueue();
+}
+
+function startMockTest() {
+  let p1 = p1Data[Math.floor(Math.random()*p1Data.length)];
+  let p23 = p23Data[Math.floor(Math.random()*p23Data.length)];
+  currentQueue = [];
+  p1.qs.forEach(q => currentQueue.push({ part: 'Part 1', q: q, limit: 45 }));
+  currentQueue.push({ part: 'Part 2', q: "Now I will give you a topic to talk about.", p2text: p23.p2, limit: 150 });
+  p23.p3.forEach(q => currentQueue.push({ part: 'Part 3', q: q, limit: 80 }));
+  runQueue();
+}
+
+function runQueue() {
+  qIndex = 0;
+  transcriptData = "";
+  nav('view-exam');
+  playNext();
+}
+
+function playNext() {
+  clearTimeout(timer);
+  if(recognizer) recognizer.stop();
+  
+  if (qIndex >= currentQueue.length) {
+    showFeedback();
+    return;
+  }
+
+  const current = currentQueue[qIndex];
+  document.getElementById('exam-part').innerText = current.part;
+  document.getElementById('exam-status').innerText = "Examiner is speaking...";
+  document.getElementById('timer-display').innerText = "";
+  
+  const p2box = document.getElementById('p2-text');
+  if (current.p2text) {
+    p2box.style.display = 'block';
+    p2box.innerText = current.p2text;
+  } else {
+    p2box.style.display = 'none';
+  }
+
+  let utterThis = new SpeechSynthesisUtterance(current.q);
+  utterThis.lang = 'en-GB';
+  utterThis.rate = 0.9;
+  utterThis.onend = () => { startRecording(current.limit); };
+  synth.speak(utterThis);
+}
+
+function startRecording(limitSeconds) {
+  document.getElementById('exam-status').innerHTML = '<span class="recording">● Recording... Please speak.</span>';
+  
+  if(recognizer) {
+    recognizer.onresult = (e) => {
+      let finalStr = "";
+      for (let i = e.resultIndex; i < e.results.length; ++i) {
+        if (e.results[i].isFinal) finalStr += e.results[i][0].transcript + " ";
+      }
+      transcriptData += finalStr;
+    };
+    try { recognizer.start(); } catch(e){}
+  }
+
+  let timeLeft = limitSeconds;
+  document.getElementById('timer-display').innerText = `Time limit: ${timeLeft}s`;
+  
+  timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById('timer-display').innerText = `Time limit: ${timeLeft}s`;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      document.getElementById('exam-status').innerText = "Time's up! Moving to next...";
+      if(synth.speaking) synth.cancel();
+      let interrupt = new SpeechSynthesisUtterance("Thank you.");
+      interrupt.lang = 'en-GB';
+      synth.speak(interrupt);
+      setTimeout(nextAction, 1500);
+    }
+  }, 1000);
+}
+
+function nextAction() {
+  clearInterval(timer);
+  qIndex++;
+  playNext();
+}
+
+function showFeedback() {
+  nav('view-feedback');
+  let words = transcriptData.split(' ').filter(w => w.length > 0).length;
+  let hasUm = (transcriptData.match(/\bum\b|\buh\b|\bah\b/gi) || []).length;
+  
+  document.getElementById('transcript-content').innerText = transcriptData || "未檢測到聲音作答。請確保允許瀏覽器使用麥克風。";
+  document.getElementById('fc-feedback').innerText = `總字數 ${words} 字。檢測到 ${hasUm} 次無效語氣詞。`;
+}
+
+function copyForAI() {
+  if(!transcriptData) {
+    alert("沒有偵測到您的作答內容喔！");
+    return;
+  }
+  let prompt = `請扮演一位嚴格的雅思考官。這是我剛剛進行口語模擬測驗的逐字稿，請幫我針對「語法多樣性(GRA)、詞彙多樣性(LR)、連貫性(FC)」進行打分(0-9分)，並指出文法錯誤與提供高階替換詞：\n\n${transcriptData}`;
+  
+  navigator.clipboard.writeText(prompt).then(() => {
+    alert("✅ 評分指令已複製！請打開 ChatGPT 或其他 AI 貼上此訊息，即可獲得深度雅思報告。");
+  });
+}
 </script>
 </body>
 </html>
