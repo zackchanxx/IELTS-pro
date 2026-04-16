@@ -561,74 +561,867 @@
 
   <script>
     // ==========================================
-    // 1. 完整當季題庫 (2026 Jan-Apr)
+    // 1. 完整當季題庫 (2026 Jan-Apr) - Expanded
     // ==========================================
     const P1_BANK = [
-      { title:'Home & Accommodation', group:'core', tags:['core'], questions:['What kind of home do you live in?','What is your favourite room in your home?','Would you like to change anything about your home?','Do you think your home will be different in the future?']},
-      { title:'Hometown', group:'core', tags:['core'], questions:['Where is your hometown?','What do you like most about it?','Has your hometown changed much in recent years?','Would you recommend it to visitors?']},
-      { title:'Work & Study', group:'core', tags:['core'], questions:['What kind of work do you do? / What do you study?','Why did you choose this job/subject?','What do you enjoy most about your work/studies?','Do you want to change jobs/subjects in the future?']},
-      { title:'Life Stages', group:'new', tags:['new'], questions:['What is the most important stage in a person’s life?','Did you enjoy your childhood?','Do you think adults are happier than children?','What do you want to do in the next stage of your life?']},
-      { title:'Childhood Activities', group:'new', tags:['new'], questions:['What did you like to do when you were a child?','Did you prefer playing indoors or outdoors?','Who did you usually play with?','Do children today play the same games as you did?']},
-      { title:'Pets and Animals', group:'new', tags:['new'], questions:['Do you have a pet?','What is your favourite animal?','Are pets popular in your country?','Why do some people keep pets?']},
-      { title:'Sharing Things', group:'new', tags:['new'], questions:['Do you like sharing things with others?','Did your parents encourage you to share when you were a kid?','What kind of things are not suitable for sharing?','Who is the first person you would like to share good news with?']},
-      { title:'Chatting', group:'new', tags:['new'], questions:['Do you like chatting with friends?','Do you prefer to chat with a group of people or just one friend?','Do you ever argue with your friends?','What do you usually chat about?']},
-      { title:'Crowded Places', group:'new', tags:['new'], questions:['Do you like crowded places?','When was the last time you were in a crowded place?','Is the city where you live crowded?','How do you feel in crowded places?']},
-      { title:'Advertisements', group:'new', tags:['new'], questions:['How do you feel about advertisements?','Do you like advertisements on TV?','Have you ever bought something because of an advertisement?','Do you think there are too many ads nowadays?']},
-      { title:'Daily Routine', group:'recycled', tags:['recycled'], questions:['What is your daily routine like?','Do you prefer planning your day or being spontaneous?','What part of the day are you most productive?','Has your routine changed recently?']},
-      { title:'Technology', group:'recycled', tags:['recycled'], questions:['How often do you use technology in daily life?','What device do you use the most?','Has technology changed the way you study or work?','Do you think people rely too much on technology?']},
-      { title:'Weather', group:'recycled', tags:['recycled'], questions:['What kind of weather do you like most?','Does weather affect your mood?','Do you check the weather forecast often?','What do you usually do on rainy days?']}
+      {
+        title:'Home & Accommodation',
+        group:'core',
+        tags:['core'],
+        questions:[
+          'What kind of home do you live in?',
+          'How long have you lived there?',
+          'What is your favourite room in your home?',
+          'Is there anything you want to change about your home?',
+          'Would you like to move to a different home in the future?',
+          'What do you usually do at home in your free time?'
+        ]
+      },
+      {
+        title:'Hometown',
+        group:'core',
+        tags:['core'],
+        questions:[
+          'Where is your hometown?',
+          'What do you like most about your hometown?',
+          'Is your hometown a good place for young people?',
+          'Has your hometown changed much in recent years?',
+          'Are there any interesting places to visit in your hometown?',
+          'Would you recommend your hometown to tourists?'
+        ]
+      },
+      {
+        title:'Work & Study',
+        group:'core',
+        tags:['core'],
+        questions:[
+          'Do you work or are you a student?',
+          'What subject are you studying?',
+          'Why did you choose this subject or job?',
+          'What do you enjoy most about your work or studies?',
+          'Is your schedule busy?',
+          'Do you want to change your job or subject in the future?'
+        ]
+      },
+      {
+        title:'Friends & Social Life',
+        group:'core',
+        tags:['core'],
+        questions:[
+          'Do you have many friends?',
+          'Who are you closest to among your friends?',
+          'What do you usually do with your friends?',
+          'When was the last time you made a new friend?',
+          'Is it easy for you to make new friends?',
+          'Do you prefer a small group of friends or many friends?'
+        ]
+      },
+      {
+        title:'Family',
+        group:'core',
+        tags:['core'],
+        questions:[
+          'Do you have a big family?',
+          'Who are you closest to in your family?',
+          'Do you spend a lot of time with your family?',
+          'Were your parents strict when you were a child?',
+          'What do you usually do together with your family?',
+          'Do you think family is important?'
+        ]
+      },
+      {
+        title:'Daily Routine',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'What is your daily routine like?',
+          'What part of the day do you enjoy most?',
+          'Do you prefer to plan your day?',
+          'Has your daily routine changed recently?',
+          'Are weekends different from weekdays for you?',
+          'Would you like to change your routine in the future?'
+        ]
+      },
+      {
+        title:'Technology and Digital Life',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'How often do you use technology in your daily life?',
+          'What device do you use the most?',
+          'Has technology changed the way you study or work?',
+          'Do you think people rely too much on technology?',
+          'What kind of technology would you like to have in the future?',
+          'Do older people use technology as much as young people?'
+        ]
+      },
+      {
+        title:'Music',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'Do you like listening to music?',
+          'What kind of music do you enjoy most?',
+          'When do you usually listen to music?',
+          'Did you listen to the same kind of music when you were younger?',
+          'Have you ever learned to play a musical instrument?',
+          'Do you think music is important in people’s lives?'
+        ]
+      },
+      {
+        title:'Food and Cooking',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'What kind of food do you like?',
+          'Do you prefer eating at home or eating out?',
+          'Can you cook?',
+          'What kind of food do you usually cook?',
+          'Did you learn cooking from your family?',
+          'Do you want to learn to cook more dishes in the future?'
+        ]
+      },
+      {
+        title:'Shopping',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'Do you enjoy shopping?',
+          'What kind of things do you usually buy?',
+          'Do you prefer shopping online or in stores?',
+          'Did you like shopping when you were younger?',
+          'Do you compare prices before buying something?',
+          'Do advertisements influence what you buy?'
+        ]
+      },
+      {
+        title:'Weather',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'What kind of weather do you like most?',
+          'Does weather affect your mood?',
+          'What do you usually do on rainy days?',
+          'Do you often check the weather forecast?',
+          'Is the weather in your hometown suitable for outdoor activities?',
+          'What is the weather like in your country?'
+        ]
+      },
+      {
+        title:'Outdoor Activities',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'Do you like outdoor activities?',
+          'What outdoor activities do you usually do?',
+          'Did you spend a lot of time outdoors when you were a child?',
+          'Do you prefer outdoor or indoor activities?',
+          'What outdoor activity would you like to try in the future?',
+          'Is it important for children to play outside?'
+        ]
+      },
+      {
+        title:'Transportation',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'How do you usually travel around your city?',
+          'Do you prefer public transport or private transport?',
+          'Is transportation convenient where you live?',
+          'Have the transport systems in your area improved?',
+          'What is the most popular means of transport in your city?',
+          'How do you think transport will change in the future?'
+        ]
+      },
+      {
+        title:'Maps',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'Do you often use maps?',
+          'Do you prefer paper maps or digital maps?',
+          'How often do you use maps on your phone?',
+          'Are you good at reading maps?',
+          'Did you use maps more often in the past?',
+          'Do you think young people still need to learn to read paper maps?'
+        ]
+      },
+      {
+        title:'Health and Exercise',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'What do you do to keep healthy?',
+          'Do you often do exercise?',
+          'What is your favourite sport or physical activity?',
+          'Did you exercise more when you were younger?',
+          'Is it easy for people in your country to exercise regularly?',
+          'Do schools do enough to help students stay healthy?'
+        ]
+      },
+      {
+        title:'Breakfast',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'What do you usually eat for breakfast?',
+          'Do you think breakfast is important?',
+          'Did your breakfast habits change compared with childhood?',
+          'Do you prefer a big breakfast or a light one?',
+          'Do you usually have breakfast at home?',
+          'Would you like to change your morning routine?'
+        ]
+      },
+      {
+        title:'Teachers',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'What kind of teachers do you like best?',
+          'Who was your favourite teacher when you were young?',
+          'Do you think teachers are important in students’ lives?',
+          'Would you like to become a teacher in the future?',
+          'Have you ever had a teacher you disliked?',
+          'What makes a good teacher?'
+        ]
+      },
+      {
+        title:'Writing',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'Do you write a lot?',
+          'What do you usually like to write?',
+          'Do you prefer typing or handwriting?',
+          'Has the way you write changed over time?',
+          'Did you enjoy writing when you were a child?',
+          'Do you think writing is still important nowadays?'
+        ]
+      },
+      {
+        title:'Sitting',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'Where is your favourite place to sit?',
+          'Do you sit for a long time every day?',
+          'Do you feel tired when sitting for too long?',
+          'Did you often sit on the floor when you were a child?',
+          'Do you prefer sitting alone or with others?',
+          'Do you think people today sit more than in the past?'
+        ]
+      },
+      {
+        title:'Geography',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'Do you like geography?',
+          'Have you ever studied geography at school?',
+          'Are you interested in learning about other countries?',
+          'Would you like to travel because of a place’s geography?',
+          'Do you think geography is useful in daily life?',
+          'What geographic feature interests you the most?'
+        ]
+      },
+      {
+        title:'Colour',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'What is your favourite colour?',
+          'Are there any colours you dislike?',
+          'What colours do your friends like?',
+          'What colour would you choose for your room?',
+          'Did you like the same colours when you were a child?',
+          'Do colours affect people’s feelings?'
+        ]
+      },
+      {
+        title:'Video Games',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'Do you play video games?',
+          'What kinds of video games do you like?',
+          'How often do you play them?',
+          'Did you play more video games when you were younger?',
+          'Do you think video games are good for young people?',
+          'Would you like to try any new games in the future?'
+        ]
+      },
+      {
+        title:'Cars',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'Do you own a car?',
+          'How often do you travel by car?',
+          'Would you like to learn to drive or improve your driving?',
+          'Are there many traffic jams in your city?',
+          'Do you think owning a car is necessary nowadays?',
+          'Do you think people will drive less in the future?'
+        ]
+      },
+      {
+        title:'Window View',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'What can you see from the window of your room?',
+          'Do you like looking out of the window?',
+          'Would you like to live in a place with a better view?',
+          'How do you feel if there is no nice view from your window?',
+          'Did the view from your window matter to you when you were a child?',
+          'Do you think a window view affects people’s mood?'
+        ]
+      },
+      {
+        title:'Old Buildings',
+        group:'new',
+        tags:['new'],
+        questions:[
+          'Are there many old buildings where you live?',
+          'Do you like old buildings?',
+          'Do you think old buildings should be preserved?',
+          'Would you prefer living in an old building or a modern one?',
+          'Are there any old buildings you want to visit?',
+          'Do old buildings make a city more attractive?'
+        ]
+      },
+      {
+        title:'Advertisements',
+        group:'recycled',
+        tags:['recycled'],
+        questions:[
+          'How do you feel about advertisements?',
+          'Do you like advertisements on TV or online?',
+          'Have you ever bought something because of an advertisement?',
+          'Do you think there are too many ads nowadays?',
+          'What kind of ads are the most effective?',
+          'Should advertisements target children?'
+        ]
+      },
+      {
+        title:'Chatting',
+        group:'recycled',
+        tags:['recycled'],
+        questions:[
+          'Do you like chatting with friends?',
+          'Do you prefer chatting face to face or online?',
+          'What do you usually chat about?',
+          'Do you prefer talking to one friend or a group?',
+          'Have you ever argued with friends while chatting?',
+          'Do people communicate differently now compared with the past?'
+        ]
+      },
+      {
+        title:'Sharing Things',
+        group:'recycled',
+        tags:['recycled'],
+        questions:[
+          'Do you like sharing things with others?',
+          'Did your parents teach you to share when you were young?',
+          'What kinds of things do you usually share?',
+          'Are there things that you would not share?',
+          'Who do you usually share good news with first?',
+          'Do you think people today are less willing to share?'
+        ]
+      },
+      {
+        title:'Crowded Places',
+        group:'recycled',
+        tags:['recycled'],
+        questions:[
+          'Do you like crowded places?',
+          'When was the last time you went to a crowded place?',
+          'Is your city usually crowded?',
+          'How do you feel in crowded places?',
+          'What kinds of places are often crowded in your area?',
+          'Do you think crowded places will become more common in the future?'
+        ]
+      },
+      {
+        title:'Pets and Animals',
+        group:'recycled',
+        tags:['recycled'],
+        questions:[
+          'Do you have a pet?',
+          'What is your favourite animal?',
+          'Are pets popular in your country?',
+          'Why do some people like keeping pets?',
+          'What animal did you like most when you were a child?',
+          'Do you think animals should be protected more?'
+        ]
+      },
+      {
+        title:'Childhood Activities',
+        group:'recycled',
+        tags:['recycled'],
+        questions:[
+          'What did you like to do when you were a child?',
+          'Did you prefer playing indoors or outdoors?',
+          'Who did you usually play with?',
+          'What games were popular when you were young?',
+          'Do children today play the same games?',
+          'Do you think childhood activities are important?'
+        ]
+      },
+      {
+        title:'Life Stages',
+        group:'recycled',
+        tags:['recycled'],
+        questions:[
+          'What is the most important stage in a person’s life?',
+          'Did you enjoy your childhood?',
+          'Do you think adults are happier than children?',
+          'What would you like to do in the next stage of your life?',
+          'Do people change a lot as they grow older?',
+          'What stage of life do you think is the most challenging?'
+        ]
+      }
     ];
 
     const P23_BANK = [
       {
-        title:'Describe a place with a lot of trees', group:'new', tags:['new'],
-        p2:['Describe a place with a lot of trees that you would like to visit.','You should say:','What park/forest it is and where it is','How you know about it','Why you want to go there','And explain what it is like.'],
-        p3:['Why do people like visiting natural places?','Should governments do more to protect natural scenery?','Do young people appreciate nature as much as older people?']
+        title:'Describe a place with a lot of trees',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe a place with a lot of trees that you would like to visit.',
+          'You should say:',
+          'what the place is',
+          'where it is',
+          'how you knew about it',
+          'and explain why you would like to visit it.'
+        ],
+        p3:[
+          'Why do people enjoy visiting places with a lot of trees?',
+          'Should governments do more to protect natural places?',
+          'Do young people appreciate nature as much as older people?',
+          'How can cities add more green spaces?',
+          'Do parks play an important role in modern cities?'
+        ]
       },
       {
-        title:'Describe a child you know who likes drawing', group:'new', tags:['new'],
-        p2:['Describe a child you know who likes drawing very much.','You should say:','How you know him/her','What he/she is like','How often he/she draws','And explain why you think he/she likes drawing.'],
-        p3:['What is the right age for a child to learn drawing?','Why do most children draw more often than adults do?','How do artworks inspire people?']
+        title:'Describe a child who likes drawing',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe a child you know who likes drawing very much.',
+          'You should say:',
+          'who the child is',
+          'how you know him or her',
+          'what he or she likes to draw',
+          'and explain why you think the child enjoys drawing.'
+        ],
+        p3:[
+          'Why do many children enjoy drawing?',
+          'Do adults draw less because they are too busy?',
+          'Should schools pay more attention to art education?',
+          'Can drawing help children develop other skills?',
+          'How can art influence people’s feelings?'
+        ]
       },
       {
-        title:'Describe a person who makes plans a lot', group:'new', tags:['new'],
-        p2:['Describe a person who makes plans a lot.','You should say:','Who he/she is','How you know him/her','What plans he/she makes','And explain how you feel about this person.'],
-        p3:['Do you think it\'s important to plan ahead?','Do you think children should plan their future careers?','Should children ask parents for advice when making plans?']
+        title:'Describe a person who makes a lot of plans',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe a person who makes plans a lot.',
+          'You should say:',
+          'who this person is',
+          'how you know this person',
+          'what kinds of plans this person makes',
+          'and explain what you think about this person.'
+        ],
+        p3:[
+          'Do you think planning is important?',
+          'Why are some people better at planning than others?',
+          'Should young people plan their future careers early?',
+          'Should children ask parents for advice when making plans?',
+          'Can too much planning ever be a bad thing?'
+        ]
       },
       {
-        title:'Describe something you can\'t live without', group:'new', tags:['new'],
-        p2:['Describe something that you can\'t live without (not a computer/phone).','You should say:','What it is','What you do with it','How it helps you in your life','And explain why you can\'t live without it.'],
-        p3:['Why are children attracted to new things?','Why do some grown-ups hate to throw out old things?','What influences people to buy new things?']
+        title:'Describe something you cannot live without',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe something you cannot live without (not a phone or computer).',
+          'You should say:',
+          'what it is',
+          'how often you use it',
+          'how it helps you',
+          'and explain why you cannot live without it.'
+        ],
+        p3:[
+          'Why are children attracted to new things?',
+          'Why do some adults keep old things for a long time?',
+          'What influences people when they buy new products?',
+          'Do people own too many unnecessary things nowadays?',
+          'Is it better to buy practical things or things for enjoyment?'
+        ]
       },
       {
-        title:'Describe a time you were not allowed to use your phone', group:'new', tags:['new'],
-        p2:['Describe an occasion when you were not allowed to use your mobile phone.','You should say:','When it was','Where it was','Why you were not allowed to use it','And explain how you felt about it.'],
-        p3:['Do people rely too much on their phones nowadays?','Should mobile phones be banned in schools?','How does mobile phone usage affect face-to-face communication?']
+        title:'Describe a time you were not allowed to use your phone',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe a time when you were not allowed to use your mobile phone.',
+          'You should say:',
+          'when it happened',
+          'where you were',
+          'why you were not allowed to use your phone',
+          'and explain how you felt about it.'
+        ],
+        p3:[
+          'Do people depend too much on mobile phones nowadays?',
+          'Should mobile phones be banned in some places?',
+          'How do mobile phones affect face-to-face communication?',
+          'Are phones more helpful or more distracting for students?',
+          'Will people become even more dependent on phones in the future?'
+        ]
       },
       {
-        title:'Describe someone else\'s room you enjoy spending time in', group:'new', tags:['new'],
-        p2:['Describe someone else\'s room you enjoy spending time in.','You should say:','Whose room it is','What the room looks like','What you do in that room','And explain why you enjoy spending time there.'],
-        p3:['Do people care a lot about the decoration of their rooms?','What kind of room do young people like?','How does the environment of a room affect a person\'s mood?']
+        title:'Describe someone else’s room you enjoy spending time in',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe someone else’s room where you enjoy spending time.',
+          'You should say:',
+          'whose room it is',
+          'what the room looks like',
+          'what you do there',
+          'and explain why you enjoy spending time in that room.'
+        ],
+        p3:[
+          'Do people care a lot about room decoration?',
+          'What kind of rooms do young people prefer?',
+          'How does a room’s environment affect people’s mood?',
+          'Is comfort more important than appearance in a room?',
+          'Do people in your country spend much money on home design?'
+        ]
       },
       {
-        title:'Describe an unusual meal', group:'new', tags:['new'],
-        p2:['Describe an unusual meal you had.','You should say:','When and where you had it','Who you had it with','What you ate','And explain why it was unusual.'],
-        p3:['How has people\'s diet changed in your country?','Do people still cook at home as much as before?','Why do people like trying unusual food?']
+        title:'Describe an unusual meal',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe an unusual meal you had.',
+          'You should say:',
+          'when and where you had it',
+          'who you had it with',
+          'what you ate',
+          'and explain why it was unusual.'
+        ],
+        p3:[
+          'How have eating habits changed in your country?',
+          'Do people cook at home as much as before?',
+          'Why do some people like trying unusual food?',
+          'Is traditional food still important for young people?',
+          'What are the advantages of eating together with others?'
+        ]
       },
       {
-        title:'Describe a person who inspired you', group:'recycled', tags:['recycled'],
-        p2:['Describe a person who inspired you.','You should say:','Who this person is','How you know this person','What this person did','And explain why you felt inspired by this person.'],
-        p3:['Why do some people become role models for others?','Do young people today need role models more than before?','Can famous people have a positive influence on society?']
+        title:'Describe a piece of technology that is difficult to use',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe a piece of technology that you find difficult to use.',
+          'You should say:',
+          'what it is',
+          'when you tried to use it',
+          'what problems you had',
+          'and explain why you found it difficult.'
+        ],
+        p3:[
+          'Why do some people have trouble using technology?',
+          'Should products be designed to be simpler?',
+          'Do older people need more help with technology?',
+          'Can technology make life more stressful?',
+          'Will future technology become easier or more complicated?'
+        ]
       },
       {
-        title:'Describe a skill you learned recently', group:'recycled', tags:['recycled'],
-        p2:['Describe a skill you learned recently.','You should say:','What the skill is','Why you wanted to learn it','How you learned it','And explain how useful it is to you.'],
-        p3:['What skills are important for young people today?','Do schools teach enough practical skills?','Is it easier to learn skills now because of the internet?']
+        title:'Describe an unusual holiday',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe an unusual holiday you had.',
+          'You should say:',
+          'where you went',
+          'who you went with',
+          'what made it unusual',
+          'and explain how you felt about it.'
+        ],
+        p3:[
+          'Why do some people prefer unusual travel experiences?',
+          'Do young people like adventure holidays more than older people?',
+          'How has tourism changed in recent years?',
+          'Should people travel to relax or to learn something new?',
+          'What makes a trip memorable?'
+        ]
       },
       {
-        title:'Describe a difficult decision you made', group:'recycled', tags:['recycled'],
-        p2:['Describe a difficult decision you made.','You should say:','What the decision was','Why it was difficult','How you made the decision','And explain the result of that decision.'],
-        p3:['Why do some people find it hard to make decisions?','Should young people make important decisions independently?','Do people nowadays have more choices than in the past?']
+        title:'Describe a challenge you faced and thought was difficult',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe a challenge you faced that you thought was rather difficult.',
+          'You should say:',
+          'what the challenge was',
+          'when it happened',
+          'what you did',
+          'and explain why it was difficult.'
+        ],
+        p3:[
+          'Why do some people enjoy challenges?',
+          'Do children today face more pressure than before?',
+          'What kind of challenges are common for young people?',
+          'How can people build confidence when facing difficulties?',
+          'Is it better to solve problems alone or ask others for help?'
+        ]
+      },
+      {
+        title:'Describe something that saves your time',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe something that saves your time.',
+          'You should say:',
+          'what it is',
+          'how often you use it',
+          'how it saves your time',
+          'and explain why it is useful to you.'
+        ],
+        p3:[
+          'Why do people value time-saving products?',
+          'Do modern technologies really save time?',
+          'Why are people busier nowadays?',
+          'Do young and old people manage time differently?',
+          'Is saving time always a good thing?'
+        ]
+      },
+      {
+        title:'Describe a place where things are expensive',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe a place you have been to where things are expensive.',
+          'You should say:',
+          'what the place is',
+          'when you went there',
+          'what things were expensive',
+          'and explain how you felt about it.'
+        ],
+        p3:[
+          'Why are some places more expensive than others?',
+          'Do high prices always mean high quality?',
+          'How do rising prices affect young people?',
+          'Should governments do something to control prices?',
+          'Do people today spend money more wisely than before?'
+        ]
+      },
+      {
+        title:'Describe a person who likes to buy cheap goods',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe a person who likes to buy goods at low prices.',
+          'You should say:',
+          'who the person is',
+          'what kinds of things he or she buys',
+          'how this person finds low prices',
+          'and explain what you think of this habit.'
+        ],
+        p3:[
+          'Why do some people care a lot about prices?',
+          'Do discounts encourage people to buy unnecessary things?',
+          'Is shopping online better for finding cheap products?',
+          'Do young people spend differently from older people?',
+          'How can consumers avoid wasting money?'
+        ]
+      },
+      {
+        title:'Describe a drawing or painting you like',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe a drawing or painting you like.',
+          'You should say:',
+          'what it looks like',
+          'where you saw it',
+          'who made it if you know',
+          'and explain why you like it.'
+        ],
+        p3:[
+          'What kinds of art are popular in your country?',
+          'Should children learn drawing and painting at school?',
+          'Why do some people visit art galleries?',
+          'Can art influence society?',
+          'Is traditional art more valuable than modern art?'
+        ]
+      },
+      {
+        title:'Describe something you do to keep fit and healthy',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe something you do to keep fit and healthy.',
+          'You should say:',
+          'what you do',
+          'how often you do it',
+          'when you started doing it',
+          'and explain why you continue doing it.'
+        ],
+        p3:[
+          'Why do some people struggle to live healthily?',
+          'Should schools spend more time on physical education?',
+          'Is diet more important than exercise?',
+          'How can governments encourage people to stay healthy?',
+          'Do young people care enough about their health?'
+        ]
+      },
+      {
+        title:'Describe a popular or well-known person in your country',
+        group:'new',
+        tags:['new'],
+        p2:[
+          'Describe a popular or well-known person in your country.',
+          'You should say:',
+          'who the person is',
+          'what he or she is famous for',
+          'how you knew about this person',
+          'and explain why this person is popular.'
+        ],
+        p3:[
+          'Why do some people become famous?',
+          'Do famous people have responsibilities to society?',
+          'Is fame always a good thing?',
+          'Do young people admire celebrities too much?',
+          'Can famous people influence public behaviour?'
+        ]
+      },
+      {
+        title:'Describe a person who inspired you',
+        group:'recycled',
+        tags:['recycled'],
+        p2:[
+          'Describe a person who inspired you.',
+          'You should say:',
+          'who this person is',
+          'how you know this person',
+          'what this person did',
+          'and explain why you felt inspired by this person.'
+        ],
+        p3:[
+          'Why do some people become role models?',
+          'Do young people need role models more than before?',
+          'Can famous people have a positive influence on society?',
+          'Do role models have to be successful people?',
+          'How can teachers inspire students?'
+        ]
+      },
+      {
+        title:'Describe a skill you learned recently',
+        group:'recycled',
+        tags:['recycled'],
+        p2:[
+          'Describe a skill you learned recently.',
+          'You should say:',
+          'what the skill is',
+          'why you wanted to learn it',
+          'how you learned it',
+          'and explain how useful it is to you.'
+        ],
+        p3:[
+          'What skills are important for young people today?',
+          'Do schools teach enough practical skills?',
+          'Is it easier to learn skills now because of the internet?',
+          'Why do some people keep learning throughout life?',
+          'Are soft skills as important as technical skills?'
+        ]
+      },
+      {
+        title:'Describe a difficult decision you made',
+        group:'recycled',
+        tags:['recycled'],
+        p2:[
+          'Describe a difficult decision you made.',
+          'You should say:',
+          'what the decision was',
+          'why it was difficult',
+          'how you made the decision',
+          'and explain the result of that decision.'
+        ],
+        p3:[
+          'Why do some people find decision-making difficult?',
+          'Should young people make important decisions independently?',
+          'Do people nowadays have more choices than in the past?',
+          'Can having too many choices be stressful?',
+          'Who usually influences people’s important decisions?'
+        ]
+      },
+      {
+        title:'Describe a person who likes buying second-hand or old things',
+        group:'recycled',
+        tags:['recycled'],
+        p2:[
+          'Describe a person who likes buying second-hand or old things.',
+          'You should say:',
+          'who the person is',
+          'what kinds of things he or she buys',
+          'where the person buys them',
+          'and explain why he or she likes doing this.'
+        ],
+        p3:[
+          'Why do some people like second-hand goods?',
+          'Is it better to buy new things or used things?',
+          'Can reusing products help the environment?',
+          'Why do some people dislike old items?',
+          'Do young people appreciate old things as much as older people?'
+        ]
+      },
+      {
+        title:'Describe a place full of noise',
+        group:'recycled',
+        tags:['recycled'],
+        p2:[
+          'Describe a noisy place you have been to.',
+          'You should say:',
+          'where it was',
+          'when you went there',
+          'why it was noisy',
+          'and explain how you felt about being there.'
+        ],
+        p3:[
+          'Are cities becoming noisier?',
+          'How does noise affect people’s lives?',
+          'Should governments control noise pollution more strictly?',
+          'Why do some people enjoy noisy places while others do not?',
+          'Is silence becoming more valuable nowadays?'
+        ]
+      },
+      {
+        title:'Describe a time you helped someone',
+        group:'recycled',
+        tags:['recycled'],
+        p2:[
+          'Describe a time when you helped someone.',
+          'You should say:',
+          'who you helped',
+          'what happened',
+          'how you helped the person',
+          'and explain how you felt about it.'
+        ],
+        p3:[
+          'Why do people help others?',
+          'Should children be taught to help others from a young age?',
+          'Is it easier to get help from family or friends?',
+          'Do people in modern society help each other less than before?',
+          'How can schools encourage students to be helpful?'
+        ]
       }
     ];
 
