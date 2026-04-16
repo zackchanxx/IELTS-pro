@@ -20,6 +20,7 @@
       --warning:#f59e0b;
       --success:#19a463;
       --shadow:0 14px 34px rgba(31,111,255,.08);
+      --shadow-hover:0 20px 40px rgba(31,111,255,.12);
       --radius:20px;
       --radius-sm:14px;
       --max:1180px;
@@ -28,8 +29,7 @@
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
     html,body{margin:0;padding:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;color:var(--text)}
     body{
-      background:
-        radial-gradient(circle at top, #e5efff 0%, var(--bg) 26%, var(--bg-2) 62%, #fff 100%);
+      background: radial-gradient(circle at top, #e5efff 0%, var(--bg) 26%, var(--bg-2) 62%, #fff 100%);
     }
 
     button,input,select,textarea{font:inherit}
@@ -98,18 +98,20 @@
       font-size:15px;
       font-weight:800;
       cursor:pointer;
-      transition:.18s ease;
+      transition:all .2s ease;
     }
 
     .nav-btn:hover{
       background:#f8fbff;
       border-color:var(--line);
+      transform: translateX(4px);
     }
 
     .nav-btn.active{
       background:var(--primary-2);
       color:var(--primary);
       border-color:#cfe0ff;
+      transform: translateX(0);
     }
 
     .side-card{
@@ -126,11 +128,27 @@
       font-size:14px;
     }
 
-    .side-card p{
-      margin:0;
-      font-size:12px;
-      line-height:1.7;
-      color:var(--muted);
+    .setting-group {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    
+    .setting-group label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    
+    .setting-group select {
+      width: 100%;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      font-size: 13px;
+      outline: none;
+      background: #fff;
     }
 
     .main{
@@ -141,6 +159,12 @@
     .view{
       display:none;
       min-height:calc(100vh - 36px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .view.active{
@@ -161,6 +185,9 @@
       padding:22px 24px 16px;
       border-bottom:1px solid var(--line);
       background:linear-gradient(180deg, rgba(255,255,255,.86) 0%, rgba(248,251,255,.92) 100%);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
     }
 
     .page-head h2{
@@ -189,6 +216,7 @@
       border:1px solid var(--line);
       background:linear-gradient(180deg,#ffffff 0%, #f7fbff 100%);
       border-radius:26px;
+      box-shadow: var(--shadow);
     }
 
     .hero-pill{
@@ -236,12 +264,13 @@
       text-align:left;
       box-shadow:var(--shadow);
       cursor:pointer;
-      transition:.18s ease;
+      transition:all .2s ease;
     }
 
     .quick-card:hover{
-      transform:translateY(-2px);
+      transform:translateY(-4px);
       border-color:#bfd4ff;
+      box-shadow: var(--shadow-hover);
     }
 
     .quick-card .title{
@@ -254,22 +283,6 @@
     .quick-card .desc{
       color:var(--muted);
       font-size:15px;
-      line-height:1.75;
-    }
-
-    .strip-grid{
-      display:grid;
-      grid-template-columns:repeat(3,minmax(0,1fr));
-      gap:12px;
-    }
-
-    .strip{
-      padding:16px;
-      border-radius:18px;
-      border:1px solid var(--line);
-      background:#fff;
-      color:var(--muted);
-      font-size:14px;
       line-height:1.75;
     }
 
@@ -303,6 +316,11 @@
       color:var(--text);
       font-size:16px;
       margin-bottom:12px;
+      transition: border-color 0.2s ease;
+    }
+    .search:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-2);
     }
 
     .filters{
@@ -321,6 +339,11 @@
       font-size:12px;
       font-weight:900;
       cursor:pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chip:hover {
+      background: var(--bg-2);
     }
 
     .chip.active{
@@ -346,7 +369,7 @@
       border-radius:18px;
       padding:16px;
       cursor:pointer;
-      transition:.18s ease;
+      transition:all .2s ease;
     }
 
     .topic-item:hover{
@@ -388,23 +411,9 @@
       border:1px solid;
     }
 
-    .badge.new{
-      background:#eef6ff;
-      color:var(--primary);
-      border-color:#cfe0ff;
-    }
-
-    .badge.must{
-      background:#fff7e8;
-      color:#b67800;
-      border-color:#ffe2ae;
-    }
-
-    .badge.core{
-      background:#eefbf5;
-      color:var(--success);
-      border-color:#ccefdc;
-    }
+    .badge.new{ background:#eef6ff; color:var(--primary); border-color:#cfe0ff; }
+    .badge.core{ background:#fff7e8; color:#b67800; border-color:#ffe2ae; }
+    .badge.recycled{ background:#f3f4f6; color:#4b5563; border-color:#d1d5db; }
 
     .content-col{
       display:flex;
@@ -418,6 +427,7 @@
       border-radius:22px;
       background:linear-gradient(180deg,#ffffff 0%, #f9fbff 100%);
       padding:20px;
+      box-shadow: var(--shadow);
     }
 
     .card h3{
@@ -459,12 +469,7 @@
       color:var(--primary);
     }
 
-    .cue-list{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
+    .cue-list{ display:flex; flex-direction:column; gap:10px; }
     .cue-item{
       border:1px solid #e1ecff;
       background:#f7fbff;
@@ -491,37 +496,33 @@
       font-size:16px;
       font-weight:900;
       cursor:pointer;
-      transition:.18s ease;
+      transition:all .2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
-    .btn:hover{
-      transform:translateY(-1px);
+    .btn:hover{ transform:translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .btn:active{ transform:translateY(0); }
+
+    .btn.primary{ background:var(--primary); color:#fff; border-color:var(--primary); }
+    .btn.soft{ background:var(--primary-2); color:var(--primary); border-color:#cfe0ff; }
+    .btn.danger{ background:#fff1f1; color:var(--danger); border-color:#ffd0d0; }
+
+    @keyframes pulse-record {
+      0% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 77, 79, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0); }
+    }
+    .btn.is-recording {
+      background: var(--danger) !important;
+      color: white !important;
+      border-color: var(--danger) !important;
+      animation: pulse-record 1.5s infinite;
     }
 
-    .btn.primary{
-      background:var(--primary);
-      color:#fff;
-      border-color:var(--primary);
-    }
-
-    .btn.soft{
-      background:var(--primary-2);
-      color:var(--primary);
-      border-color:#cfe0ff;
-    }
-
-    .btn.danger{
-      background:#fff1f1;
-      color:var(--danger);
-      border-color:#ffd0d0;
-    }
-
-    .switch-row{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-    }
-
+    .switch-row{ display:flex; flex-wrap:wrap; gap:10px; }
     .switch-btn{
       min-height:44px;
       padding:10px 14px;
@@ -532,27 +533,22 @@
       font-size:15px;
       font-weight:900;
       cursor:pointer;
+      transition: all 0.2s ease;
     }
-
-    .switch-btn.active{
-      background:var(--primary-2);
-      color:var(--primary);
-      border-color:#cfe0ff;
-    }
+    .switch-btn.active{ background:var(--primary-2); color:var(--primary); border-color:#cfe0ff; }
 
     .stats{
       display:grid;
       grid-template-columns:repeat(4,minmax(0,1fr));
       gap:10px;
     }
-
     .stat{
       border:1px solid var(--line);
       background:#fff;
       border-radius:18px;
       padding:14px;
+      box-shadow: var(--shadow);
     }
-
     .stat-label{
       font-size:11px;
       font-weight:900;
@@ -561,7 +557,6 @@
       letter-spacing:.06em;
       margin-bottom:8px;
     }
-
     .stat-value{
       font-size:22px;
       line-height:1.2;
@@ -577,6 +572,7 @@
       font-size:15px;
       line-height:1.8;
       white-space:pre-wrap;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
     }
 
     .mock-grid{
@@ -607,13 +603,10 @@
       letter-spacing:-.07em;
       font-weight:900;
       margin:4px 0 14px;
+      font-variant-numeric: tabular-nums;
     }
 
-    .subtle{
-      color:var(--muted);
-      font-size:15px;
-      line-height:1.8;
-    }
+    .subtle{ color:var(--muted); font-size:15px; line-height:1.8; }
 
     .progress{
       height:10px;
@@ -623,7 +616,6 @@
       overflow:hidden;
       margin-top:16px;
     }
-
     .progress > div{
       height:100%;
       width:0%;
@@ -631,27 +623,16 @@
       transition:width .2s linear;
     }
 
-    .record-list{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
+    .record-list{ display:flex; flex-direction:column; gap:10px; }
     .record-item{
       border:1px solid var(--line);
       border-radius:16px;
       background:#fff;
-      padding:12px;
+      padding:16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
     }
-
-    .record-item h4{
-      margin:0 0 8px;
-      font-size:14px;
-    }
-
-    .record-item audio{
-      width:100%;
-    }
+    .record-item h4{ margin:0 0 8px; font-size:14px; }
+    .record-item audio{ width:100%; margin-top: 8px; height: 36px; }
 
     .mobile-top{
       display:none;
@@ -664,18 +645,8 @@
       padding:12px 14px;
       margin:-18px -18px 16px;
     }
-
-    .mobile-top-row{
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-
-    .mobile-top h1{
-      margin:0;
-      font-size:22px;
-      letter-spacing:-.04em;
-    }
+    .mobile-top-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .mobile-top h1{ margin:0; font-size:22px; letter-spacing:-.04em; }
 
     .mobile-nav{
       display:none;
@@ -690,7 +661,6 @@
       grid-template-columns:repeat(5,minmax(0,1fr));
       margin:18px -18px -22px;
     }
-
     .mobile-nav button{
       border:1px solid transparent;
       background:transparent;
@@ -700,8 +670,8 @@
       font-weight:900;
       color:var(--muted);
       cursor:pointer;
+      transition: all 0.2s ease;
     }
-
     .mobile-nav button.active{
       background:var(--primary-2);
       color:var(--primary);
@@ -729,68 +699,22 @@
       }
       .page-head h2{font-size:30px}
       .hero-title{font-size:38px}
-      .quick-grid,
-      .strip-grid,
-      .workspace,
-      .mock-grid{
-        grid-template-columns:1fr;
-      }
-      .stats{
-        grid-template-columns:repeat(2,minmax(0,1fr));
-      }
+      .quick-grid, .workspace, .mock-grid{ grid-template-columns:1fr; }
+      .stats{ grid-template-columns:repeat(2,minmax(0,1fr)); }
       .mobile-top{display:block}
       .mobile-nav{display:grid}
     }
 
     @media (max-width: 640px){
-      .page-head{
-        padding:18px 18px 14px;
-      }
-      .page-head h2{
-        font-size:28px;
-      }
-      .page-head p{
-        font-size:16px;
-      }
-      .home-wrap{
-        padding:18px;
-      }
-      .hero-box{
-        padding:22px 18px;
-      }
-      .hero-title{
-        font-size:32px;
-      }
-      .hero-desc{
-        font-size:16px;
-      }
-      .quick-card .title{
-        font-size:22px;
-      }
-      .quick-card .desc,
-      .strip,
-      .meta,
-      .cue-item,
-      .box,
-      .search,
-      .btn,
-      .switch-btn,
-      .subtle{
-        font-size:16px;
-      }
-      .workspace,
-      .mock-grid{
-        padding:14px;
-      }
-      .topic-title{
-        font-size:19px;
-      }
-      .hidden-box .big{
-        font-size:30px;
-      }
-      .timer{
-        font-size:50px;
-      }
+      .page-head{ padding:18px 18px 14px; flex-direction: column; gap: 10px;}
+      .page-head h2{ font-size:28px; }
+      .home-wrap{ padding:18px; }
+      .hero-box{ padding:22px 18px; }
+      .hero-title{ font-size:32px; }
+      .quick-card .title{ font-size:22px; }
+      .btn, .switch-btn { font-size: 15px; }
+      .hidden-box .big{ font-size:30px; }
+      .timer{ font-size:50px; }
     }
   </style>
 </head>
@@ -799,7 +723,7 @@
     <aside class="sidebar">
       <div class="brand">
         <h1>IELTS Copilot</h1>
-        <p>設計重做版 · 手機優先 · 單檔 HTML · 可直接上 GitHub Pages</p>
+        <p>2026 最新口語全真模擬</p>
       </div>
 
       <div class="nav">
@@ -812,8 +736,16 @@
       </div>
 
       <div class="side-card">
-        <h4>這版已修正</h4>
-        <p>點擊主題後會自動更新內容區並在手機上自動捲動到內容位置，字級與按鈕也已放大。</p>
+        <h4>學習設定</h4>
+        <div class="setting-group">
+          <label>考官語速</label>
+          <select id="globalTtsRate">
+            <option value="0.85">慢速 (0.85x)</option>
+            <option value="0.95" selected>正常 (0.95x)</option>
+            <option value="1.1">稍快 (1.1x)</option>
+            <option value="1.25">極快 (1.25x)</option>
+          </select>
+        </div>
       </div>
     </aside>
 
@@ -821,49 +753,49 @@
       <div class="mobile-top">
         <div class="mobile-top-row">
           <h1>IELTS Copilot</h1>
+          <select id="mobileTtsRate" style="padding:4px 8px; border-radius:8px; border:1px solid #d9e8ff; font-size:12px;">
+            <option value="0.85">慢速</option>
+            <option value="0.95" selected>正常</option>
+            <option value="1.1">稍快</option>
+          </select>
         </div>
       </div>
 
       <section id="view-home" class="view active">
         <div class="page-shell">
           <div class="page-head">
-            <h2>主頁</h2>
-            <p>直接選擇你要進入的模組，現在這版首頁已改成真正工具型介面，不再是宣傳頁。</p>
+            <div>
+              <h2>主頁</h2>
+              <p>題庫已同步更新至 2026 年 1-4 月，並標示 Core、新題與保留話題。</p>
+            </div>
           </div>
 
           <div class="home-wrap">
             <div class="hero-box">
-              <div class="hero-pill">單檔網站 · GitHub Pages 可直接部署</div>
-              <h3 class="hero-title">讓 IELTS 口語練習，<br>像正式考試一樣。</h3>
+              <div class="hero-pill">2026 Jan-Apr 題庫更新版</div>
+              <h3 class="hero-title">聚焦必考，<br>精準打擊當季新題。</h3>
               <p class="hero-desc">
-                內建 P1、P2 / P3、P3 單練、模擬真實考試、錄音庫、語音播放、
-                題幹隱藏、超時打斷與考後反饋。
+                內建必考題 (Core)、當季新題與保留話題。全新邏輯幫助你高效突破口語考試。
               </p>
             </div>
 
             <div class="quick-grid">
               <button class="quick-card" data-open="p1">
                 <div class="title">P1 題庫</div>
-                <div class="desc">固定主題練習，問題語音播放，題幹隱藏，每題 45 秒。</div>
+                <div class="desc">固定主題練習，問題語音播放，題幹隱藏，每題 45 秒自動打斷。</div>
               </button>
               <button class="quick-card" data-open="p2">
                 <div class="title">P2 / P3 題庫</div>
-                <div class="desc">同一話題綁定 Cue Card 與延伸問題，練習更有邏輯。</div>
+                <div class="desc">同一話題綁定 Cue Card 與延伸問題，串聯練習更有邏輯。</div>
               </button>
               <button class="quick-card" data-open="p3">
                 <div class="title">P3 題庫</div>
-                <div class="desc">專練分析與延伸，題幹隱藏，適合強化 Part 3。</div>
+                <div class="desc">專練分析與延伸，題幹隱藏，適合強化 Part 3 臨場反應。</div>
               </button>
               <button class="quick-card" data-open="mock">
                 <div class="title">模擬真實考試</div>
-                <div class="desc">P1 → P2 → P3 隨機抽題，逐題錄音，自動打斷。</div>
+                <div class="desc">P1 → P2 → P3 隨機抽題，全自動推進，考後自動生成表現反饋。</div>
               </button>
-            </div>
-
-            <div class="strip-grid">
-              <div class="strip">手機版字體、卡片、按鈕都已重新放大。</div>
-              <div class="strip">點擊主題後會自動把你帶到內容區，不再只變藍色。</div>
-              <div class="strip">分類已重整成更像真實使用的練習架構。</div>
             </div>
           </div>
         </div>
@@ -872,8 +804,10 @@
       <section id="view-p1" class="view">
         <div class="page-shell">
           <div class="page-head">
-            <h2>P1 題庫</h2>
-            <p>以 Core / New / Must-practice / Recycled 四種方式整理。選主題後只播放問題，不顯示題幹。</p>
+            <div>
+              <h2>P1 題庫</h2>
+              <p>選主題後只播放問題，不顯示題幹。</p>
+            </div>
           </div>
 
           <div class="workspace">
@@ -882,9 +816,9 @@
                 <input id="p1Search" class="search" placeholder="搜尋 P1 主題..." />
                 <div class="filters" id="p1Filters">
                   <button class="chip active" data-tag="all">全部</button>
-                  <button class="chip" data-tag="core">Core</button>
-                  <button class="chip" data-tag="new">新題</button>
-                  <button class="chip" data-tag="must">必考</button>
+                  <button class="chip" data-tag="core">必考題 (Core)</button>
+                  <button class="chip" data-tag="new">當季新題</button>
+                  <button class="chip" data-tag="recycled">保留話題</button>
                 </div>
                 <div id="p1List" class="topic-list"></div>
               </div>
@@ -901,7 +835,7 @@
                 </div>
 
                 <div class="controls">
-                  <button class="btn soft" id="p1PlayBtn">播放當前問題</button>
+                  <button class="btn soft" id="p1PlayBtn">播放語音</button>
                   <button class="btn primary" id="p1RecBtn">開始 / 停止錄音</button>
                   <button class="btn" id="p1NextBtn">下一題</button>
                 </div>
@@ -935,8 +869,10 @@
       <section id="view-p2" class="view">
         <div class="page-shell">
           <div class="page-head">
-            <h2>P2 / P3 題庫</h2>
-            <p>每個 P2 話題都綁定對應的 P3 延伸題。P2 顯示 Cue Card，P3 隱藏題幹只播放語音。</p>
+            <div>
+              <h2>P2 / P3 題庫</h2>
+              <p>每個 P2 話題綁定 P3 延伸題。</p>
+            </div>
           </div>
 
           <div class="workspace">
@@ -945,8 +881,8 @@
                 <input id="p23Search" class="search" placeholder="搜尋 P2 / P3 話題..." />
                 <div class="filters" id="p23Filters">
                   <button class="chip active" data-tag="all">全部</button>
-                  <button class="chip" data-tag="new">新題</button>
-                  <button class="chip" data-tag="must">必考</button>
+                  <button class="chip" data-tag="new">當季新題</button>
+                  <button class="chip" data-tag="recycled">保留話題</button>
                 </div>
                 <div id="p23List" class="topic-list"></div>
               </div>
@@ -974,7 +910,7 @@
                 </div>
 
                 <div class="controls">
-                  <button class="btn soft" id="p23PlayBtn">播放當前內容</button>
+                  <button class="btn soft" id="p23PlayBtn">播放語音</button>
                   <button class="btn primary" id="p23RecBtn">開始 / 停止錄音</button>
                   <button class="btn" id="p23NextBtn">下一題</button>
                 </div>
@@ -1008,8 +944,10 @@
       <section id="view-p3" class="view">
         <div class="page-shell">
           <div class="page-head">
-            <h2>P3 題庫</h2>
-            <p>只練延伸討論。題幹隱藏，語音播放。適合做高強度 Part 3 訓練。</p>
+            <div>
+              <h2>P3 題庫</h2>
+              <p>只練延伸討論，高強度盲聽訓練。</p>
+            </div>
           </div>
 
           <div class="workspace">
@@ -1018,8 +956,8 @@
                 <input id="p3Search" class="search" placeholder="搜尋 P3 話題..." />
                 <div class="filters" id="p3Filters">
                   <button class="chip active" data-tag="all">全部</button>
-                  <button class="chip" data-tag="new">新題</button>
-                  <button class="chip" data-tag="must">必考</button>
+                  <button class="chip" data-tag="new">當季新題</button>
+                  <button class="chip" data-tag="recycled">保留話題</button>
                 </div>
                 <div id="p3List" class="topic-list"></div>
               </div>
@@ -1036,7 +974,7 @@
                 </div>
 
                 <div class="controls">
-                  <button class="btn soft" id="p3PlayBtn">播放當前問題</button>
+                  <button class="btn soft" id="p3PlayBtn">播放語音</button>
                   <button class="btn primary" id="p3RecBtn">開始 / 停止錄音</button>
                   <button class="btn" id="p3NextBtn">下一題</button>
                 </div>
@@ -1070,8 +1008,10 @@
       <section id="view-mock" class="view">
         <div class="page-shell">
           <div class="page-head">
-            <h2>模擬真實考試</h2>
-            <p>P1 每題 45 秒，P2 150 秒，P3 每題 80 秒。超時後系統會自動打斷並進入下一題。</p>
+            <div>
+              <h2>模擬真實考試</h2>
+              <p>自動推進流程，超時自動打斷。</p>
+            </div>
           </div>
 
           <div class="mock-grid">
@@ -1095,8 +1035,8 @@
 
                 <div class="controls">
                   <button class="btn primary" id="mockStartBtn">開始考試</button>
-                  <button class="btn soft" id="mockReplayBtn">重播當前問題</button>
-                  <button class="btn danger" id="mockSkipBtn">跳過 / 打斷</button>
+                  <button class="btn soft" id="mockReplayBtn">重播問題</button>
+                  <button class="btn danger" id="mockSkipBtn">手動打斷 (Skip)</button>
                 </div>
               </div>
 
@@ -1107,7 +1047,7 @@
 
               <div class="card">
                 <h3>考後反饋</h3>
-                <div class="box" id="mockFeedback">完成模考後，這裡會根據錄音情況輸出反饋，不提供評分。</div>
+                <div class="box" id="mockFeedback">完成模考後，這裡會根據轉錄情況輸出節奏與架構反饋。</div>
               </div>
             </div>
 
@@ -1115,10 +1055,10 @@
               <div class="card">
                 <h3>模考規則</h3>
                 <div class="cue-list">
-                  <div class="cue-item">P1：抽 3 個主題，每主題抽 2 題。</div>
+                  <div class="cue-item">P1：抽 3 個主題，每主題 2 題。</div>
                   <div class="cue-item">P2：抽 1 個話題，顯示 Cue Card。</div>
                   <div class="cue-item">P3：從同話題抽 3 題延伸。</div>
-                  <div class="cue-item">考後輸出節奏、語速、填充詞與完成度反饋。</div>
+                  <div class="cue-item">全程錄音並在結束時給予診斷建議。</div>
                 </div>
               </div>
 
@@ -1136,13 +1076,18 @@
       <section id="view-recordings" class="view">
         <div class="page-shell">
           <div class="page-head">
-            <h2>錄音庫</h2>
-            <p>練習與模考錄音都會保存在當前頁面會話中。</p>
+            <div>
+              <h2>錄音庫</h2>
+              <p>本次連線的所有練習與模考錄音都會保存在此。</p>
+            </div>
+            <button class="btn soft" id="exportLogsBtn" style="min-height:40px; font-size:14px; padding: 8px 16px;">
+              匯出文字稿 (.txt)
+            </button>
           </div>
 
-          <div class="workspace" style="grid-template-columns:1fr;">
-            <div class="panel">
-              <div class="panel-inner">
+          <div class="workspace" style="grid-template-columns:1fr; padding-top: 0;">
+            <div class="panel" style="border: none; background: transparent; box-shadow: none;">
+              <div class="panel-inner" style="padding: 18px 0;">
                 <div class="record-list" id="allRecordings">
                   <div class="record-item"><h4>尚無錄音</h4></div>
                 </div>
@@ -1163,638 +1108,117 @@
   </div>
 
   <script>
-    const appState = {
-      currentView: 'home',
-      practice: {
-        type: null,
-        topicIndex: 0,
-        questionIndex: 0,
-        mode: 'p2'
-      },
-      filters: {
-        p1: 'all',
-        p23: 'all',
-        p3: 'all'
-      },
-      recorder: {
-        mediaRecorder: null,
-        stream: null,
-        chunks: [],
-        timer: null,
-        seconds: 0,
-        maxSeconds: 0,
-        target: null
-      },
-      recognition: {
-        supported: !!(window.SpeechRecognition || window.webkitSpeechRecognition),
-        instance: null,
-        transcript: ''
-      },
-      recordings: [],
-      mock: {
-        started: false,
-        queue: [],
-        index: -1,
-        currentPromptText: '',
-        prepTimer: null,
-        logs: [],
-        transcripts: []
-      }
-    };
-
+    // 2026 1-4 月當季題庫更新版
     const P1_BANK = [
-      { title:'Home', group:'core', tags:['core'], questions:[
-        'What kind of home do you live in?',
-        'What is your favourite room in your home?',
-        'Would you like to change anything about your home?',
-        'Do you think your home will be different in the future?'
-      ]},
-      { title:'Hometown', group:'core', tags:['core'], questions:[
-        'Where is your hometown?',
-        'What do you like most about it?',
-        'Has your hometown changed much in recent years?',
-        'Would you recommend it to visitors?'
-      ]},
-      { title:'Work', group:'core', tags:['core'], questions:[
-        'What kind of work do you do?',
-        'Why did you choose this job?',
-        'What do you enjoy most about your work?',
-        'Do you want to change jobs in the future?'
-      ]},
-      { title:'Study', group:'core', tags:['core'], questions:[
-        'What do you study?',
-        'Why did you choose this subject?',
-        'What do you enjoy most about your studies?',
-        'Would you like to study something else in the future?'
-      ]},
-      { title:'Daily Routine', group:'new', tags:['new'], questions:[
-        'What is your daily routine like?',
-        'Do you prefer planning your day or being spontaneous?',
-        'What part of the day are you most productive?',
-        'Has your routine changed recently?'
-      ]},
-      { title:'Morning Routine', group:'new', tags:['new'], questions:[
-        'What do you usually do in the morning?',
-        'Do you like getting up early?',
-        'Is breakfast important to you?',
-        'Do you think mornings are productive?'
-      ]},
-      { title:'Friends', group:'new', tags:['new'], questions:[
-        'Do you have a lot of friends or a small group of close friends?',
-        'What do you usually do with your friends?',
-        'How do people make friends nowadays?',
-        'Is it easier to make friends online?'
-      ]},
-      { title:'Technology', group:'new', tags:['new'], questions:[
-        'How often do you use technology in daily life?',
-        'What device do you use the most?',
-        'Has technology changed the way you study or work?',
-        'Do you think people rely too much on technology?'
-      ]},
-      { title:'Restaurants', group:'new', tags:['new'], questions:[
-        'Do you often eat at restaurants?',
-        'What kind of restaurants do you like?',
-        'What makes a restaurant memorable?',
-        'Are restaurants popular among young people in your city?'
-      ]},
-      { title:'Gifts', group:'new', tags:['new'], questions:[
-        'Do you often give gifts to other people?',
-        'What kind of gifts do you like receiving?',
-        'What was the best gift you have ever received?',
-        'Do you think expensive gifts are better?'
-      ]},
-      { title:'Chores', group:'new', tags:['new'], questions:[
-        'Do you like doing chores at home?',
-        'What chores do you usually do?',
-        'Did you do housework when you were younger?',
-        'Should children help with chores?'
-      ]},
-      { title:'Art', group:'new', tags:['new'], questions:[
-        'Are you interested in art in general?',
-        'Did you enjoy drawing or painting when you were a child?',
-        'Have you visited any art exhibitions recently?',
-        'Do you think art should be taught in school?'
-      ]},
-      { title:'Animals / Pets', group:'new', tags:['new'], questions:[
-        'Do you like animals?',
-        'Did you keep any pets when you were younger?',
-        'What kind of animal do you find most interesting?',
-        'Do you think people should do more to protect animals?'
-      ]},
-      { title:'Birthdays', group:'new', tags:['new'], questions:[
-        'Do you usually celebrate your birthday?',
-        'What did you do on your last birthday?',
-        'Are birthdays important to you?',
-        'How do people in your country usually celebrate birthdays?'
-      ]},
-      { title:'Breakfast', group:'new', tags:['new'], questions:[
-        'What do you usually eat for breakfast?',
-        'Do you think breakfast is important?',
-        'Has your breakfast habit changed over time?',
-        'Would you like to change anything about your morning meals?'
-      ]},
-      { title:'Chocolate', group:'new', tags:['new'], questions:[
-        'Do you enjoy eating chocolate?',
-        'How often do you buy chocolate?',
-        'Did you like chocolate more when you were young?',
-        'Why do you think chocolate is popular in many countries?'
-      ]},
-      { title:'Films / Movies', group:'new', tags:['new'], questions:[
-        'Do you enjoy watching films?',
-        'What type of films do you like most?',
-        'Do you prefer watching films at home or in the cinema?',
-        'Did you watch more films in the past than you do now?'
-      ]},
-      { title:'Flowers', group:'new', tags:['new'], questions:[
-        'Do you like flowers?',
-        'Have you ever bought flowers for someone?',
-        'Are flowers important in celebrations in your country?',
-        'Do you think flowers make places look better?'
-      ]},
-      { title:'Libraries', group:'new', tags:['new'], questions:[
-        'Do you still go to libraries?',
-        'Did you go to libraries when you were younger?',
-        'What kinds of people usually go to libraries?',
-        'Are libraries still necessary nowadays?'
-      ]},
-      { title:'Parks', group:'new', tags:['new'], questions:[
-        'Do you like going to parks?',
-        'Are there many parks in your area?',
-        'What do people usually do in parks?',
-        'Did you go to parks often as a child?'
-      ]},
-      { title:'Photos / Photography', group:'new', tags:['new'], questions:[
-        'Do you enjoy taking photos?',
-        'What do you usually photograph?',
-        'Do you prefer taking pictures or appearing in them?',
-        'Has photography become more important because of smartphones?'
-      ]},
-      { title:'Science', group:'new', tags:['new'], questions:[
-        'Are you interested in science?',
-        'Did you enjoy science classes at school?',
-        'What area of science do you find most interesting?',
-        'Do you think science changes people’s lives a lot?'
-      ]},
-      { title:'Weekends', group:'new', tags:['new'], questions:[
-        'What do you usually do on weekends?',
-        'Do you prefer busy weekends or quiet ones?',
-        'Did you spend weekends differently when you were younger?',
-        'What would your ideal weekend be like?'
-      ]},
-      { title:'Writing', group:'new', tags:['new'], questions:[
-        'Do you write a lot in daily life?',
-        'What kinds of things do you usually write?',
-        'Do you prefer typing or handwriting?',
-        'Do you think the way people write will continue to change?'
-      ]},
-      { title:'Weather', group:'must', tags:['must'], questions:[
-        'What kind of weather do you like most?',
-        'What is the weather usually like where you live?',
-        'Does weather affect your mood?',
-        'Do you check the weather forecast often?'
-      ]},
-      { title:'Public Transport', group:'must', tags:['must'], questions:[
-        'Do you often use public transport?',
-        'What type of public transport is common in your city?',
-        'Is public transport convenient where you live?',
-        'Do you think more people will use public transport in the future?'
-      ]},
-      { title:'Music', group:'must', tags:['must'], questions:[
-        'Do you enjoy listening to music?',
-        'What kind of music do you like?',
-        'When do you usually listen to music?',
-        'Do you think music is important in daily life?'
-      ]},
-      { title:'Sports', group:'must', tags:['must'], questions:[
-        'Do you play any sports?',
-        'What sports are popular in your country?',
-        'Did you like sports when you were a child?',
-        'Do you prefer watching sports or playing them?'
-      ]},
-      { title:'Reading', group:'recycled', tags:[], questions:[
-        'Do you enjoy reading?',
-        'What kind of books do you like?',
-        'Do you prefer e-books or printed books?',
-        'Is reading popular among young people?'
-      ]},
-      { title:'Shopping', group:'recycled', tags:[], questions:[
-        'Do you enjoy shopping?',
-        'Do you prefer online shopping or shopping in stores?',
-        'What do you usually buy?',
-        'Has shopping changed in your country?'
-      ]},
-      { title:'Bicycles', group:'recycled', tags:[], questions:[
-        'Do you have a bicycle?',
-        'When was the last time you rode a bicycle?',
-        'Is cycling popular in your city?',
-        'Do you think more people will cycle in the future?'
-      ]},
-      { title:'Museums', group:'recycled', tags:[], questions:[
-        'Do you like visiting museums?',
-        'Did you often go to museums as a child?',
-        'What kind of museums are popular in your country?',
-        'Do you think museums are useful for young people?'
-      ]}
+      // Core (必考題)
+      { title:'Home & Accommodation', group:'core', tags:['core'], questions:['What kind of home do you live in?','What is your favourite room in your home?','Would you like to change anything about your home?','Do you think your home will be different in the future?']},
+      { title:'Hometown', group:'core', tags:['core'], questions:['Where is your hometown?','What do you like most about it?','Has your hometown changed much in recent years?','Would you recommend it to visitors?']},
+      { title:'Work & Study', group:'core', tags:['core'], questions:['What kind of work do you do? / What do you study?','Why did you choose this job/subject?','What do you enjoy most about your work/studies?','Do you want to change jobs/subjects in the future?']},
+      
+      // New (當季新題 2026 Jan-Apr)
+      { title:'Life Stages', group:'new', tags:['new'], questions:['What is the most important stage in a person’s life?','Did you enjoy your childhood?','Do you think adults are happier than children?','What do you want to do in the next stage of your life?']},
+      { title:'Childhood Activities', group:'new', tags:['new'], questions:['What did you like to do when you were a child?','Did you prefer playing indoors or outdoors?','Who did you usually play with?','Do children today play the same games as you did?']},
+      { title:'Pets and Animals', group:'new', tags:['new'], questions:['Do you have a pet?','What is your favourite animal?','Are pets popular in your country?','Why do some people keep pets?']},
+      { title:'Sharing Things', group:'new', tags:['new'], questions:['Do you like sharing things with others?','Did your parents encourage you to share when you were a kid?','What kind of things are not suitable for sharing?','Who is the first person you would like to share good news with?']},
+      { title:'Chatting', group:'new', tags:['new'], questions:['Do you like chatting with friends?','Do you prefer to chat with a group of people or just one friend?','Do you ever argue with your friends?','What do you usually chat about?']},
+      { title:'Crowded Places', group:'new', tags:['new'], questions:['Do you like crowded places?','When was the last time you were in a crowded place?','Is the city where you live crowded?','How do you feel in crowded places?']},
+      { title:'Advertisements', group:'new', tags:['new'], questions:['How do you feel about advertisements?','Do you like advertisements on TV?','Have you ever bought something because of an advertisement?','Do you think there are too many ads nowadays?']},
+      
+      // Recycled (保留話題)
+      { title:'Daily Routine', group:'recycled', tags:['recycled'], questions:['What is your daily routine like?','Do you prefer planning your day or being spontaneous?','What part of the day are you most productive?','Has your routine changed recently?']},
+      { title:'Technology', group:'recycled', tags:['recycled'], questions:['How often do you use technology in daily life?','What device do you use the most?','Has technology changed the way you study or work?','Do you think people rely too much on technology?']},
+      { title:'Weather', group:'recycled', tags:['recycled'], questions:['What kind of weather do you like most?','Does weather affect your mood?','Do you check the weather forecast often?','What do you usually do on rainy days?']}
     ];
 
     const P23_BANK = [
+      // New (當季新題 2026 Jan-Apr)
+      {
+        title:'Describe a place with a lot of trees',
+        group:'new', tags:['new'],
+        p2:['Describe a place with a lot of trees that you would like to visit.','You should say:','What park/forest it is and where it is','How you know about it','Why you want to go there','And explain what it is like.'],
+        p3:['Why do people like visiting natural places?','Should governments do more to protect natural scenery?','Do young people appreciate nature as much as older people?']
+      },
+      {
+        title:'Describe a child you know who likes drawing',
+        group:'new', tags:['new'],
+        p2:['Describe a child you know who likes drawing very much.','You should say:','How you know him/her','What he/she is like','How often he/she draws','And explain why you think he/she likes drawing.'],
+        p3:['What is the right age for a child to learn drawing?','Why do most children draw more often than adults do?','How do artworks inspire people?']
+      },
+      {
+        title:'Describe a person who makes plans a lot',
+        group:'new', tags:['new'],
+        p2:['Describe a person who makes plans a lot.','You should say:','Who he/she is','How you know him/her','What plans he/she makes','And explain how you feel about this person.'],
+        p3:['Do you think it\'s important to plan ahead?','Do you think children should plan their future careers?','Should children ask parents for advice when making plans?']
+      },
+      {
+        title:'Describe something you can\'t live without',
+        group:'new', tags:['new'],
+        p2:['Describe something that you can\'t live without (not a computer/phone).','You should say:','What it is','What you do with it','How it helps you in your life','And explain why you can\'t live without it.'],
+        p3:['Why are children attracted to new things?','Why do some grown-ups hate to throw out old things?','What influences people to buy new things?']
+      },
+      {
+        title:'Describe a time you were not allowed to use your phone',
+        group:'new', tags:['new'],
+        p2:['Describe an occasion when you were not allowed to use your mobile phone.','You should say:','When it was','Where it was','Why you were not allowed to use it','And explain how you felt about it.'],
+        p3:['Do people rely too much on their phones nowadays?','Should mobile phones be banned in schools?','How does mobile phone usage affect face-to-face communication?']
+      },
+      {
+        title:'Describe someone else\'s room you enjoy spending time in',
+        group:'new', tags:['new'],
+        p2:['Describe someone else\'s room you enjoy spending time in.','You should say:','Whose room it is','What the room looks like','What you do in that room','And explain why you enjoy spending time there.'],
+        p3:['Do people care a lot about the decoration of their rooms?','What kind of room do young people like?','How does the environment of a room affect a person\'s mood?']
+      },
+      {
+        title:'Describe an unusual meal',
+        group:'new', tags:['new'],
+        p2:['Describe an unusual meal you had.','You should say:','When and where you had it','Who you had it with','What you ate','And explain why it was unusual.'],
+        p3:['How has people\'s diet changed in your country?','Do people still cook at home as much as before?','Why do people like trying unusual food?']
+      },
+      
+      // Recycled (保留話題)
       {
         title:'Describe a person who inspired you',
-        group:'must',
-        tags:['new','must'],
-        p2:[
-          'Describe a person who inspired you.',
-          'You should say:',
-          'Who this person is',
-          'How you know this person',
-          'What this person did',
-          'And explain why you felt inspired by this person'
-        ],
-        p3:[
-          'Why do some people become role models for others?',
-          'Do young people today need role models more than before?',
-          'Can famous people have a positive influence on society?'
-        ]
-      },
-      {
-        title:'Describe a friend you value',
-        group:'new',
-        tags:['new'],
-        p2:[
-          'Describe a friend you value.',
-          'You should say:',
-          'Who this person is',
-          'How you met',
-          'What you often do together',
-          'And explain why this friendship is important to you'
-        ],
-        p3:[
-          'What makes a friendship last a long time?',
-          'Do adults make friends in the same way as children?',
-          'Is it easier to maintain friendships today?'
-        ]
-      },
-      {
-        title:'Describe a difficult decision you made',
-        group:'new',
-        tags:['new'],
-        p2:[
-          'Describe a difficult decision you made.',
-          'You should say:',
-          'What the decision was',
-          'Why it was difficult',
-          'How you made the decision',
-          'And explain the result of that decision'
-        ],
-        p3:[
-          'Why do some people find it hard to make decisions?',
-          'Should young people make important decisions independently?',
-          'Do people nowadays have more choices than in the past?'
-        ]
-      },
-      {
-        title:'Describe a place that surprised you',
-        group:'new',
-        tags:['new'],
-        p2:[
-          'Describe a place that surprised you.',
-          'You should say:',
-          'Where the place is',
-          'When you went there',
-          'What you saw there',
-          'And explain why it surprised you'
-        ],
-        p3:[
-          'Why do some places leave a strong impression on people?',
-          'Do modern cities still surprise people?',
-          'How can tourism change a place?'
-        ]
+        group:'recycled', tags:['recycled'],
+        p2:['Describe a person who inspired you.','You should say:','Who this person is','How you know this person','What this person did','And explain why you felt inspired by this person.'],
+        p3:['Why do some people become role models for others?','Do young people today need role models more than before?','Can famous people have a positive influence on society?']
       },
       {
         title:'Describe a skill you learned recently',
-        group:'must',
-        tags:['new','must'],
-        p2:[
-          'Describe a skill you learned recently.',
-          'You should say:',
-          'What the skill is',
-          'Why you wanted to learn it',
-          'How you learned it',
-          'And explain how useful it is to you'
-        ],
-        p3:[
-          'What skills are important for young people today?',
-          'Do schools teach enough practical skills?',
-          'Is it easier to learn skills now because of the internet?'
-        ]
+        group:'recycled', tags:['recycled'],
+        p2:['Describe a skill you learned recently.','You should say:','What the skill is','Why you wanted to learn it','How you learned it','And explain how useful it is to you.'],
+        p3:['What skills are important for young people today?','Do schools teach enough practical skills?','Is it easier to learn skills now because of the internet?']
       },
       {
-        title:'Describe an important object you own',
-        group:'new',
-        tags:['new'],
-        p2:[
-          'Describe an important object you own.',
-          'You should say:',
-          'What it is',
-          'How you got it',
-          'How often you use it',
-          'And explain why it is important to you'
-        ],
-        p3:[
-          'Why do people become attached to certain objects?',
-          'Do people own too many unnecessary things nowadays?',
-          'Will sentimental value remain important in the future?'
-        ]
-      },
-      {
-        title:'Describe a tradition in your country',
-        group:'must',
-        tags:['new','must'],
-        p2:[
-          'Describe a tradition in your country.',
-          'You should say:',
-          'What the tradition is',
-          'When it happens',
-          'How people celebrate it',
-          'And explain why it is important'
-        ],
-        p3:[
-          'Why should traditions be preserved?',
-          'Do young people value traditions as much as older people?',
-          'How does globalization influence local traditions?'
-        ]
-      },
-      {
-        title:'Describe a goal you want to achieve',
-        group:'must',
-        tags:['new','must'],
-        p2:[
-          'Describe a goal you want to achieve.',
-          'You should say:',
-          'What the goal is',
-          'Why you set this goal',
-          'What you have done about it',
-          'And explain why it matters to you'
-        ],
-        p3:[
-          'Why is goal-setting important?',
-          'Do people set more personal goals or career goals nowadays?',
-          'Should parents help children set long-term goals?'
-        ]
-      },
-      {
-        title:'Describe a difficult thing you did successfully',
-        group:'must',
-        tags:['new','must'],
-        p2:[
-          'Describe a difficult thing you did successfully.',
-          'You should say:',
-          'What it was',
-          'Why it was difficult',
-          'How you managed to do it',
-          'And explain how you felt afterwards'
-        ],
-        p3:[
-          'Why do people feel proud after overcoming difficulties?',
-          'Should children deal with some problems by themselves?',
-          'Do difficult experiences make people stronger?'
-        ]
-      },
-      {
-        title:'Describe a useful website or app',
-        group:'must',
-        tags:['new','must'],
-        p2:[
-          'Describe a useful website or app.',
-          'You should say:',
-          'What it is',
-          'How often you use it',
-          'What you use it for',
-          'And explain why you think it is useful'
-        ],
-        p3:[
-          'Why are apps important in modern life?',
-          'Do people depend too much on apps?',
-          'Will websites become less important in the future?'
-        ]
-      },
-      {
-        title:'Describe a place in your country you would recommend',
-        group:'must',
-        tags:['new','must'],
-        p2:[
-          'Describe a place in your country you would recommend.',
-          'You should say:',
-          'What the place is',
-          'Where it is',
-          'What people can do there',
-          'And explain why you would recommend it'
-        ],
-        p3:[
-          'Why do some places become popular tourist attractions?',
-          'Should governments spend money promoting tourism?',
-          'How can tourism benefit local communities?'
-        ]
-      },
-      {
-        title:'Describe a time when you learned from a mistake',
-        group:'new',
-        tags:['new'],
-        p2:[
-          'Describe a time when you learned from a mistake.',
-          'You should say:',
-          'What mistake you made',
-          'When it happened',
-          'What you learned',
-          'And explain how it influenced you'
-        ],
-        p3:[
-          'Why do mistakes help people grow?',
-          'Should children be allowed to make mistakes?',
-          'Do schools teach enough about learning from failure?'
-        ]
-      },
-      {
-        title:'Describe a person who likes dressing well',
-        group:'new',
-        tags:['new'],
-        p2:[
-          'Describe a person who likes dressing well.',
-          'You should say:',
-          'Who this person is',
-          'How you know this person',
-          'What kind of clothes they like',
-          'And explain why you think this person dresses well'
-        ],
-        p3:[
-          'Do people judge others by the way they dress?',
-          'Why do some people care a lot about fashion?',
-          'Do clothes influence confidence?'
-        ]
-      },
-      {
-        title:'Describe a place with beautiful natural scenery',
-        group:'must',
-        tags:['new','must'],
-        p2:[
-          'Describe a place with beautiful natural scenery.',
-          'You should say:',
-          'Where it is',
-          'When you visited it',
-          'What you saw there',
-          'And explain why you think it is beautiful'
-        ],
-        p3:[
-          'Why do people like visiting natural places?',
-          'Should governments do more to protect natural scenery?',
-          'Do young people appreciate nature as much as older people?'
-        ]
-      },
-      {
-        title:'Describe a person who encouraged you to achieve a goal',
-        group:'new',
-        tags:['new'],
-        p2:[
-          'Describe a person who encouraged you to achieve a goal.',
-          'You should say:',
-          'Who this person is',
-          'What goal you wanted to achieve',
-          'How this person encouraged you',
-          'And explain how you felt about that support'
-        ],
-        p3:[
-          'Why do some people need more encouragement than others?',
-          'Is family support more important than support from friends?',
-          'How can teachers motivate students effectively?'
-        ]
-      },
-      {
-        title:'Describe a famous person you would like to meet',
-        group:'must',
-        tags:['must'],
-        p2:[
-          'Describe a famous person you would like to meet.',
-          'You should say:',
-          'Who the person is',
-          'What they are famous for',
-          'Why you want to meet them',
-          'And explain what you would talk about'
-        ],
-        p3:[
-          'Why do people admire famous people?',
-          'Do famous people influence young people too much?',
-          'Is fame always a good thing?'
-        ]
-      },
-      {
-        title:'Describe a city you think is interesting',
-        group:'must',
-        tags:['must'],
-        p2:[
-          'Describe a city you think is interesting.',
-          'You should say:',
-          'What city it is',
-          'When you visited or learned about it',
-          'What the city is like',
-          'And explain why it is interesting'
-        ],
-        p3:[
-          'Why do many young people prefer living in cities?',
-          'What problems are common in cities?',
-          'Will cities become better places to live in the future?'
-        ]
-      },
-      {
-        title:'Describe a person who gave a clever solution to a problem',
-        group:'must',
-        tags:['must'],
-        p2:[
-          'Describe a person who gave a clever solution to a problem.',
-          'You should say:',
-          'Who the person is',
-          'What the problem was',
-          'What solution they suggested',
-          'And explain why you thought it was clever'
-        ],
-        p3:[
-          'Why are problem-solving skills important?',
-          'Do adults and children solve problems differently?',
-          'Can teamwork lead to better solutions?'
-        ]
-      },
-      {
-        title:'Describe a memorable trip',
-        group:'recycled',
-        tags:[],
-        p2:[
-          'Describe a memorable trip.',
-          'You should say:',
-          'Where you went',
-          'Who you went with',
-          'What happened during the trip',
-          'And explain why it was memorable'
-        ],
-        p3:[
-          'Why do people enjoy travelling?',
-          'How has travel changed in recent years?',
-          'Do you think virtual travel can replace real travel?'
-        ]
-      },
-      {
-        title:'Describe a time you helped someone',
-        group:'recycled',
-        tags:[],
-        p2:[
-          'Describe a time you helped someone.',
-          'You should say:',
-          'Who the person was',
-          'What problem they had',
-          'How you helped',
-          'And explain how you felt afterwards'
-        ],
-        p3:[
-          'Why should people help others?',
-          'Do young people help others enough nowadays?',
-          'Should schools encourage community service?'
-        ]
-      },
-      {
-        title:'Describe a time when you used imagination',
-        group:'recycled',
-        tags:['must'],
-        p2:[
-          'Describe a time when you used imagination.',
-          'You should say:',
-          'What the situation was',
-          'Why imagination was needed',
-          'What you did',
-          'And explain the result'
-        ],
-        p3:[
-          'Why is imagination important for children?',
-          'Is imagination useful in adult life?',
-          'Can technology reduce people’s imagination?'
-        ]
-      },
-      {
-        title:'Describe a successful person you know',
-        group:'recycled',
-        tags:['must'],
-        p2:[
-          'Describe a successful person you know.',
-          'You should say:',
-          'Who the person is',
-          'What they do',
-          'How you know them',
-          'And explain why you think they are successful'
-        ],
-        p3:[
-          'How do people define success?',
-          'Do young people and older people see success differently?',
-          'Is money the most important sign of success?'
-        ]
+        title:'Describe a difficult decision you made',
+        group:'recycled', tags:['recycled'],
+        p2:['Describe a difficult decision you made.','You should say:','What the decision was','Why it was difficult','How you made the decision','And explain the result of that decision.'],
+        p3:['Why do some people find it hard to make decisions?','Should young people make important decisions independently?','Do people nowadays have more choices than in the past?']
       }
     ];
+
+    const appState = {
+      currentView: 'home',
+      practice: { type: null, topicIndex: 0, questionIndex: 0, mode: 'p2' },
+      filters: { p1: 'all', p23: 'all', p3: 'all' },
+      recorder: { mediaRecorder: null, stream: null, chunks: [], timer: null, seconds: 0, maxSeconds: 0, target: null },
+      recognition: { supported: !!(window.SpeechRecognition || window.webkitSpeechRecognition), instance: null, transcript: '' },
+      recordings: [],
+      mock: { started: false, queue: [], index: -1, currentPromptText: '', prepTimer: null, logs: [], transcripts: [] }
+    };
+
+    function getTtsRate() {
+      const desk = document.getElementById('globalTtsRate');
+      const mob = document.getElementById('mobileTtsRate');
+      if(window.innerWidth <= 980) return parseFloat(mob.value) || 0.95;
+      return parseFloat(desk.value) || 0.95;
+    }
+
+    function syncTtsSelects(e) {
+      document.getElementById('globalTtsRate').value = e.target.value;
+      document.getElementById('mobileTtsRate').value = e.target.value;
+    }
+    document.getElementById('globalTtsRate').addEventListener('change', syncTtsSelects);
+    document.getElementById('mobileTtsRate').addEventListener('change', syncTtsSelects);
 
     function openView(view){
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -1811,13 +1235,11 @@
 
     function renderBadges(tags){
       if(!tags || !tags.length) return '';
-      return `
-        <div class="badges">
-          ${tags.includes('core') ? '<span class="badge core">Core</span>' : ''}
-          ${tags.includes('new') ? '<span class="badge new">新題</span>' : ''}
-          ${tags.includes('must') ? '<span class="badge must">必考</span>' : ''}
-        </div>
-      `;
+      return `<div class="badges">
+        ${tags.includes('core') ? '<span class="badge core">必考題</span>' : ''}
+        ${tags.includes('new') ? '<span class="badge new">當季新題</span>' : ''}
+        ${tags.includes('recycled') ? '<span class="badge recycled">保留話題</span>' : ''}
+      </div>`;
     }
 
     function filterTopicArray(data, keyword, tag){
@@ -1831,9 +1253,7 @@
     function jumpToContent(id){
       const el = document.getElementById(id);
       if(!el) return;
-      if(window.innerWidth <= 980){
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      if(window.innerWidth <= 980) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function speak(text){
@@ -1841,11 +1261,9 @@
         window.speechSynthesis.cancel();
         const utter = new SpeechSynthesisUtterance(text);
         utter.lang = 'en-GB';
-        utter.rate = 0.95;
+        utter.rate = getTtsRate();
         window.speechSynthesis.speak(utter);
-      }catch(err){
-        console.warn(err);
-      }
+      }catch(err){ console.warn(err); }
     }
 
     function makeRecognition(onUpdate){
@@ -1857,9 +1275,7 @@
       rec.continuous = true;
       rec.onresult = (e) => {
         let text = '';
-        for(let i = 0; i < e.results.length; i++){
-          text += e.results[i][0].transcript + ' ';
-        }
+        for(let i = 0; i < e.results.length; i++){ text += e.results[i][0].transcript + ' '; }
         onUpdate(text.trim());
       };
       return rec;
@@ -1871,15 +1287,17 @@
       return `${m}:${s}`;
     }
 
+    function updateRecordingUIState(isRecording, targetId) {
+      const btn = document.getElementById(targetId);
+      if(btn) {
+        if(isRecording) btn.classList.add('is-recording');
+        else btn.classList.remove('is-recording');
+      }
+    }
+
     function stopRecording(){
-      if(appState.recorder.timer){
-        clearInterval(appState.recorder.timer);
-        appState.recorder.timer = null;
-      }
-      if(appState.recognition.instance){
-        try{ appState.recognition.instance.stop(); }catch(e){}
-        appState.recognition.instance = null;
-      }
+      if(appState.recorder.timer){ clearInterval(appState.recorder.timer); appState.recorder.timer = null; }
+      if(appState.recognition.instance){ try{ appState.recognition.instance.stop(); }catch(e){} appState.recognition.instance = null; }
       if(appState.recorder.mediaRecorder && appState.recorder.mediaRecorder.state !== 'inactive'){
         appState.recorder.mediaRecorder.stop();
       }
@@ -1887,13 +1305,14 @@
         appState.recorder.stream.getTracks().forEach(t => t.stop());
         appState.recorder.stream = null;
       }
+      ['p1RecBtn','p23RecBtn','p3RecBtn'].forEach(id => updateRecordingUIState(false, id));
     }
 
-    async function startRecording(target, maxSeconds, onTick, onStop){
+    async function startRecording(target, maxSeconds, onTick, onStop, btnId){
       stopRecording();
 
       if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-        alert('你的瀏覽器目前不支援錄音，建議使用最新版 Safari 或 Chrome。');
+        alert('不支援錄音，請使用最新版 Safari 或 Chrome。');
         return false;
       }
 
@@ -1909,20 +1328,17 @@
         appState.recorder.target = target;
         appState.recognition.transcript = '';
 
-        mediaRecorder.ondataavailable = (e) => {
-          if(e.data.size > 0) appState.recorder.chunks.push(e.data);
-        };
+        if(btnId) updateRecordingUIState(true, btnId);
+
+        mediaRecorder.ondataavailable = (e) => { if(e.data.size > 0) appState.recorder.chunks.push(e.data); };
 
         mediaRecorder.onstop = () => {
+          if(btnId) updateRecordingUIState(false, btnId);
           const blob = new Blob(appState.recorder.chunks, { type: 'audio/webm' });
           const url = URL.createObjectURL(blob);
           const item = {
-            id: Date.now() + Math.random().toString(16).slice(2),
-            target,
-            duration: appState.recorder.seconds,
-            url,
-            transcript: appState.recognition.transcript || '',
-            createdAt: new Date().toLocaleString()
+            id: Date.now(), target, duration: appState.recorder.seconds, url,
+            transcript: appState.recognition.transcript || '', createdAt: new Date().toLocaleString()
           };
           appState.recordings.unshift(item);
           renderRecordings();
@@ -1936,17 +1352,13 @@
             appState.recognition.transcript = text;
             updateTranscriptBox(target, text);
           });
-          if(appState.recognition.instance){
-            try{ appState.recognition.instance.start(); }catch(e){}
-          }
+          if(appState.recognition.instance){ try{ appState.recognition.instance.start(); }catch(e){} }
         }
 
         appState.recorder.timer = setInterval(() => {
           appState.recorder.seconds += 1;
           if(onTick) onTick(appState.recorder.seconds, maxSeconds);
-          if(appState.recorder.seconds >= maxSeconds){
-            autoInterrupt(target);
-          }
+          if(appState.recorder.seconds >= maxSeconds) autoInterrupt(target);
         }, 1000);
 
         return true;
@@ -1958,35 +1370,23 @@
     }
 
     function updateTranscriptBox(target, text){
-      if(target === 'p1'){
-        document.getElementById('p1Transcript').textContent = text || '語音轉錄將顯示於此。';
-      }else if(target === 'p23'){
-        document.getElementById('p23Transcript').textContent = text || '錄音轉錄將顯示於此。';
-      }else if(target === 'p3'){
-        document.getElementById('p3Transcript').textContent = text || '轉錄內容將顯示於此。';
-      }else if(target === 'mock'){
-        document.getElementById('mockSubtle').textContent = text || '正在錄音中。';
-      }
+      if(target === 'p1') document.getElementById('p1Transcript').textContent = text || '語音轉錄...';
+      else if(target === 'p23') document.getElementById('p23Transcript').textContent = text || '錄音轉錄...';
+      else if(target === 'p3') document.getElementById('p3Transcript').textContent = text || '轉錄內容...';
+      else if(target === 'mock') document.getElementById('mockSubtle').textContent = text || '錄音中...';
     }
 
     function autoInterrupt(target){
+      stopRecording();
       if(target === 'p1'){
-        stopRecording();
         document.getElementById('p1RecState').textContent = '已打斷';
-        alert('已超過 45 秒，系統將進入下一題。');
         nextP1Question();
       }else if(target === 'p23'){
-        stopRecording();
-        const max = appState.practice.mode === 'p2' ? 150 : 80;
-        alert(`已超過 ${max} 秒，系統將進入下一題。`);
         nextP23Question();
       }else if(target === 'p3'){
-        stopRecording();
         document.getElementById('p3RecState').textContent = '已打斷';
-        alert('已超過 80 秒，系統將進入下一題。');
         nextP3Question();
       }else if(target === 'mock'){
-        stopRecording();
         appState.mock.logs.push(`超時打斷：${appState.mock.currentPromptText}`);
         updateMockLog();
         nextMockQuestion();
@@ -1997,7 +1397,7 @@
       const html = appState.recordings.length
         ? appState.recordings.map(item => `
           <div class="record-item">
-            <h4>${item.target} · ${item.createdAt} · ${item.duration}s</h4>
+            <h4>${item.target.toUpperCase()} · ${item.createdAt} · ${item.duration}s</h4>
             <div class="subtle" style="margin-bottom:8px;">${item.transcript || '無轉錄內容'}</div>
             <audio controls src="${item.url}"></audio>
           </div>
@@ -2008,131 +1408,107 @@
       document.getElementById('mockRecordings').innerHTML = html;
     }
 
+    document.getElementById('exportLogsBtn').addEventListener('click', () => {
+      if(!appState.recordings.length) return alert('目前尚無錄音紀錄可匯出。');
+      let textContent = "=== IELTS Copilot 練習紀錄 ===\n\n";
+      appState.recordings.forEach((item) => {
+        textContent += `[${item.createdAt}] 類型: ${item.target.toUpperCase()} | 耗時: ${item.duration}s\n`;
+        textContent += `內容: ${item.transcript || '(無語音轉錄內容)'}\n`;
+        textContent += `------------------------------------\n`;
+      });
+      const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `IELTS_Logs_${new Date().getTime()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // P1 邏輯
     function renderP1List(){
-      const keyword = document.getElementById('p1Search').value.trim();
-      const tag = appState.filters.p1;
-      const list = filterTopicArray(P1_BANK, keyword, tag);
+      const list = filterTopicArray(P1_BANK, document.getElementById('p1Search').value.trim(), appState.filters.p1);
       const wrap = document.getElementById('p1List');
-
       wrap.innerHTML = list.map(topic => {
-        const realIndex = P1_BANK.findIndex(x => x.title === topic.title);
-        return `
-          <button class="topic-item ${appState.practice.type === 'p1' && appState.practice.topicIndex === realIndex ? 'active' : ''}" data-index="${realIndex}">
-            <div class="topic-title">${topic.title}</div>
-            <div class="topic-sub">${topic.group === 'core' ? '固定開場核心主題' : topic.group === 'must' ? '高頻必練主題' : topic.group === 'new' ? '較新與近期高頻主題' : '常見循環話題'}</div>
-            ${renderBadges(topic.tags)}
-          </button>
-        `;
+        const i = P1_BANK.findIndex(x => x.title === topic.title);
+        const subTitle = topic.group === 'core' ? '固定必考核心主題' : topic.group === 'new' ? '2026 1-4月 當季新題' : '本季保留換庫話題';
+        return `<button class="topic-item ${appState.practice.type === 'p1' && appState.practice.topicIndex === i ? 'active' : ''}" data-index="${i}">
+          <div class="topic-title">${topic.title}</div>
+          <div class="topic-sub">${subTitle}</div>
+          ${renderBadges(topic.tags)}
+        </button>`;
       }).join('');
-
       wrap.querySelectorAll('.topic-item').forEach(btn => {
-        btn.addEventListener('click', () => {
-          selectP1(Number(btn.dataset.index));
-          jumpToContent('p1ContentArea');
-        });
+        btn.addEventListener('click', () => { selectP1(Number(btn.dataset.index)); jumpToContent('p1ContentArea'); });
       });
     }
 
     function selectP1(index){
-      appState.practice.type = 'p1';
-      appState.practice.topicIndex = index;
-      appState.practice.questionIndex = 0;
+      appState.practice.type = 'p1'; appState.practice.topicIndex = index; appState.practice.questionIndex = 0;
       const topic = P1_BANK[index];
-
       document.getElementById('p1Title').textContent = topic.title;
-      document.getElementById('p1Meta').textContent = '題目將以語音播放，畫面不顯示具體問題。';
       document.getElementById('p1QIndex').textContent = `1 / ${topic.questions.length}`;
       document.getElementById('p1RecState').textContent = '待機';
       document.getElementById('p1Timer').textContent = '00:00';
-      document.getElementById('p1Transcript').textContent = '語音轉錄將顯示於此。';
-
       renderP1List();
     }
 
     function playP1Question(){
       if(appState.practice.type !== 'p1') return;
-      const topic = P1_BANK[appState.practice.topicIndex];
-      speak(topic.questions[appState.practice.questionIndex]);
+      speak(P1_BANK[appState.practice.topicIndex].questions[appState.practice.questionIndex]);
     }
 
     async function toggleP1Recording(){
       if(appState.recorder.mediaRecorder && appState.recorder.mediaRecorder.state === 'recording'){
-        stopRecording();
-        document.getElementById('p1RecState').textContent = '已停止';
-        return;
+        stopRecording(); document.getElementById('p1RecState').textContent = '已停止'; return;
       }
-      if(appState.practice.type !== 'p1') return;
-
       document.getElementById('p1RecState').textContent = '錄音中';
-      await startRecording('p1', 45, (sec) => {
-        document.getElementById('p1Timer').textContent = formatTime(sec);
-      }, () => {
-        document.getElementById('p1RecState').textContent = '已保存';
-      });
+      await startRecording('p1', 45, (sec) => document.getElementById('p1Timer').textContent = formatTime(sec), 
+        () => document.getElementById('p1RecState').textContent = '已保存', 'p1RecBtn');
     }
 
     function nextP1Question(){
       if(appState.practice.type !== 'p1') return;
       const topic = P1_BANK[appState.practice.topicIndex];
       appState.practice.questionIndex = (appState.practice.questionIndex + 1) % topic.questions.length;
-
       document.getElementById('p1QIndex').textContent = `${appState.practice.questionIndex + 1} / ${topic.questions.length}`;
-      document.getElementById('p1RecState').textContent = '待機';
       document.getElementById('p1Timer').textContent = '00:00';
       document.getElementById('p1Transcript').textContent = '語音轉錄將顯示於此。';
     }
 
+    // P2/P3 邏輯
     function renderP23List(){
-      const keyword = document.getElementById('p23Search').value.trim();
-      const tag = appState.filters.p23;
-      const list = filterTopicArray(P23_BANK, keyword, tag);
+      const list = filterTopicArray(P23_BANK, document.getElementById('p23Search').value.trim(), appState.filters.p23);
       const wrap = document.getElementById('p23List');
-
       wrap.innerHTML = list.map(topic => {
-        const realIndex = P23_BANK.findIndex(x => x.title === topic.title);
-        return `
-          <button class="topic-item ${appState.practice.type === 'p23' && appState.practice.topicIndex === realIndex ? 'active' : ''}" data-index="${realIndex}">
-            <div class="topic-title">${topic.title}</div>
-            <div class="topic-sub">${topic.group === 'must' ? '高頻必練話題' : topic.group === 'new' ? '較新與近期高頻話題' : '常見循環話題'}</div>
-            ${renderBadges(topic.tags)}
-          </button>
-        `;
+        const i = P23_BANK.findIndex(x => x.title === topic.title);
+        return `<button class="topic-item ${appState.practice.type === 'p23' && appState.practice.topicIndex === i ? 'active' : ''}" data-index="${i}">
+          <div class="topic-title">${topic.title}</div>
+          ${renderBadges(topic.tags)}
+        </button>`;
       }).join('');
-
       wrap.querySelectorAll('.topic-item').forEach(btn => {
-        btn.addEventListener('click', () => {
-          selectP23(Number(btn.dataset.index));
-          jumpToContent('p23ContentArea');
-        });
+        btn.addEventListener('click', () => { selectP23(Number(btn.dataset.index)); jumpToContent('p23ContentArea'); });
       });
     }
 
     function selectP23(index){
-      appState.practice.type = 'p23';
-      appState.practice.topicIndex = index;
-      appState.practice.questionIndex = 0;
-      appState.practice.mode = 'p2';
-      renderP23Card();
-      renderP23List();
+      appState.practice.type = 'p23'; appState.practice.topicIndex = index; appState.practice.questionIndex = 0; appState.practice.mode = 'p2';
+      renderP23Card(); renderP23List();
     }
 
     function switchP23(mode){
-      if(appState.practice.type !== 'p23') return;
-      appState.practice.mode = mode;
-      appState.practice.questionIndex = 0;
-      renderP23Card();
+      appState.practice.mode = mode; appState.practice.questionIndex = 0; renderP23Card();
     }
 
     function renderP23Card(){
       const topic = P23_BANK[appState.practice.topicIndex];
       const mode = appState.practice.mode;
-
       document.getElementById('p23Title').textContent = topic.title;
       document.getElementById('p23Mode').textContent = mode.toUpperCase();
       document.getElementById('p23QIndex').textContent = mode === 'p2' ? '1 / 1' : `${appState.practice.questionIndex + 1} / ${topic.p3.length}`;
       document.getElementById('p23Limit').textContent = mode === 'p2' ? '150s' : '80s';
       document.getElementById('p23Timer').textContent = '00:00';
-      document.getElementById('p23Transcript').textContent = '錄音轉錄將顯示於此。';
 
       document.getElementById('switchP2Btn').classList.toggle('active', mode === 'p2');
       document.getElementById('switchP3Btn').classList.toggle('active', mode === 'p3');
@@ -2140,227 +1516,98 @@
       if(mode === 'p2'){
         document.getElementById('p2CardBox').style.display = 'block';
         document.getElementById('p3HiddenBox').style.display = 'none';
-        document.getElementById('p23Meta').textContent = 'P2 顯示 Cue Card，錄音限時 150 秒。';
         document.getElementById('p2CueList').innerHTML = topic.p2.map(line => `<div class="cue-item">${line}</div>`).join('');
       }else{
         document.getElementById('p2CardBox').style.display = 'none';
         document.getElementById('p3HiddenBox').style.display = 'block';
-        document.getElementById('p23Meta').textContent = 'P3 題幹隱藏，將以語音播放。每題限時 80 秒。';
       }
     }
 
     function playP23Question(){
-      if(appState.practice.type !== 'p23') return;
       const topic = P23_BANK[appState.practice.topicIndex];
-      if(appState.practice.mode === 'p2'){
-        speak(topic.p2.join('. '));
-      }else{
-        speak(topic.p3[appState.practice.questionIndex]);
-      }
+      speak(appState.practice.mode === 'p2' ? topic.p2.join('. ') : topic.p3[appState.practice.questionIndex]);
     }
 
     async function toggleP23Recording(){
-      if(appState.recorder.mediaRecorder && appState.recorder.mediaRecorder.state === 'recording'){
-        stopRecording();
-        return;
-      }
-      if(appState.practice.type !== 'p23') return;
+      if(appState.recorder.mediaRecorder && appState.recorder.mediaRecorder.state === 'recording'){ stopRecording(); return; }
       const max = appState.practice.mode === 'p2' ? 150 : 80;
-
-      await startRecording('p23', max, (sec) => {
-        document.getElementById('p23Timer').textContent = formatTime(sec);
-      }, () => {});
+      await startRecording('p23', max, (sec) => document.getElementById('p23Timer').textContent = formatTime(sec), null, 'p23RecBtn');
     }
 
     function nextP23Question(){
-      if(appState.practice.type !== 'p23') return;
       const topic = P23_BANK[appState.practice.topicIndex];
-      if(appState.practice.mode === 'p2'){
-        appState.practice.mode = 'p3';
-        appState.practice.questionIndex = 0;
-      }else{
-        appState.practice.questionIndex = (appState.practice.questionIndex + 1) % topic.p3.length;
-      }
+      if(appState.practice.mode === 'p2'){ appState.practice.mode = 'p3'; appState.practice.questionIndex = 0; }
+      else{ appState.practice.questionIndex = (appState.practice.questionIndex + 1) % topic.p3.length; }
       renderP23Card();
     }
 
+    // P3 單練邏輯
     function renderP3List(){
-      const keyword = document.getElementById('p3Search').value.trim();
-      const tag = appState.filters.p3;
-      const list = filterTopicArray(P23_BANK, keyword, tag);
+      const list = filterTopicArray(P23_BANK, document.getElementById('p3Search').value.trim(), appState.filters.p3);
       const wrap = document.getElementById('p3List');
-
       wrap.innerHTML = list.map(topic => {
-        const realIndex = P23_BANK.findIndex(x => x.title === topic.title);
-        return `
-          <button class="topic-item ${appState.practice.type === 'p3' && appState.practice.topicIndex === realIndex ? 'active' : ''}" data-index="${realIndex}">
-            <div class="topic-title">${topic.title}</div>
-            <div class="topic-sub">直接練對應 P3 延伸討論問題</div>
-            ${renderBadges(topic.tags)}
-          </button>
-        `;
+        const i = P23_BANK.findIndex(x => x.title === topic.title);
+        return `<button class="topic-item ${appState.practice.type === 'p3' && appState.practice.topicIndex === i ? 'active' : ''}" data-index="${i}">
+          <div class="topic-title">${topic.title}</div>
+          ${renderBadges(topic.tags)}
+        </button>`;
       }).join('');
-
       wrap.querySelectorAll('.topic-item').forEach(btn => {
-        btn.addEventListener('click', () => {
-          selectP3(Number(btn.dataset.index));
-          jumpToContent('p3ContentArea');
-        });
+        btn.addEventListener('click', () => { selectP3(Number(btn.dataset.index)); jumpToContent('p3ContentArea'); });
       });
     }
 
     function selectP3(index){
-      appState.practice.type = 'p3';
-      appState.practice.topicIndex = index;
-      appState.practice.questionIndex = 0;
-
+      appState.practice.type = 'p3'; appState.practice.topicIndex = index; appState.practice.questionIndex = 0;
       const topic = P23_BANK[index];
       document.getElementById('p3Title').textContent = topic.title;
-      document.getElementById('p3Meta').textContent = '進入後只顯示話題名稱，不顯示延伸問題。';
       document.getElementById('p3QIndex').textContent = `1 / ${topic.p3.length}`;
-      document.getElementById('p3RecState').textContent = '待機';
       document.getElementById('p3Timer').textContent = '00:00';
-      document.getElementById('p3Transcript').textContent = '轉錄內容將顯示於此。';
-
       renderP3List();
     }
 
-    function playP3Question(){
-      if(appState.practice.type !== 'p3') return;
-      const topic = P23_BANK[appState.practice.topicIndex];
-      speak(topic.p3[appState.practice.questionIndex]);
-    }
+    function playP3Question(){ speak(P23_BANK[appState.practice.topicIndex].p3[appState.practice.questionIndex]); }
 
     async function toggleP3Recording(){
-      if(appState.recorder.mediaRecorder && appState.recorder.mediaRecorder.state === 'recording'){
-        stopRecording();
-        document.getElementById('p3RecState').textContent = '已停止';
-        return;
-      }
-      if(appState.practice.type !== 'p3') return;
-
-      document.getElementById('p3RecState').textContent = '錄音中';
-      await startRecording('p3', 80, (sec) => {
-        document.getElementById('p3Timer').textContent = formatTime(sec);
-      }, () => {
-        document.getElementById('p3RecState').textContent = '已保存';
-      });
+      if(appState.recorder.mediaRecorder && appState.recorder.mediaRecorder.state === 'recording'){ stopRecording(); return; }
+      await startRecording('p3', 80, (sec) => document.getElementById('p3Timer').textContent = formatTime(sec), null, 'p3RecBtn');
     }
 
     function nextP3Question(){
-      if(appState.practice.type !== 'p3') return;
-      const topic = P23_BANK[appState.practice.topicIndex];
-      appState.practice.questionIndex = (appState.practice.questionIndex + 1) % topic.p3.length;
-
-      document.getElementById('p3QIndex').textContent = `${appState.practice.questionIndex + 1} / ${topic.p3.length}`;
-      document.getElementById('p3RecState').textContent = '待機';
+      appState.practice.questionIndex = (appState.practice.questionIndex + 1) % P23_BANK[appState.practice.topicIndex].p3.length;
+      document.getElementById('p3QIndex').textContent = `${appState.practice.questionIndex + 1} / ${P23_BANK[appState.practice.topicIndex].p3.length}`;
       document.getElementById('p3Timer').textContent = '00:00';
-      document.getElementById('p3Transcript').textContent = '轉錄內容將顯示於此。';
     }
 
-    function buildMockQueue(){
-      const queue = [];
-      const p1Topics = [...P1_BANK].sort(() => Math.random() - 0.5).slice(0, 3);
-
-      p1Topics.forEach(topic => {
-        const chosen = [...topic.questions].sort(() => Math.random() - 0.5).slice(0, 2);
-        chosen.forEach(q => {
-          queue.push({
-            part: 'P1',
-            topic: topic.title,
-            prompt: q,
-            hidden: true,
-            maxSeconds: 45
-          });
-        });
-      });
-
-      const pack = P23_BANK[Math.floor(Math.random() * P23_BANK.length)];
-      queue.push({
-        part: 'P2',
-        topic: pack.title,
-        prompt: pack.p2.join('\n'),
-        hidden: false,
-        maxSeconds: 150
-      });
-
-      pack.p3.slice(0, 3).forEach(q => {
-        queue.push({
-          part: 'P3',
-          topic: pack.title,
-          prompt: q,
-          hidden: true,
-          maxSeconds: 80
-        });
-      });
-
-      return queue;
-    }
-
-    function updateMockLog(){
-      document.getElementById('mockLog').textContent = appState.mock.logs.join('\n');
-    }
-
+    // Mock 邏輯
     function startMock(){
-      appState.mock.queue = buildMockQueue();
-      appState.mock.index = -1;
-      appState.mock.logs = ['考試開始。'];
-      appState.mock.transcripts = [];
-      appState.mock.started = true;
+      appState.mock.queue = [];
+      const p1Topics = [...P1_BANK].sort(() => Math.random() - 0.5).slice(0, 3);
+      p1Topics.forEach(t => [...t.questions].sort(() => Math.random() - 0.5).slice(0, 2).forEach(q => 
+        appState.mock.queue.push({ part: 'P1', topic: t.title, prompt: q, hidden: true, maxSeconds: 45 })
+      ));
+      const pack = P23_BANK[Math.floor(Math.random() * P23_BANK.length)];
+      appState.mock.queue.push({ part: 'P2', topic: pack.title, prompt: pack.p2.join('\n'), hidden: false, maxSeconds: 150 });
+      pack.p3.slice(0, 3).forEach(q => appState.mock.queue.push({ part: 'P3', topic: pack.title, prompt: q, hidden: true, maxSeconds: 80 }));
 
-      document.getElementById('mockFeedback').textContent = '考試進行中，完成後生成反饋。';
+      appState.mock.index = -1; appState.mock.logs = ['考試開始。']; appState.mock.transcripts = []; appState.mock.started = true;
       document.getElementById('mockStage').textContent = 'Preparation';
       document.getElementById('mockTitle').textContent = '請準備開始考試';
-      document.getElementById('mockMeta').textContent = '系統將進入正式流程。請確認麥克風權限已開啟。';
-      document.getElementById('mockPromptArea').innerHTML = `
-        <div class="hidden-box">
-          <div class="small">Get Ready</div>
-          <div class="big">即將開始模考</div>
-        </div>
-      `;
-      document.getElementById('mockSubtle').textContent = '5 秒後開始。';
-      document.getElementById('mockProgress').style.width = '0%';
+      document.getElementById('mockPromptArea').innerHTML = `<div class="hidden-box"><div class="small">Get Ready</div><div class="big">即將開始</div></div>`;
       updateMockLog();
 
-      let prep = 5;
-      document.getElementById('mockTimer').textContent = '00:05';
-
+      let prep = 5; document.getElementById('mockTimer').textContent = '00:05';
       if(appState.mock.prepTimer) clearInterval(appState.mock.prepTimer);
       appState.mock.prepTimer = setInterval(() => {
-        prep--;
-        document.getElementById('mockTimer').textContent = formatTime(Math.max(prep, 0));
-        document.getElementById('mockProgress').style.width = `${(5 - prep) * 20}%`;
-        if(prep <= 0){
-          clearInterval(appState.mock.prepTimer);
-          appState.mock.prepTimer = null;
-          nextMockQuestion();
-        }
+        prep--; document.getElementById('mockTimer').textContent = formatTime(Math.max(prep, 0));
+        if(prep <= 0){ clearInterval(appState.mock.prepTimer); nextMockQuestion(); }
       }, 1000);
-    }
-
-    function replayMock(){
-      if(!appState.mock.started) return;
-      const current = appState.mock.queue[appState.mock.index];
-      if(!current) return;
-      speak(current.prompt.replace(/\n/g, '. '));
-    }
-
-    function skipMock(){
-      if(!appState.mock.started) return;
-      stopRecording();
-      appState.mock.logs.push(`手動跳過：${appState.mock.currentPromptText}`);
-      updateMockLog();
-      nextMockQuestion();
     }
 
     async function nextMockQuestion(){
       appState.mock.index += 1;
       const item = appState.mock.queue[appState.mock.index];
-
-      if(!item){
-        finishMock();
-        return;
-      }
+      if(!item) return finishMock();
 
       appState.mock.currentPromptText = `${item.part} · ${item.topic}`;
       appState.mock.logs.push(`進入 ${item.part}：${item.topic}`);
@@ -2368,42 +1615,18 @@
 
       document.getElementById('mockStage').textContent = item.part;
       document.getElementById('mockTitle').textContent = item.topic;
-      document.getElementById('mockMeta').textContent = item.hidden
-        ? '問題將以語音播放，畫面不顯示題幹。'
-        : 'P2 Cue Card 直接顯示，可按正式考試方式作答。';
-
-      if(item.hidden){
-        document.getElementById('mockPromptArea').innerHTML = `
-          <div class="hidden-box">
-            <div class="small">${item.part} Audio Only</div>
-            <div class="big">題目已隱藏</div>
-          </div>
-        `;
-      }else{
-        document.getElementById('mockPromptArea').innerHTML = `
-          <div class="cue-list">
-            ${item.prompt.split('\n').map(line => `<div class="cue-item">${line}</div>`).join('')}
-          </div>
-        `;
-      }
-
+      document.getElementById('mockPromptArea').innerHTML = item.hidden 
+        ? `<div class="hidden-box"><div class="small">${item.part} Audio Only</div><div class="big">題目已隱藏</div></div>`
+        : `<div class="cue-list">${item.prompt.split('\n').map(l => `<div class="cue-item">${l}</div>`).join('')}</div>`;
       document.getElementById('mockTimer').textContent = '00:00';
-      document.getElementById('mockSubtle').textContent = `限時 ${item.maxSeconds} 秒，系統會自動打斷。`;
       document.getElementById('mockProgress').style.width = '0%';
 
       speak(item.prompt.replace(/\n/g, '. '));
-
       await startRecording('mock', item.maxSeconds, (sec, max) => {
         document.getElementById('mockTimer').textContent = formatTime(sec);
-        document.getElementById('mockProgress').style.width = `${Math.min(100, (sec / max) * 100)}%`;
+        document.getElementById('mockProgress').style.width = `${(sec / max) * 100}%`;
       }, (record) => {
-        appState.mock.transcripts.push({
-          part: item.part,
-          topic: item.topic,
-          prompt: item.prompt,
-          transcript: record.transcript,
-          duration: record.duration
-        });
+        appState.mock.transcripts.push({ part: item.part, transcript: record.transcript, duration: record.duration });
       });
     }
 
@@ -2411,121 +1634,30 @@
       appState.mock.started = false;
       document.getElementById('mockStage').textContent = 'Finished';
       document.getElementById('mockTitle').textContent = '模考完成';
-      document.getElementById('mockMeta').textContent = '以下是根據錄音情況生成的反饋。';
-      document.getElementById('mockPromptArea').innerHTML = `
-        <div class="hidden-box">
-          <div class="small">Exam Complete</div>
-          <div class="big">反饋已生成</div>
-        </div>
-      `;
-      document.getElementById('mockTimer').textContent = '00:00';
-      document.getElementById('mockSubtle').textContent = '你可以查看錄音、轉錄與反饋。';
-      document.getElementById('mockProgress').style.width = '100%';
-
-      appState.mock.logs.push('考試結束。');
-      updateMockLog();
-      document.getElementById('mockFeedback').textContent = generateFeedback(appState.mock.transcripts);
-      renderRecordings();
+      document.getElementById('mockPromptArea').innerHTML = `<div class="hidden-box"><div class="big">反饋已生成</div></div>`;
+      appState.mock.logs.push('考試結束。'); updateMockLog();
+      document.getElementById('mockFeedback').textContent = '模考結束。如需詳細反饋，建議將錄音庫文字稿匯出交由 AI 分析。';
     }
 
-    function generateFeedback(items){
-      if(!items.length){
-        return '這次沒有成功捕捉到錄音內容。建議先檢查麥克風權限，再重做一次完整模考。';
-      }
-
-      const allText = items.map(i => i.transcript || '').join(' ').trim();
-      const totalDuration = items.reduce((sum, i) => sum + (i.duration || 0), 0);
-      const words = allText ? allText.split(/\s+/).filter(Boolean) : [];
-      const wordCount = words.length;
-      const wpm = totalDuration > 0 ? Math.round(wordCount / (totalDuration / 60)) : 0;
-      const fillers = allText.match(/\b(um|uh|like|you know|well)\b/gi) || [];
-
-      const p1 = items.filter(i => i.part === 'P1');
-      const p2 = items.find(i => i.part === 'P2');
-      const p3 = items.filter(i => i.part === 'P3');
-
-      const notes = [];
-
-      if(!allText){
-        notes.push('1. 本次幾乎沒有有效轉錄內容，先優先檢查收音與麥克風權限。');
-        notes.push('2. 建議使用較安靜的環境並靠近麥克風。');
-        notes.push('3. 確保錄音正常後，再做一次完整模考。');
-        return notes.join('\n');
-      }
-
-      if(wpm < 85){
-        notes.push('1. 整體節奏偏慢，開頭思考時間略長。建議每題先直接表態，再補原因與例子。');
-      }else if(wpm > 165){
-        notes.push('1. 整體語速偏快。語速快不一定更好，建議在轉折與例子前稍微放慢。');
-      }else{
-        notes.push('1. 整體語速區間不錯，基本接近正常應試節奏。');
-      }
-
-      if(fillers.length >= 8){
-        notes.push('2. 填充詞偏多，例如 um / uh / like。建議把填充詞改成短停頓，會更自然。');
-      }else if(fillers.length >= 3){
-        notes.push('2. 填充詞有一些，但仍可控制。可以再提升回答的乾淨度。');
-      }else{
-        notes.push('2. 填充詞控制得不錯，輸出相對乾淨。');
-      }
-
-      const shortP1 = p1.filter(x => x.duration < 15).length;
-      if(shortP1 >= 2){
-        notes.push('3. P1 有幾題偏短，代表延伸不足。建議每題至少回答 2 到 4 句。');
-      }else{
-        notes.push('3. P1 回答長度基本合格，不容易顯得過短。');
-      }
-
-      if(p2){
-        const p2Words = (p2.transcript || '').split(/\s+/).filter(Boolean).length;
-        if(p2Words < 90){
-          notes.push('4. P2 內容偏短。建議固定使用「背景 → 細節 → 感受 → 結果」四段式。');
-        }else if(p2Words < 140){
-          notes.push('4. P2 已有基本內容，但可以加入更多時間、人物、場景等細節。');
-        }else{
-          notes.push('4. P2 內容厚度不錯，下一步可提升連接與故事線的流暢度。');
-        }
-      }
-
-      const shortP3 = p3.filter(x => x.duration < 18).length;
-      if(shortP3 >= 2){
-        notes.push('5. P3 延伸偏短，分析層次還不夠。建議至少做到「觀點 + 原因 + 例子」。');
-      }else{
-        notes.push('5. P3 已有一定延伸能力，整體討論感不錯。');
-      }
-
-      notes.push('6. 目前不提供分數，先優先把節奏、完整度、延伸能力和語音清晰度穩定下來。');
-      return notes.join('\n');
-    }
-
-    function bindFilterButtons(containerId, stateKey, renderFn){
-      const wrap = document.getElementById(containerId);
-      wrap.querySelectorAll('.chip').forEach(btn => {
-        btn.addEventListener('click', () => {
-          appState.filters[stateKey] = btn.dataset.tag;
-          wrap.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
-          btn.classList.add('active');
-          renderFn();
-        });
-      });
-    }
+    function updateMockLog(){ document.getElementById('mockLog').textContent = appState.mock.logs.join('\n'); }
+    function replayMock(){ if(appState.mock.started && appState.mock.queue[appState.mock.index]) speak(appState.mock.queue[appState.mock.index].prompt); }
+    function skipMock(){ if(appState.mock.started) { stopRecording(); nextMockQuestion(); } }
 
     function bindEvents(){
-      document.querySelectorAll('.nav-btn,.mobile-nav-btn').forEach(btn => {
-        btn.addEventListener('click', () => openView(btn.dataset.view));
+      document.querySelectorAll('.nav-btn,.mobile-nav-btn').forEach(btn => btn.addEventListener('click', () => openView(btn.dataset.view)));
+      document.querySelectorAll('[data-open]').forEach(card => card.addEventListener('click', () => openView(card.dataset.open)));
+
+      ['p1','p23','p3'].forEach(k => {
+        document.getElementById(k+'Search').addEventListener('input', window['render'+k.charAt(0).toUpperCase()+k.slice(1)+'List']);
+        document.getElementById(k+'Filters').querySelectorAll('.chip').forEach(btn => {
+          btn.addEventListener('click', () => {
+            appState.filters[k] = btn.dataset.tag;
+            btn.parentElement.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
+            btn.classList.add('active');
+            window['render'+k.charAt(0).toUpperCase()+k.slice(1)+'List']();
+          });
+        });
       });
-
-      document.querySelectorAll('[data-open]').forEach(card => {
-        card.addEventListener('click', () => openView(card.dataset.open));
-      });
-
-      document.getElementById('p1Search').addEventListener('input', renderP1List);
-      document.getElementById('p23Search').addEventListener('input', renderP23List);
-      document.getElementById('p3Search').addEventListener('input', renderP3List);
-
-      bindFilterButtons('p1Filters', 'p1', renderP1List);
-      bindFilterButtons('p23Filters', 'p23', renderP23List);
-      bindFilterButtons('p3Filters', 'p3', renderP3List);
 
       document.getElementById('p1PlayBtn').addEventListener('click', playP1Question);
       document.getElementById('p1RecBtn').addEventListener('click', toggleP1Recording);
@@ -2546,25 +1678,8 @@
       document.getElementById('mockSkipBtn').addEventListener('click', skipMock);
     }
 
-    function init(){
-      bindEvents();
-      renderP1List();
-      renderP23List();
-      renderP3List();
-      renderRecordings();
-
-      if(P1_BANK.length) selectP1(0);
-      if(P23_BANK.length){
-        selectP23(0);
-        selectP3(0);
-      }
-
-      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-        console.warn('Recorder unsupported in this browser');
-      }
-    }
-
-    init();
+    bindEvents(); renderP1List(); renderP23List(); renderP3List();
+    if(P1_BANK.length) selectP1(0); if(P23_BANK.length){ selectP23(0); selectP3(0); }
   </script>
 </body>
 </html>
