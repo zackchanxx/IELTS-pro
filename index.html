@@ -3,662 +3,1632 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IELTS Copilot - Apple Style Redesign</title>
+  <title>IELTS Copilot</title>
   <style>
     :root{
       --bg:#edf4ff;
       --bg-2:#f8fbff;
-      --header-bg: rgba(255, 255, 255, 0.75);
-      --card: rgba(255, 255, 255, 0.85);
-      --card-2: rgba(244, 248, 255, 0.95);
-      --glass: rgba(255, 255, 255, 0.45);
-      --line: rgba(0, 0, 0, 0.08);
+      --card:#ffffff;
+      --card-2:#f4f8ff;
+      --line:#d9e8ff;
       --text:#10213a;
       --muted:#6c82a5;
-      --primary:#0071e3;
-      --primary-hover:#0077ed;
-      --primary-soft: rgba(0, 113, 227, 0.1);
-      --danger:#ff3b30;
-      --warning:#ff9500;
-      --success:#34c759;
-      --shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-      --shadow-float: 0 15px 40px rgba(0, 0, 0, 0.08);
-      --radius: 28px;
-      --radius-sm: 18px;
+      --primary:#1f6fff;
+      --primary-2:#eaf2ff;
+      --primary-3:#dbe9ff;
+      --danger:#ff4d4f;
+      --warning:#f59e0b;
+      --success:#19a463;
+      --shadow:0 14px 34px rgba(31,111,255,.08);
+      --shadow-hover:0 20px 40px rgba(31,111,255,.12);
+      --radius:20px;
+      --radius-sm:14px;
       --max:1180px;
     }
 
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{margin:0;padding:0;min-height:100%;font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;color:var(--text)}
+    html,body{margin:0;padding:0;min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif;color:var(--text)}
     body{
-      background:
-        radial-gradient(circle at top, #e5efff 0%, var(--bg) 35%, var(--bg-2) 75%, #fff 100%);
-      padding-top: 50px; /* Fixed Header */
+      background: radial-gradient(circle at top, #e5efff 0%, var(--bg) 26%, var(--bg-2) 62%, #fff 100%);
     }
 
-    button,input,select,textarea{font:inherit; border: none; outline: none;}
+    button,input,select,textarea{font:inherit}
     .hidden{display:none!important}
 
     .app{
       max-width:var(--max);
       margin:0 auto;
-      min-height:calc(100vh - 50px);
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
+      min-height:100vh;
+      display:grid;
+      grid-template-columns:280px 1fr;
+      gap:18px;
+      padding:18px;
     }
 
-    /* Fixed Glass Header */
-    .glass-header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 50px;
-      background: var(--header-bg);
-      backdrop-filter: blur(16px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-bottom: 1px solid var(--line);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    .sidebar{
+      position:sticky;
+      top:18px;
+      height:calc(100vh - 36px);
+      background:rgba(255,255,255,.78);
+      backdrop-filter:blur(14px);
+      border:1px solid rgba(217,232,255,.95);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:18px 16px;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
     }
 
-    .glass-header h1 {
-      margin: 0;
-      font-size: 18px;
-      letter-spacing: -0.05em;
-      font-weight: 900;
-      color: var(--text);
+    .brand{
+      padding:8px 8px 16px;
+      border-bottom:1px solid var(--line);
     }
 
-    /* Side Column and Content Column */
-    .view {
-      display: none;
-      min-height: calc(100vh - 100px);
-      flex: 1;
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 18px;
-    }
-
-    .view.active {
-      display: grid;
-    }
-
-    /* Sidebar - Glass with master list */
-    .sidebar {
-      background: var(--card);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 24px 18px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      position: sticky;
-      top: 68px; /* Header + padding */
-      height: calc(100vh - 100px);
-    }
-
-    .brand {
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--line);
+    .brand h1{
+      margin:0;
+      font-size:26px;
+      letter-spacing:-.05em;
+      line-height:1;
     }
 
     .brand p{
-      margin: 8px 0 0;
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.65;
+      margin:8px 0 0;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.65;
     }
 
-    .nav {
+    .nav{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      padding-top:16px;
+      overflow:auto;
+    }
+
+    .nav-btn{
+      width:100%;
+      border:1px solid transparent;
+      background:transparent;
+      color:var(--text);
+      text-align:left;
+      border-radius:16px;
+      padding:14px 14px;
+      font-size:15px;
+      font-weight:800;
+      cursor:pointer;
+      transition:all .2s ease;
+    }
+
+    .nav-btn:hover{
+      background:#f8fbff;
+      border-color:var(--line);
+      transform: translateX(4px);
+    }
+
+    .nav-btn.active{
+      background:var(--primary-2);
+      color:var(--primary);
+      border-color:#cfe0ff;
+      transform: translateX(0);
+    }
+
+    .side-card{
+      margin-top:auto;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .side-card h4{
+      margin:0 0 8px;
+      font-size:14px;
+    }
+
+    .setting-group {
+      margin-top: 12px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      padding-top: 16px;
-      overflow: auto;
-    }
-
-    .nav-btn {
-      width: 100%;
-      border: 1px solid transparent;
-      background: transparent;
-      color: var(--text);
-      text-align: left;
-      border-radius: 18px;
-      padding: 12px 16px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: .22s ease;
-    }
-
-    .nav-btn:hover {
-      background: var(--primary-soft);
-      transform: translateY(-1px);
-    }
-
-    .nav-btn.active {
-      background: var(--primary-soft);
-      color: var(--primary);
-      border-color: #cfe0ff;
-    }
-
-    .search {
-      width: 100%;
-      border: 1px solid var(--line);
-      background: var(--glass);
-      border-radius: 12px;
-      padding: 10px 14px;
-      color: var(--text);
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    .filters {
-      display: flex;
       gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 10px;
     }
-
-    .chip {
-      border: 1px solid var(--line);
-      background: #fff;
-      color: var(--muted);
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 11px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .chip.active {
-      background: var(--primary-soft);
-      color: var(--primary);
-      border-color: #cfe0ff;
-    }
-
-    .topic-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: calc(100vh - 350px);
-      overflow: auto;
-      padding-right: 2px;
-    }
-
-    .topic-item {
-      width: 100%;
-      text-align: left;
-      border: 1px solid transparent;
-      background: transparent;
-      border-radius: 18px;
-      padding: 14px;
-      cursor: pointer;
-      transition: .22s ease;
-    }
-
-    .topic-item:hover {
-      background: #f8fbff;
-      border-color: var(--line);
-    }
-
-    .topic-item.active {
-      background: var(--primary-soft);
-      border-color: #cfe0ff;
-    }
-
-    .topic-title {
-      font-size: 18px;
-      font-weight: 800;
-      letter-spacing: -0.04em;
-    }
-
-    /* Content Column - Large cards with master view details */
-    .content-col {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      min-width: 0;
-    }
-
-    .page-shell {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-float);
-      overflow: hidden;
-      min-height: calc(100vh - 100px);
-      backdrop-filter: blur(10px);
-    }
-
-    .page-head {
-      padding: 28px 24px 20px;
-      border-bottom: 1px solid var(--line);
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 251, 255, 0.85) 100%);
-    }
-
-    .page-head h2 {
-      margin: 0;
-      font-size: 38px;
-      line-height: 1;
-      letter-spacing: -0.06em;
-      font-weight: 900;
-    }
-
-    .page-head p {
-      margin: 12px 0 0;
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.7;
-      max-width: 800px;
-    }
-
-    .home-wrap {
-      padding: 32px 24px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    /* Hero like introductory card */
-    .hero-box {
-      padding: 32px;
-      border: 1px solid var(--line);
-      background: var(--glass);
-      backdrop-filter: blur(8px);
-      border-radius: 26px;
-    }
-
-    .hero-title {
-      font-size: 52px;
-      line-height: 1.01;
-      letter-spacing: -0.07em;
-      font-weight: 900;
-      margin: 0 0 16px;
-    }
-
-    .quick-grid {
-      display: grid;
-      grid-template-columns: repeat(2,minmax(0,1fr));
-      gap: 14px;
-    }
-
-    /* Product like card grid */
-    .quick-card {
-      border: 1px solid var(--line);
-      border-radius: var(--radius-sm);
-      background: var(--card);
-      padding: 24px;
-      box-shadow: var(--shadow);
-      cursor: pointer;
-      transition: .22s ease;
-    }
-
-    .quick-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
-    }
-
-    .quick-card .title {
-      font-size: 26px;
-      font-weight: 900;
-      letter-spacing: -0.05em;
-      margin-bottom: 10px;
-    }
-
-    /* Details Card - floating layered detail */
-    .card {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--card);
-      padding: 28px;
-      box-shadow: var(--shadow-float);
-    }
-
-    .card h3 {
-      margin: 0 0 10px;
-      font-size: 30px;
-      font-weight: 900;
-      letter-spacing: -0.05em;
-    }
-
-    /* Large title block in detail view */
-    .big-hidden-title {
-      color: var(--primary);
-      font-size: 42px;
-      font-weight: 900;
-      letter-spacing: -0.06em;
-      margin: 16px 0;
-    }
-
-    /* Cue card style */
-    .cue-item {
-      border: 1px solid #e1ecff;
-      background: rgba(247, 251, 255, 0.75);
-      backdrop-filter: blur(5px);
-      border-radius: var(--radius-sm);
-      padding: 14px 16px;
-      font-size: 16px;
-    }
-
-    /* Floating control block */
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .btn {
-      min-height: 52px;
-      padding: 12px 24px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--line);
-      background: #fff;
-      color: var(--text);
-      font-size: 16px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: .22s ease;
-    }
-
-    .btn:hover {
-      background: var(--bg-2);
-      transform: translateY(-1px);
-    }
-
-    .btn.primary {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-    .btn.soft {
-      background: var(--primary-soft);
-      color: var(--primary);
-      border-color: #cfe0ff;
-    }
-
-    .switch-row {
-      display: flex;
-      gap: 12px;
-    }
-
-    /* Apple style stats block */
-    .stat {
-      border: 1px solid var(--line);
-      background: #fff;
-      border-radius: var(--radius-sm);
-      padding: 16px;
-      box-shadow: var(--shadow);
-    }
-
-    .stat-label {
+    
+    .setting-group label {
       font-size: 12px;
-      font-weight: 800;
+      font-weight: 700;
       color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
     }
-
-    .stat-value {
-      font-size: 26px;
-      font-weight: 900;
-      letter-spacing: -0.04em;
-    }
-
-    /* Large Hero Card for Mock exam */
-    .mock-grid {
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .mock-hero {
+    
+    .setting-group select {
+      width: 100%;
+      padding: 6px 10px;
+      border-radius: 8px;
       border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--glass);
-      backdrop-filter: blur(10px);
-      padding: 32px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .timer {
-      font-size: 72px;
-      font-weight: 900;
-      letter-spacing: -0.08em;
-      margin: 10px 0;
-    }
-
-    .record-item {
-      border: 1px solid var(--line);
-      border-radius: var(--radius-sm);
+      font-size: 13px;
+      outline: none;
       background: #fff;
-      padding: 16px;
+    }
+
+    .main{
+      min-width:0;
+      padding:0 0 22px;
+    }
+
+    .view{
+      display:none;
+      min-height:calc(100vh - 36px);
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .view.active{
+      display:block;
+    }
+
+    .page-shell{
+      background:rgba(255,255,255,.75);
+      border:1px solid rgba(217,232,255,.95);
+      border-radius:30px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      min-height:calc(100vh - 36px);
+      backdrop-filter:blur(12px);
+    }
+
+    .page-head{
+      padding:22px 24px 16px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.86) 0%, rgba(248,251,255,.92) 100%);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .page-head h2{
+      margin:0;
+      font-size:34px;
+      line-height:1.05;
+      letter-spacing:-.05em;
+    }
+
+    .page-head p{
+      margin:10px 0 0;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.75;
+    }
+
+    .home-wrap{
+      padding:28px 24px 24px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+    }
+
+    .hero-box{
+      padding:28px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,#ffffff 0%, #f7fbff 100%);
+      border-radius:26px;
       box-shadow: var(--shadow);
     }
 
-    /* Mobile */
+    .hero-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      font-weight:900;
+      color:var(--primary);
+      border:1px solid #cfe0ff;
+      background:var(--primary-2);
+      padding:8px 14px;
+      border-radius:999px;
+      margin-bottom:14px;
+    }
+
+    .hero-title{
+      font-size:48px;
+      line-height:1.02;
+      letter-spacing:-.06em;
+      font-weight:900;
+      margin:0 0 14px;
+      max-width:760px;
+    }
+
+    .hero-desc{
+      margin:0;
+      color:var(--muted);
+      font-size:17px;
+      line-height:1.9;
+      max-width:760px;
+    }
+
+    .quick-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:14px;
+    }
+
+    .quick-card{
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:var(--card);
+      padding:22px;
+      text-align:left;
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      transition:all .2s ease;
+    }
+
+    .quick-card:hover{
+      transform:translateY(-4px);
+      border-color:#bfd4ff;
+      box-shadow: var(--shadow-hover);
+    }
+
+    .quick-card .title{
+      font-size:24px;
+      font-weight:900;
+      letter-spacing:-.04em;
+      margin-bottom:8px;
+    }
+
+    .quick-card .desc{
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.75;
+    }
+
+    .workspace{
+      padding:18px;
+      display:grid;
+      grid-template-columns:340px 1fr;
+      gap:16px;
+      min-height:calc(100vh - 160px);
+    }
+
+    .panel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:var(--shadow);
+      min-width:0;
+    }
+
+    .panel-inner{
+      padding:16px;
+    }
+
+    .search{
+      width:100%;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:16px;
+      padding:14px 16px;
+      outline:none;
+      color:var(--text);
+      font-size:16px;
+      margin-bottom:12px;
+      transition: border-color 0.2s ease;
+    }
+    .search:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-2);
+    }
+
+    .filters{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+
+    .chip{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--muted);
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:12px;
+      font-weight:900;
+      cursor:pointer;
+      transition: all 0.2s ease;
+    }
+
+    .chip:hover {
+      background: var(--bg-2);
+    }
+
+    .chip.active{
+      background:var(--primary-2);
+      color:var(--primary);
+      border-color:#cfe0ff;
+    }
+
+    .topic-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height:calc(100vh - 290px);
+      overflow:auto;
+      padding-right:2px;
+    }
+
+    .topic-item{
+      width:100%;
+      text-align:left;
+      border:1px solid transparent;
+      background:transparent;
+      border-radius:18px;
+      padding:16px;
+      cursor:pointer;
+      transition:all .2s ease;
+    }
+
+    .topic-item:hover{
+      background:#f8fbff;
+      border-color:var(--line);
+    }
+
+    .topic-item.active{
+      background:var(--primary-2);
+      border-color:#cfe0ff;
+    }
+
+    .topic-title{
+      font-size:20px;
+      line-height:1.35;
+      font-weight:900;
+      letter-spacing:-.03em;
+    }
+
+    .topic-sub{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.6;
+    }
+
+    .badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .badge{
+      padding:5px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      border:1px solid;
+    }
+
+    .badge.new{ background:#eef6ff; color:var(--primary); border-color:#cfe0ff; }
+    .badge.must{ background:#fff7e8; color:#b67800; border-color:#ffe2ae; }
+    .badge.core{ background:#eefbf5; color:var(--success); border-color:#ccefdc; }
+
+    .content-col{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      min-width:0;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:22px;
+      background:linear-gradient(180deg,#ffffff 0%, #f9fbff 100%);
+      padding:20px;
+      box-shadow: var(--shadow);
+    }
+
+    .card h3{
+      margin:0 0 8px;
+      font-size:28px;
+      line-height:1.1;
+      letter-spacing:-.04em;
+    }
+
+    .meta{
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.8;
+    }
+
+    .hidden-box{
+      border:1px dashed #cfe0ff;
+      border-radius:18px;
+      background:linear-gradient(180deg,#f7fbff 0%, #eef5ff 100%);
+      padding:28px 20px;
+      text-align:center;
+    }
+
+    .hidden-box .small{
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.08em;
+      color:var(--muted);
+      text-transform:uppercase;
+    }
+
+    .hidden-box .big{
+      margin-top:10px;
+      font-size:34px;
+      line-height:1.1;
+      font-weight:900;
+      letter-spacing:-.05em;
+      color:var(--primary);
+    }
+
+    .cue-list{ display:flex; flex-direction:column; gap:10px; }
+    .cue-item{
+      border:1px solid #e1ecff;
+      background:#f7fbff;
+      border-radius:16px;
+      padding:13px 14px;
+      font-size:16px;
+      line-height:1.75;
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .btn{
+      min-height:48px;
+      padding:12px 16px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+      font-size:16px;
+      font-weight:900;
+      cursor:pointer;
+      transition:all .2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:hover{ transform:translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .btn:active{ transform:translateY(0); }
+
+    .btn.primary{ background:var(--primary); color:#fff; border-color:var(--primary); }
+    .btn.soft{ background:var(--primary-2); color:var(--primary); border-color:#cfe0ff; }
+    .btn.danger{ background:#fff1f1; color:var(--danger); border-color:#ffd0d0; }
+
+    /* Recording Animation */
+    @keyframes pulse-record {
+      0% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 77, 79, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 77, 79, 0); }
+    }
+    .btn.is-recording {
+      background: var(--danger) !important;
+      color: white !important;
+      border-color: var(--danger) !important;
+      animation: pulse-record 1.5s infinite;
+    }
+
+    .switch-row{ display:flex; flex-wrap:wrap; gap:10px; }
+    .switch-btn{
+      min-height:44px;
+      padding:10px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--muted);
+      font-size:15px;
+      font-weight:900;
+      cursor:pointer;
+      transition: all 0.2s ease;
+    }
+    .switch-btn.active{ background:var(--primary-2); color:var(--primary); border-color:#cfe0ff; }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:10px;
+    }
+    .stat{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:18px;
+      padding:14px;
+      box-shadow: var(--shadow);
+    }
+    .stat-label{
+      font-size:11px;
+      font-weight:900;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      margin-bottom:8px;
+    }
+    .stat-value{
+      font-size:22px;
+      line-height:1.2;
+      font-weight:900;
+      letter-spacing:-.03em;
+    }
+
+    .box{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background:#fff;
+      padding:15px;
+      font-size:15px;
+      line-height:1.8;
+      white-space:pre-wrap;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .mock-grid{
+      padding:18px;
+      display:grid;
+      grid-template-columns:1fr 360px;
+      gap:16px;
+      min-height:calc(100vh - 160px);
+    }
+
+    .stage{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid #cfe0ff;
+      background:var(--primary-2);
+      color:var(--primary);
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:12px;
+      font-weight:900;
+      margin-bottom:12px;
+    }
+
+    .timer{
+      font-size:56px;
+      line-height:1;
+      letter-spacing:-.07em;
+      font-weight:900;
+      margin:4px 0 14px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .subtle{ color:var(--muted); font-size:15px; line-height:1.8; }
+
+    .progress{
+      height:10px;
+      border-radius:999px;
+      background:#eef4ff;
+      border:1px solid #dbe7ff;
+      overflow:hidden;
+      margin-top:16px;
+    }
+    .progress > div{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#90b8ff 0%, #1f6fff 100%);
+      transition:width .2s linear;
+    }
+
+    .record-list{ display:flex; flex-direction:column; gap:10px; }
+    .record-item{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      padding:16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    }
+    .record-item h4{ margin:0 0 8px; font-size:14px; }
+    .record-item audio{ width:100%; margin-top: 8px; height: 36px; }
+
+    .mobile-top{
+      display:none;
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:rgba(245,249,255,.88);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--line);
+      padding:12px 14px;
+      margin:-18px -18px 16px;
+    }
+    .mobile-top-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+    .mobile-top h1{ margin:0; font-size:22px; letter-spacing:-.04em; }
+
+    .mobile-nav{
+      display:none;
+      position:sticky;
+      bottom:0;
+      z-index:30;
+      background:rgba(255,255,255,.94);
+      backdrop-filter:blur(12px);
+      border-top:1px solid var(--line);
+      padding:10px 10px calc(10px + env(safe-area-inset-bottom));
+      gap:8px;
+      grid-template-columns:repeat(5,minmax(0,1fr));
+      margin:18px -18px -22px;
+    }
+    .mobile-nav button{
+      border:1px solid transparent;
+      background:transparent;
+      border-radius:14px;
+      padding:10px 8px;
+      font-size:12px;
+      font-weight:900;
+      color:var(--muted);
+      cursor:pointer;
+      transition: all 0.2s ease;
+    }
+    .mobile-nav button.active{
+      background:var(--primary-2);
+      color:var(--primary);
+      border-color:#cfe0ff;
+    }
+
     @media (max-width: 980px){
-      .app { padding: 10px; }
-      .view {
-        grid-template-columns: 1fr;
-        padding-bottom: 70px; /* For mobile nav */
+      body{padding:0;align-items:stretch}
+      .app{
+        max-width:none;
+        min-height:100vh;
+        width:100%;
+        grid-template-columns:1fr;
+        border:none;
+        border-radius:0;
+        box-shadow:none;
       }
-      .sidebar {
-        position: static;
-        height: auto;
-        border-radius: var(--radius);
-        top: auto;
+      .sidebar{display:none}
+      .main{padding:18px}
+      .page-shell{
+        min-height:calc(100vh - 36px);
+        border-radius:0;
+        border-left:none;
+        border-right:none;
       }
-      .quick-grid { grid-template-columns: 1fr; }
+      .page-head h2{font-size:30px}
+      .hero-title{font-size:38px}
+      .quick-grid, .workspace, .mock-grid{ grid-template-columns:1fr; }
+      .stats{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .mobile-top{display:block}
+      .mobile-nav{display:grid}
+    }
+
+    @media (max-width: 640px){
+      .page-head{ padding:18px 18px 14px; flex-direction: column; gap: 10px;}
+      .page-head h2{ font-size:28px; }
+      .home-wrap{ padding:18px; }
+      .hero-box{ padding:22px 18px; }
+      .hero-title{ font-size:32px; }
+      .quick-card .title{ font-size:22px; }
+      .btn, .switch-btn { font-size: 15px; }
+      .hidden-box .big{ font-size:30px; }
+      .timer{ font-size:50px; }
     }
   </style>
 </head>
 <body>
-  <header class="glass-header">
-    <h1>IELTS Copilot</h1>
-  </header>
-
   <div class="app">
-    <section id="view-home" class="view active" style="grid-template-columns: 1fr;">
-      <div class="page-shell">
-        <div class="page-head">
-          <h2>主頁</h2>
-          <p>請直接選擇你要進入的練習模組，我們不再使用宣傳頁。此版本已針對手機端與操作流暢度重新放大字級與按鈕，並已加入自動捲動功能。</p>
-        </div>
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>IELTS Copilot</h1>
+        <p>口語全真模擬 · 單檔架構</p>
+      </div>
 
-        <div class="home-wrap">
-          <div class="hero-box">
-            <h3 class="hero-title">讓 IELTS 口語練習，像正式考試一樣。</h3>
-            <p>內建核心 (Core) / 全新 (New) / 必考 (Must) / 循環 (Recycled) 題庫，並支持題幹隱藏、模擬全真模考流程、錄音分析。單檔 HTML 架構可直接部署。</p>
-          </div>
+      <div class="nav">
+        <button class="nav-btn active" data-view="home">主頁</button>
+        <button class="nav-btn" data-view="p1">P1 題庫</button>
+        <button class="nav-btn" data-view="p2">P2 / P3 題庫</button>
+        <button class="nav-btn" data-view="p3">P3 題庫</button>
+        <button class="nav-btn" data-view="mock">模擬真實考試</button>
+        <button class="nav-btn" data-view="recordings">錄音庫</button>
+      </div>
 
-          <div class="quick-grid">
-            <button class="quick-card" data-open="p1">
-              <div class="title">P1 題庫</div>
-              <div class="desc">固定主題練習，問題語音播放，題幹隱藏，每題 45 秒。</div>
-            </button>
-            <button class="quick-card" data-open="p2">
-              <div class="title">P2 / P3 題庫</div>
-              <div class="desc">同一話題綁定 Cue Card 與延伸問題，練習更有邏輯。</div>
-            </button>
-            <button class="quick-card" data-open="p3">
-              <div class="title">P3 題庫</div>
-              <div class="desc">專練分析與延伸，題幹隱藏，適合強化 Part 3討論臨場感。</div>
-            </button>
-            <button class="quick-card" data-open="mock">
-              <div class="title">模擬全真考試</div>
-              <div class="desc">全隨機抽題流程 P1 → P2 → P3，逐題錄音，超時打斷。</div>
-            </button>
-          </div>
+      <div class="side-card">
+        <h4>學習設定</h4>
+        <div class="setting-group">
+          <label>考官語速</label>
+          <select id="globalTtsRate">
+            <option value="0.85">慢速 (0.85x)</option>
+            <option value="0.95" selected>正常 (0.95x)</option>
+            <option value="1.1">稍快 (1.1x)</option>
+            <option value="1.25">極快 (1.25x)</option>
+          </select>
         </div>
       </div>
-    </section>
+    </aside>
 
-    <section id="view-p1" class="view">
-      <aside class="sidebar">
-        <div class="brand"><h1>IELTS Copilot</h1><p>P1 Topic List</p></div>
-        <div class="nav">
-          <button class="nav-btn" data-view="home">主頁</button>
-          <button class="nav-btn" data-view="p1">P1 題庫</button>
-          <button class="nav-btn" data-view="p2">P2 / P3 題庫</button>
-          <button class="nav-btn" data-view="p3">P3 題庫</button>
-          <button class="nav-btn" data-view="mock">模擬全真考試</button>
-          <button class="nav-btn" data-view="recordings">錄音庫</button>
-        </div>
-        <div style="margin-top:24px;">
-          <input id="p1Search" class="search" placeholder="搜尋 P1 主題..." />
-          <div class="filters" id="p1Filters">
-            <button class="chip active" data-tag="all">全部</button>
-            <button class="chip" data-tag="core">Core</button>
-            <button class="chip" data-tag="new">新題</button>
-            <button class="chip" data-tag="must">必考</button>
-          </div>
-          <div id="p1List" class="topic-list"></div>
-        </div>
-      </aside>
-
-      <main class="content-col" id="p1ContentArea">
-        <div class="card">
-          <h3 id="p1Title">請先選擇主題</h3>
-          <p class="meta" id="p1Meta">題目將以語音播放，畫面不顯示具體問題，請集中專注盲聽。</p>
-          <div class="big-hidden-title">題目已隱藏</div>
-          <div class="controls">
-            <button class="btn soft" id="p1PlayBtn">播放語音</button>
-            <button class="btn primary" id="p1RecBtn">開始 / 停止錄音</button>
-            <button class="btn" id="p1NextBtn">下一題</button>
-          </div>
-        </div>
-        <div class="quick-grid" style="grid-template-columns:repeat(4,1fr);">
-          <div class="stat"><div class="stat-label">當前題號</div><div class="stat-value" id="p1QIndex">-</div></div>
-          <div class="stat"><div class="stat-label">限時</div><div class="stat-value">45s</div></div>
-          <div class="stat"><div class="stat-label">錄音狀態</div><div class="stat-value" id="p1RecState">待機</div></div>
-          <div class="stat"><div class="stat-label">計時</div><div class="stat-value" id="p1Timer">00:00</div></div>
-        </div>
-        <div class="box" id="p1Transcript">語音轉錄將顯示於此。</div>
-      </main>
-    </section>
-
-    <section id="view-p2" class="view">
-        <aside class="sidebar">
-          <div class="brand"><h1>IELTS Copilot</h1><p>P2/P3 Topic List</p></div>
-          <div class="nav">
-            <button class="nav-btn" data-view="home">主頁</button>
-            <button class="nav-btn" data-view="p1">P1 題庫</button>
-            <button class="nav-btn" data-view="p2">P2 / P3 題庫</button>
-            <button class="nav-btn" data-view="p3">P3 題庫</button>
-            <button class="nav-btn" data-view="mock">模擬全真考試</button>
-            <button class="nav-btn" data-view="recordings">錄音庫</button>
-          </div>
-          <div style="margin-top:24px;">
-            <input id="p23Search" class="search" placeholder="搜尋 P2 / P3 話題..." />
-            <div id="p23List" class="topic-list"></div>
-          </div>
-        </aside>
-  
-        <main class="content-col" id="p23ContentArea">
-          <div class="card">
-            <h3 id="p23Title">請先選擇話題</h3>
-            <p class="meta" id="p23Meta">Part 2 顯示 Cue Card，Part 3 題幹隱藏。</p>
-            <div class="switch-row">
-              <button class="switch-btn active" id="switchP2Btn">Part 2 Cue Card</button>
-              <button class="switch-btn" id="switchP3Btn">Part 3 延伸討論</button>
-            </div>
-            <div id="p2CardBox"><div class="cue-list" id="p2CueList"></div></div>
-            <div id="p3HiddenBox" class="hidden big-hidden-title"> Part 3 問題將以語音播放 </div>
-            <div class="controls">
-              <button class="btn soft" id="p23PlayBtn">播放語音</button>
-              <button class="btn primary" id="p23RecBtn">開始 / 停止錄音</button>
-              <button class="btn" id="p23NextBtn">下一題</button>
-            </div>
-          </div>
-          <div class="quick-grid" style="grid-template-columns:repeat(3,1fr);">
-            <div class="stat"><div class="stat-label">模式</div><div class="stat-value" id="p23Mode">P2</div></div>
-            <div class="stat"><div class="stat-label">限時</div><div class="stat-value" id="p23Limit">150s</div></div>
-            <div class="stat"><div class="stat-label">計時</div><div class="stat-value" id="p23Timer">00:00</div></div>
-          </div>
-        </main>
-    </section>
-
-    <section id="view-mock" class="view" style="grid-template-columns: 1fr;">
-      <div class="page-shell">
-        <div class="page-head">
-          <h2>模擬全真考試</h2>
-          <p>按 P1 (3主題/每主題2題) → P2 (1話題) → P3 (同話題3題延伸) 流程，支持語音播放與超時自動打斷。</p>
-        </div>
-        <div class="mock-grid">
-          <div class="mock-hero">
-            <div class="stage" id="mockStage">Preparation</div>
-            <h3 id="mockTitle">準備考試</h3>
-            <div class="timer" id="mockTimer">00:00</div>
-            <div class="controls">
-              <button class="btn primary" id="mockStartBtn">開始考試</button>
-              <button class="btn soft" id="mockSkipBtn">跳過</button>
-            </div>
-          </div>
-          <div class="box" id="mockPromptArea"> 這裡將動態顯示 Cue Card。 </div>
+    <main class="main">
+      <div class="mobile-top">
+        <div class="mobile-top-row">
+          <h1>IELTS Copilot</h1>
+          <select id="mobileTtsRate" style="padding:4px 8px; border-radius:8px; border:1px solid #d9e8ff; font-size:12px;">
+            <option value="0.85">慢速</option>
+            <option value="0.95" selected>正常</option>
+            <option value="1.1">稍快</option>
+          </select>
         </div>
       </div>
-    </section>
 
-    </div>
+      <section id="view-home" class="view active">
+        <div class="page-shell">
+          <div class="page-head">
+            <div>
+              <h2>主頁</h2>
+              <p>選擇你要進入的模組開始練習。</p>
+            </div>
+          </div>
+
+          <div class="home-wrap">
+            <div class="hero-box">
+              <div class="hero-pill">V2.0 更新版 · 介面與功能強化</div>
+              <h3 class="hero-title">讓 IELTS 口語練習，<br>像正式考試一樣。</h3>
+              <p class="hero-desc">
+                內建 P1、P2 / P3、P3 單練、全真模考。新增錄音動態視覺、語速調整與文字稿匯出功能。
+              </p>
+            </div>
+
+            <div class="quick-grid">
+              <button class="quick-card" data-open="p1">
+                <div class="title">P1 題庫</div>
+                <div class="desc">固定主題練習，問題語音播放，題幹隱藏，每題 45 秒自動打斷。</div>
+              </button>
+              <button class="quick-card" data-open="p2">
+                <div class="title">P2 / P3 題庫</div>
+                <div class="desc">同一話題綁定 Cue Card 與延伸問題，串聯練習更有邏輯。</div>
+              </button>
+              <button class="quick-card" data-open="p3">
+                <div class="title">P3 題庫</div>
+                <div class="desc">專練分析與延伸，題幹隱藏，適合強化 Part 3 臨場反應。</div>
+              </button>
+              <button class="quick-card" data-open="mock">
+                <div class="title">模擬真實考試</div>
+                <div class="desc">P1 → P2 → P3 隨機抽題，全自動推進，考後自動生成表現反饋。</div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-p1" class="view">
+        <div class="page-shell">
+          <div class="page-head">
+            <div>
+              <h2>P1 題庫</h2>
+              <p>選主題後只播放問題，不顯示題幹。</p>
+            </div>
+          </div>
+
+          <div class="workspace">
+            <div class="panel">
+              <div class="panel-inner">
+                <input id="p1Search" class="search" placeholder="搜尋 P1 主題..." />
+                <div class="filters" id="p1Filters">
+                  <button class="chip active" data-tag="all">全部</button>
+                  <button class="chip" data-tag="core">Core</button>
+                  <button class="chip" data-tag="new">新題</button>
+                  <button class="chip" data-tag="must">必考</button>
+                </div>
+                <div id="p1List" class="topic-list"></div>
+              </div>
+            </div>
+
+            <div class="content-col" id="p1ContentArea">
+              <div class="card">
+                <h3 id="p1Title">請先選擇主題</h3>
+                <p class="meta" id="p1Meta">題目將以語音播放，畫面不顯示具體問題。</p>
+
+                <div class="hidden-box">
+                  <div class="small">Hidden Prompt Mode</div>
+                  <div class="big">題目已隱藏</div>
+                </div>
+
+                <div class="controls">
+                  <button class="btn soft" id="p1PlayBtn">播放語音</button>
+                  <button class="btn primary" id="p1RecBtn">開始 / 停止錄音</button>
+                  <button class="btn" id="p1NextBtn">下一題</button>
+                </div>
+              </div>
+
+              <div class="stats">
+                <div class="stat">
+                  <div class="stat-label">當前題號</div>
+                  <div class="stat-value" id="p1QIndex">-</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-label">限時</div>
+                  <div class="stat-value">45s</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-label">錄音狀態</div>
+                  <div class="stat-value" id="p1RecState">待機</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-label">計時器</div>
+                  <div class="stat-value" id="p1Timer">00:00</div>
+                </div>
+              </div>
+
+              <div class="box" id="p1Transcript">語音轉錄將顯示於此。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-p2" class="view">
+        <div class="page-shell">
+          <div class="page-head">
+            <div>
+              <h2>P2 / P3 題庫</h2>
+              <p>每個 P2 話題綁定 P3 延伸題。</p>
+            </div>
+          </div>
+
+          <div class="workspace">
+            <div class="panel">
+              <div class="panel-inner">
+                <input id="p23Search" class="search" placeholder="搜尋 P2 / P3 話題..." />
+                <div class="filters" id="p23Filters">
+                  <button class="chip active" data-tag="all">全部</button>
+                  <button class="chip" data-tag="new">新題</button>
+                  <button class="chip" data-tag="must">必考</button>
+                </div>
+                <div id="p23List" class="topic-list"></div>
+              </div>
+            </div>
+
+            <div class="content-col" id="p23ContentArea">
+              <div class="switch-row">
+                <button class="switch-btn active" id="switchP2Btn">P2 Cue Card</button>
+                <button class="switch-btn" id="switchP3Btn">P3 延伸</button>
+              </div>
+
+              <div class="card">
+                <h3 id="p23Title">請先選擇話題</h3>
+                <p class="meta" id="p23Meta">P2 顯示內容，P3 題幹隱藏。</p>
+
+                <div id="p2CardBox">
+                  <div class="cue-list" id="p2CueList"></div>
+                </div>
+
+                <div id="p3HiddenBox" class="hidden" style="display:none;">
+                  <div class="hidden-box">
+                    <div class="small">P3 Audio Only</div>
+                    <div class="big">問題將以語音播放</div>
+                  </div>
+                </div>
+
+                <div class="controls">
+                  <button class="btn soft" id="p23PlayBtn">播放語音</button>
+                  <button class="btn primary" id="p23RecBtn">開始 / 停止錄音</button>
+                  <button class="btn" id="p23NextBtn">下一題</button>
+                </div>
+              </div>
+
+              <div class="stats">
+                <div class="stat">
+                  <div class="stat-label">模式</div>
+                  <div class="stat-value" id="p23Mode">P2</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-label">當前題號</div>
+                  <div class="stat-value" id="p23QIndex">-</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-label">限時</div>
+                  <div class="stat-value" id="p23Limit">150s</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-label">計時器</div>
+                  <div class="stat-value" id="p23Timer">00:00</div>
+                </div>
+              </div>
+
+              <div class="box" id="p23Transcript">錄音轉錄將顯示於此。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-p3" class="view">
+        <div class="page-shell">
+          <div class="page-head">
+            <div>
+              <h2>P3 題庫</h2>
+              <p>只練延伸討論，高強度盲聽訓練。</p>
+            </div>
+          </div>
+
+          <div class="workspace">
+            <div class="panel">
+              <div class="panel-inner">
+                <input id="p3Search" class="search" placeholder="搜尋 P3 話題..." />
+                <div class="filters" id="p3Filters">
+                  <button class="chip active" data-tag="all">全部</button>
+                  <button class="chip" data-tag="new">新題</button>
+                  <button class="chip" data-tag="must">必考</button>
+                </div>
+                <div id="p3List" class="topic-list"></div>
+              </div>
+            </div>
+
+            <div class="content-col" id="p3ContentArea">
+              <div class="card">
+                <h3 id="p3Title">請先選擇話題</h3>
+                <p class="meta" id="p3Meta">進入後只顯示話題名稱，不顯示延伸問題。</p>
+
+                <div class="hidden-box">
+                  <div class="small">Discussion Only</div>
+                  <div class="big">語音播放 · 限時回答</div>
+                </div>
+
+                <div class="controls">
+                  <button class="btn soft" id="p3PlayBtn">播放語音</button>
+                  <button class="btn primary" id="p3RecBtn">開始 / 停止錄音</button>
+                  <button class="btn" id="p3NextBtn">下一題</button>
+                </div>
+              </div>
+
+              <div class="stats">
+                <div class="stat">
+                  <div class="stat-label">當前題號</div>
+                  <div class="stat-value" id="p3QIndex">-</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-label">限時</div>
+                  <div class="stat-value">80s</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-label">錄音狀態</div>
+                  <div class="stat-value" id="p3RecState">待機</div>
+                </div>
+                <div class="stat">
+                  <div class="stat-label">計時器</div>
+                  <div class="stat-value" id="p3Timer">00:00</div>
+                </div>
+              </div>
+
+              <div class="box" id="p3Transcript">轉錄內容將顯示於此。</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-mock" class="view">
+        <div class="page-shell">
+          <div class="page-head">
+            <div>
+              <h2>模擬真實考試</h2>
+              <p>自動推進流程，超時自動打斷。</p>
+            </div>
+          </div>
+
+          <div class="mock-grid">
+            <div class="content-col">
+              <div class="card">
+                <div class="stage" id="mockStage">Ready</div>
+                <h3 id="mockTitle">是否準備考試？</h3>
+                <p class="meta" id="mockMeta">點擊開始後會按真實流程進行，並逐題錄音。</p>
+
+                <div id="mockPromptArea">
+                  <div class="hidden-box">
+                    <div class="small">Exam Flow</div>
+                    <div class="big">P1 → P2 → P3</div>
+                  </div>
+                </div>
+
+                <div class="timer" id="mockTimer">00:00</div>
+                <div class="subtle" id="mockSubtle">尚未開始。</div>
+
+                <div class="progress"><div id="mockProgress"></div></div>
+
+                <div class="controls">
+                  <button class="btn primary" id="mockStartBtn">開始考試</button>
+                  <button class="btn soft" id="mockReplayBtn">重播問題</button>
+                  <button class="btn danger" id="mockSkipBtn">手動打斷 (Skip)</button>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3>即時模考記錄</h3>
+                <div class="box" id="mockLog">尚未開始。</div>
+              </div>
+
+              <div class="card">
+                <h3>考後反饋</h3>
+                <div class="box" id="mockFeedback">完成模考後，這裡會根據轉錄情況輸出節奏與架構反饋。</div>
+              </div>
+            </div>
+
+            <div class="content-col">
+              <div class="card">
+                <h3>模考規則</h3>
+                <div class="cue-list">
+                  <div class="cue-item">P1：抽 3 個主題，每主題 2 題。</div>
+                  <div class="cue-item">P2：抽 1 個話題，顯示 Cue Card。</div>
+                  <div class="cue-item">P3：從同話題抽 3 題延伸。</div>
+                  <div class="cue-item">全程錄音並在結束時給予診斷建議。</div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3>錄音片段</h3>
+                <div class="record-list" id="mockRecordings">
+                  <div class="record-item"><h4>尚無錄音</h4></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-recordings" class="view">
+        <div class="page-shell">
+          <div class="page-head">
+            <div>
+              <h2>錄音庫</h2>
+              <p>本次連線的所有練習與模考錄音都會保存在此。</p>
+            </div>
+            <button class="btn soft" id="exportLogsBtn" style="min-height:40px; font-size:14px; padding: 8px 16px;">
+              匯出文字稿 (.txt)
+            </button>
+          </div>
+
+          <div class="workspace" style="grid-template-columns:1fr; padding-top: 0;">
+            <div class="panel" style="border: none; background: transparent; box-shadow: none;">
+              <div class="panel-inner" style="padding: 18px 0;">
+                <div class="record-list" id="allRecordings">
+                  <div class="record-item"><h4>尚無錄音</h4></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="mobile-nav">
+        <button class="mobile-nav-btn active" data-view="home">主頁</button>
+        <button class="mobile-nav-btn" data-view="p1">P1</button>
+        <button class="mobile-nav-btn" data-view="p2">P2/3</button>
+        <button class="mobile-nav-btn" data-view="p3">P3</button>
+        <button class="mobile-nav-btn" data-view="mock">模考</button>
+      </div>
+    </main>
+  </div>
 
   <script>
-    // ** Retain all original JS logic, data banks, and ID targeting. **
-    // ** Only view-switching is adjusted for new structure. **
+    // 資料庫保持不變
     const P1_BANK = [
       { title:'Home', group:'core', tags:['core'], questions:['What kind of home do you live in?','What is your favourite room in your home?','Would you like to change anything about your home?','Do you think your home will be different in the future?']},
+      { title:'Hometown', group:'core', tags:['core'], questions:['Where is your hometown?','What do you like most about it?','Has your hometown changed much in recent years?','Would you recommend it to visitors?']},
+      { title:'Work', group:'core', tags:['core'], questions:['What kind of work do you do?','Why did you choose this job?','What do you enjoy most about your work?','Do you want to change jobs in the future?']},
+      { title:'Study', group:'core', tags:['core'], questions:['What do you study?','Why did you choose this subject?','What do you enjoy most about your studies?','Would you like to study something else in the future?']},
       { title:'Daily Routine', group:'new', tags:['new'], questions:['What is your daily routine like?','Do you prefer planning your day or being spontaneous?','What part of the day are you most productive?','Has your routine changed recently?']},
+      { title:'Technology', group:'new', tags:['new'], questions:['How often do you use technology in daily life?','What device do you use the most?','Has technology changed the way you study or work?','Do you think people rely too much on technology?']}
     ];
 
     const P23_BANK = [
-      { title:'Describe a person who inspired you', group:'must', tags:['must'], p2:['Describe a person who inspired you.','You should say:','Who this person is','How you know this person','What this person did','And explain why you felt inspired by this person'], p3:['Why do some people become role models for others?','Do young people today need role models more than before?','Can famous people have a positive influence on society?'] },
+      {
+        title:'Describe a person who inspired you',
+        group:'must',
+        tags:['new','must'],
+        p2:['Describe a person who inspired you.','You should say:','Who this person is','How you know this person','What this person did','And explain why you felt inspired by this person'],
+        p3:['Why do some people become role models for others?','Do young people today need role models more than before?','Can famous people have a positive influence on society?']
+      },
+      {
+        title:'Describe a difficult decision you made',
+        group:'new',
+        tags:['new'],
+        p2:['Describe a difficult decision you made.','You should say:','What the decision was','Why it was difficult','How you made the decision','And explain the result of that decision'],
+        p3:['Why do some people find it hard to make decisions?','Should young people make important decisions independently?','Do people nowadays have more choices than in the past?']
+      },
+      {
+        title:'Describe a skill you learned recently',
+        group:'must',
+        tags:['new','must'],
+        p2:['Describe a skill you learned recently.','You should say:','What the skill is','Why you wanted to learn it','How you learned it','And explain how useful it is to you'],
+        p3:['What skills are important for young people today?','Do schools teach enough practical skills?','Is it easier to learn skills now because of the internet?']
+      }
     ];
+
+    const appState = {
+      currentView: 'home',
+      practice: { type: null, topicIndex: 0, questionIndex: 0, mode: 'p2' },
+      filters: { p1: 'all', p23: 'all', p3: 'all' },
+      recorder: { mediaRecorder: null, stream: null, chunks: [], timer: null, seconds: 0, maxSeconds: 0, target: null },
+      recognition: { supported: !!(window.SpeechRecognition || window.webkitSpeechRecognition), instance: null, transcript: '' },
+      recordings: [],
+      mock: { started: false, queue: [], index: -1, currentPromptText: '', prepTimer: null, logs: [], transcripts: [] }
+    };
+
+    function getTtsRate() {
+      // 支援手機版與電腦版不同下拉選單同步抓取
+      const desk = document.getElementById('globalTtsRate');
+      const mob = document.getElementById('mobileTtsRate');
+      if(window.innerWidth <= 980) return parseFloat(mob.value) || 0.95;
+      return parseFloat(desk.value) || 0.95;
+    }
+
+    function syncTtsSelects(e) {
+      document.getElementById('globalTtsRate').value = e.target.value;
+      document.getElementById('mobileTtsRate').value = e.target.value;
+    }
+    document.getElementById('globalTtsRate').addEventListener('change', syncTtsSelects);
+    document.getElementById('mobileTtsRate').addEventListener('change', syncTtsSelects);
 
     function openView(view){
       document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
       const target = document.getElementById('view-' + view);
       if(target) target.classList.add('active');
+
+      document.querySelectorAll('.nav-btn,.mobile-nav-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === view);
+      });
+
+      appState.currentView = view;
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderBadges(tags){
+      if(!tags || !tags.length) return '';
+      return `<div class="badges">
+        ${tags.includes('core') ? '<span class="badge core">Core</span>' : ''}
+        ${tags.includes('new') ? '<span class="badge new">新題</span>' : ''}
+        ${tags.includes('must') ? '<span class="badge must">必考</span>' : ''}
+      </div>`;
+    }
+
+    function filterTopicArray(data, keyword, tag){
+      return data.filter(item => {
+        const hitKeyword = !keyword || item.title.toLowerCase().includes(keyword.toLowerCase());
+        const hitTag = tag === 'all' ? true : (item.tags || []).includes(tag) || item.group === tag;
+        return hitKeyword && hitTag;
+      });
     }
 
     function jumpToContent(id){
       const el = document.getElementById(id);
       if(!el) return;
-      if(window.innerWidth <= 980){ el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      if(window.innerWidth <= 980) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Retain all functional JS (Recording, TTS, Mock flow, Filtering) targeted to new apple-styled elements.
-    // ** Functional JS logic removed for brevity but must be retained in a real environment. **
-    document.querySelectorAll('[data-open]').forEach(card => {
-        card.addEventListener('click', () => openView(card.dataset.open));
+    function speak(text){
+      try{
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'en-GB';
+        utter.rate = getTtsRate();
+        window.speechSynthesis.speak(utter);
+      }catch(err){ console.warn(err); }
+    }
+
+    function makeRecognition(onUpdate){
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if(!SR) return null;
+      const rec = new SR();
+      rec.lang = 'en-US';
+      rec.interimResults = true;
+      rec.continuous = true;
+      rec.onresult = (e) => {
+        let text = '';
+        for(let i = 0; i < e.results.length; i++){ text += e.results[i][0].transcript + ' '; }
+        onUpdate(text.trim());
+      };
+      return rec;
+    }
+
+    function formatTime(sec){
+      const m = String(Math.floor(sec / 60)).padStart(2,'0');
+      const s = String(sec % 60).padStart(2,'0');
+      return `${m}:${s}`;
+    }
+
+    function updateRecordingUIState(isRecording, targetId) {
+      const btn = document.getElementById(targetId);
+      if(btn) {
+        if(isRecording) btn.classList.add('is-recording');
+        else btn.classList.remove('is-recording');
+      }
+    }
+
+    function stopRecording(){
+      if(appState.recorder.timer){ clearInterval(appState.recorder.timer); appState.recorder.timer = null; }
+      if(appState.recognition.instance){ try{ appState.recognition.instance.stop(); }catch(e){} appState.recognition.instance = null; }
+      if(appState.recorder.mediaRecorder && appState.recorder.mediaRecorder.state !== 'inactive'){
+        appState.recorder.mediaRecorder.stop();
+      }
+      if(appState.recorder.stream){
+        appState.recorder.stream.getTracks().forEach(t => t.stop());
+        appState.recorder.stream = null;
+      }
+      // 重置所有 UI 狀態
+      ['p1RecBtn','p23RecBtn','p3RecBtn'].forEach(id => updateRecordingUIState(false, id));
+    }
+
+    async function startRecording(target, maxSeconds, onTick, onStop, btnId){
+      stopRecording();
+
+      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+        alert('不支援錄音，請使用最新版 Safari 或 Chrome。');
+        return false;
+      }
+
+      try{
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const mediaRecorder = new MediaRecorder(stream);
+
+        appState.recorder.stream = stream;
+        appState.recorder.mediaRecorder = mediaRecorder;
+        appState.recorder.chunks = [];
+        appState.recorder.seconds = 0;
+        appState.recorder.maxSeconds = maxSeconds;
+        appState.recorder.target = target;
+        appState.recognition.transcript = '';
+
+        if(btnId) updateRecordingUIState(true, btnId);
+
+        mediaRecorder.ondataavailable = (e) => { if(e.data.size > 0) appState.recorder.chunks.push(e.data); };
+
+        mediaRecorder.onstop = () => {
+          if(btnId) updateRecordingUIState(false, btnId);
+          const blob = new Blob(appState.recorder.chunks, { type: 'audio/webm' });
+          const url = URL.createObjectURL(blob);
+          const item = {
+            id: Date.now(), target, duration: appState.recorder.seconds, url,
+            transcript: appState.recognition.transcript || '', createdAt: new Date().toLocaleString()
+          };
+          appState.recordings.unshift(item);
+          renderRecordings();
+          if(onStop) onStop(item);
+        };
+
+        mediaRecorder.start();
+
+        if(appState.recognition.supported){
+          appState.recognition.instance = makeRecognition((text) => {
+            appState.recognition.transcript = text;
+            updateTranscriptBox(target, text);
+          });
+          if(appState.recognition.instance){ try{ appState.recognition.instance.start(); }catch(e){} }
+        }
+
+        appState.recorder.timer = setInterval(() => {
+          appState.recorder.seconds += 1;
+          if(onTick) onTick(appState.recorder.seconds, maxSeconds);
+          if(appState.recorder.seconds >= maxSeconds) autoInterrupt(target);
+        }, 1000);
+
+        return true;
+      }catch(err){
+        console.error(err);
+        alert('錄音啟動失敗，請允許麥克風權限。');
+        return false;
+      }
+    }
+
+    function updateTranscriptBox(target, text){
+      if(target === 'p1') document.getElementById('p1Transcript').textContent = text || '語音轉錄...';
+      else if(target === 'p23') document.getElementById('p23Transcript').textContent = text || '錄音轉錄...';
+      else if(target === 'p3') document.getElementById('p3Transcript').textContent = text || '轉錄內容...';
+      else if(target === 'mock') document.getElementById('mockSubtle').textContent = text || '錄音中...';
+    }
+
+    function autoInterrupt(target){
+      stopRecording();
+      if(target === 'p1'){
+        document.getElementById('p1RecState').textContent = '已打斷';
+        nextP1Question();
+      }else if(target === 'p23'){
+        nextP23Question();
+      }else if(target === 'p3'){
+        document.getElementById('p3RecState').textContent = '已打斷';
+        nextP3Question();
+      }else if(target === 'mock'){
+        appState.mock.logs.push(`超時打斷：${appState.mock.currentPromptText}`);
+        updateMockLog();
+        nextMockQuestion();
+      }
+    }
+
+    function renderRecordings(){
+      const html = appState.recordings.length
+        ? appState.recordings.map(item => `
+          <div class="record-item">
+            <h4>${item.target.toUpperCase()} · ${item.createdAt} · ${item.duration}s</h4>
+            <div class="subtle" style="margin-bottom:8px;">${item.transcript || '無轉錄內容'}</div>
+            <audio controls src="${item.url}"></audio>
+          </div>
+        `).join('')
+        : '<div class="record-item"><h4>尚無錄音</h4></div>';
+
+      document.getElementById('allRecordings').innerHTML = html;
+      document.getElementById('mockRecordings').innerHTML = html;
+    }
+
+    // 匯出錄音逐字稿功能
+    document.getElementById('exportLogsBtn').addEventListener('click', () => {
+      if(!appState.recordings.length) return alert('目前尚無錄音紀錄可匯出。');
+      let textContent = "=== IELTS Copilot 練習紀錄 ===\n\n";
+      appState.recordings.forEach((item, index) => {
+        textContent += `[${item.createdAt}] 類型: ${item.target.toUpperCase()} | 耗時: ${item.duration}s\n`;
+        textContent += `內容: ${item.transcript || '(無語音轉錄內容)'}\n`;
+        textContent += `------------------------------------\n`;
+      });
+      const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `IELTS_Logs_${new Date().getTime()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
     });
 
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+    // P1 邏輯
+    function renderP1List(){
+      const list = filterTopicArray(P1_BANK, document.getElementById('p1Search').value.trim(), appState.filters.p1);
+      const wrap = document.getElementById('p1List');
+      wrap.innerHTML = list.map(topic => {
+        const i = P1_BANK.findIndex(x => x.title === topic.title);
+        return `<button class="topic-item ${appState.practice.type === 'p1' && appState.practice.topicIndex === i ? 'active' : ''}" data-index="${i}">
+          <div class="topic-title">${topic.title}</div>
+          <div class="topic-sub">${topic.group}</div>
+          ${renderBadges(topic.tags)}
+        </button>`;
+      }).join('');
+      wrap.querySelectorAll('.topic-item').forEach(btn => {
+        btn.addEventListener('click', () => { selectP1(Number(btn.dataset.index)); jumpToContent('p1ContentArea'); });
+      });
+    }
+
+    function selectP1(index){
+      appState.practice.type = 'p1'; appState.practice.topicIndex = index; appState.practice.questionIndex = 0;
+      const topic = P1_BANK[index];
+      document.getElementById('p1Title').textContent = topic.title;
+      document.getElementById('p1QIndex').textContent = `1 / ${topic.questions.length}`;
+      document.getElementById('p1RecState').textContent = '待機';
+      document.getElementById('p1Timer').textContent = '00:00';
+      renderP1List();
+    }
+
+    function playP1Question(){
+      if(appState.practice.type !== 'p1') return;
+      speak(P1_BANK[appState.practice.topicIndex].questions[appState.practice.questionIndex]);
+    }
+
+    async function toggleP1Recording(){
+      if(appState.recorder.mediaRecorder && appState.recorder.mediaRecorder.state === 'recording'){
+        stopRecording(); document.getElementById('p1RecState').textContent = '已停止'; return;
+      }
+      document.getElementById('p1RecState').textContent = '錄音中';
+      await startRecording('p1', 45, (sec) => document.getElementById('p1Timer').textContent = formatTime(sec), 
+        () => document.getElementById('p1RecState').textContent = '已保存', 'p1RecBtn');
+    }
+
+    function nextP1Question(){
+      if(appState.practice.type !== 'p1') return;
+      const topic = P1_BANK[appState.practice.topicIndex];
+      appState.practice.questionIndex = (appState.practice.questionIndex + 1) % topic.questions.length;
+      document.getElementById('p1QIndex').textContent = `${appState.practice.questionIndex + 1} / ${topic.questions.length}`;
+      document.getElementById('p1Timer').textContent = '00:00';
+      document.getElementById('p1Transcript').textContent = '語音轉錄將顯示於此。';
+    }
+
+    // P2/P3 邏輯
+    function renderP23List(){
+      const list = filterTopicArray(P23_BANK, document.getElementById('p23Search').value.trim(), appState.filters.p23);
+      const wrap = document.getElementById('p23List');
+      wrap.innerHTML = list.map(topic => {
+        const i = P23_BANK.findIndex(x => x.title === topic.title);
+        return `<button class="topic-item ${appState.practice.type === 'p23' && appState.practice.topicIndex === i ? 'active' : ''}" data-index="${i}">
+          <div class="topic-title">${topic.title}</div>
+          ${renderBadges(topic.tags)}
+        </button>`;
+      }).join('');
+      wrap.querySelectorAll('.topic-item').forEach(btn => {
+        btn.addEventListener('click', () => { selectP23(Number(btn.dataset.index)); jumpToContent('p23ContentArea'); });
+      });
+    }
+
+    function selectP23(index){
+      appState.practice.type = 'p23'; appState.practice.topicIndex = index; appState.practice.questionIndex = 0; appState.practice.mode = 'p2';
+      renderP23Card(); renderP23List();
+    }
+
+    function switchP23(mode){
+      appState.practice.mode = mode; appState.practice.questionIndex = 0; renderP23Card();
+    }
+
+    function renderP23Card(){
+      const topic = P23_BANK[appState.practice.topicIndex];
+      const mode = appState.practice.mode;
+      document.getElementById('p23Title').textContent = topic.title;
+      document.getElementById('p23Mode').textContent = mode.toUpperCase();
+      document.getElementById('p23QIndex').textContent = mode === 'p2' ? '1 / 1' : `${appState.practice.questionIndex + 1} / ${topic.p3.length}`;
+      document.getElementById('p23Limit').textContent = mode === 'p2' ? '150s' : '80s';
+      document.getElementById('p23Timer').textContent = '00:00';
+
+      document.getElementById('switchP2Btn').classList.toggle('active', mode === 'p2');
+      document.getElementById('switchP3Btn').classList.toggle('active', mode === 'p3');
+
+      if(mode === 'p2'){
+        document.getElementById('p2CardBox').style.display = 'block';
+        document.getElementById('p3HiddenBox').style.display = 'none';
+        document.getElementById('p2CueList').innerHTML = topic.p2.map(line => `<div class="cue-item">${line}</div>`).join('');
+      }else{
+        document.getElementById('p2CardBox').style.display = 'none';
+        document.getElementById('p3HiddenBox').style.display = 'block';
+      }
+    }
+
+    function playP23Question(){
+      const topic = P23_BANK[appState.practice.topicIndex];
+      speak(appState.practice.mode === 'p2' ? topic.p2.join('. ') : topic.p3[appState.practice.questionIndex]);
+    }
+
+    async function toggleP23Recording(){
+      if(appState.recorder.mediaRecorder && appState.recorder.mediaRecorder.state === 'recording'){ stopRecording(); return; }
+      const max = appState.practice.mode === 'p2' ? 150 : 80;
+      await startRecording('p23', max, (sec) => document.getElementById('p23Timer').textContent = formatTime(sec), null, 'p23RecBtn');
+    }
+
+    function nextP23Question(){
+      const topic = P23_BANK[appState.practice.topicIndex];
+      if(appState.practice.mode === 'p2'){ appState.practice.mode = 'p3'; appState.practice.questionIndex = 0; }
+      else{ appState.practice.questionIndex = (appState.practice.questionIndex + 1) % topic.p3.length; }
+      renderP23Card();
+    }
+
+    // P3 單練邏輯
+    function renderP3List(){
+      const list = filterTopicArray(P23_BANK, document.getElementById('p3Search').value.trim(), appState.filters.p3);
+      const wrap = document.getElementById('p3List');
+      wrap.innerHTML = list.map(topic => {
+        const i = P23_BANK.findIndex(x => x.title === topic.title);
+        return `<button class="topic-item ${appState.practice.type === 'p3' && appState.practice.topicIndex === i ? 'active' : ''}" data-index="${i}">
+          <div class="topic-title">${topic.title}</div>
+          ${renderBadges(topic.tags)}
+        </button>`;
+      }).join('');
+      wrap.querySelectorAll('.topic-item').forEach(btn => {
+        btn.addEventListener('click', () => { selectP3(Number(btn.dataset.index)); jumpToContent('p3ContentArea'); });
+      });
+    }
+
+    function selectP3(index){
+      appState.practice.type = 'p3'; appState.practice.topicIndex = index; appState.practice.questionIndex = 0;
+      const topic = P23_BANK[index];
+      document.getElementById('p3Title').textContent = topic.title;
+      document.getElementById('p3QIndex').textContent = `1 / ${topic.p3.length}`;
+      document.getElementById('p3Timer').textContent = '00:00';
+      renderP3List();
+    }
+
+    function playP3Question(){ speak(P23_BANK[appState.practice.topicIndex].p3[appState.practice.questionIndex]); }
+
+    async function toggleP3Recording(){
+      if(appState.recorder.mediaRecorder && appState.recorder.mediaRecorder.state === 'recording'){ stopRecording(); return; }
+      await startRecording('p3', 80, (sec) => document.getElementById('p3Timer').textContent = formatTime(sec), null, 'p3RecBtn');
+    }
+
+    function nextP3Question(){
+      appState.practice.questionIndex = (appState.practice.questionIndex + 1) % P23_BANK[appState.practice.topicIndex].p3.length;
+      document.getElementById('p3QIndex').textContent = `${appState.practice.questionIndex + 1} / ${P23_BANK[appState.practice.topicIndex].p3.length}`;
+      document.getElementById('p3Timer').textContent = '00:00';
+    }
+
+    // Mock 邏輯
+    function startMock(){
+      appState.mock.queue = [];
+      const p1Topics = [...P1_BANK].sort(() => Math.random() - 0.5).slice(0, 3);
+      p1Topics.forEach(t => [...t.questions].sort(() => Math.random() - 0.5).slice(0, 2).forEach(q => 
+        appState.mock.queue.push({ part: 'P1', topic: t.title, prompt: q, hidden: true, maxSeconds: 45 })
+      ));
+      const pack = P23_BANK[Math.floor(Math.random() * P23_BANK.length)];
+      appState.mock.queue.push({ part: 'P2', topic: pack.title, prompt: pack.p2.join('\n'), hidden: false, maxSeconds: 150 });
+      pack.p3.slice(0, 3).forEach(q => appState.mock.queue.push({ part: 'P3', topic: pack.title, prompt: q, hidden: true, maxSeconds: 80 }));
+
+      appState.mock.index = -1; appState.mock.logs = ['考試開始。']; appState.mock.transcripts = []; appState.mock.started = true;
+      document.getElementById('mockStage').textContent = 'Preparation';
+      document.getElementById('mockTitle').textContent = '請準備開始考試';
+      document.getElementById('mockPromptArea').innerHTML = `<div class="hidden-box"><div class="small">Get Ready</div><div class="big">即將開始</div></div>`;
+      updateMockLog();
+
+      let prep = 5; document.getElementById('mockTimer').textContent = '00:05';
+      if(appState.mock.prepTimer) clearInterval(appState.mock.prepTimer);
+      appState.mock.prepTimer = setInterval(() => {
+        prep--; document.getElementById('mockTimer').textContent = formatTime(Math.max(prep, 0));
+        if(prep <= 0){ clearInterval(appState.mock.prepTimer); nextMockQuestion(); }
+      }, 1000);
+    }
+
+    async function nextMockQuestion(){
+      appState.mock.index += 1;
+      const item = appState.mock.queue[appState.mock.index];
+      if(!item) return finishMock();
+
+      appState.mock.currentPromptText = `${item.part} · ${item.topic}`;
+      appState.mock.logs.push(`進入 ${item.part}：${item.topic}`);
+      updateMockLog();
+
+      document.getElementById('mockStage').textContent = item.part;
+      document.getElementById('mockTitle').textContent = item.topic;
+      document.getElementById('mockPromptArea').innerHTML = item.hidden 
+        ? `<div class="hidden-box"><div class="small">${item.part} Audio Only</div><div class="big">題目已隱藏</div></div>`
+        : `<div class="cue-list">${item.prompt.split('\n').map(l => `<div class="cue-item">${l}</div>`).join('')}</div>`;
+      document.getElementById('mockTimer').textContent = '00:00';
+      document.getElementById('mockProgress').style.width = '0%';
+
+      speak(item.prompt.replace(/\n/g, '. '));
+      await startRecording('mock', item.maxSeconds, (sec, max) => {
+        document.getElementById('mockTimer').textContent = formatTime(sec);
+        document.getElementById('mockProgress').style.width = `${(sec / max) * 100}%`;
+      }, (record) => {
+        appState.mock.transcripts.push({ part: item.part, transcript: record.transcript, duration: record.duration });
+      });
+    }
+
+    function finishMock(){
+      appState.mock.started = false;
+      document.getElementById('mockStage').textContent = 'Finished';
+      document.getElementById('mockTitle').textContent = '模考完成';
+      document.getElementById('mockPromptArea').innerHTML = `<div class="hidden-box"><div class="big">反饋已生成</div></div>`;
+      appState.mock.logs.push('考試結束。'); updateMockLog();
+      document.getElementById('mockFeedback').textContent = '模考結束。如需詳細反饋，建議將錄音庫文字稿匯出交由 AI 分析。';
+    }
+
+    function updateMockLog(){ document.getElementById('mockLog').textContent = appState.mock.logs.join('\n'); }
+    function replayMock(){ if(appState.mock.started && appState.mock.queue[appState.mock.index]) speak(appState.mock.queue[appState.mock.index].prompt); }
+    function skipMock(){ if(appState.mock.started) { stopRecording(); nextMockQuestion(); } }
+
+    function bindEvents(){
+      document.querySelectorAll('.nav-btn,.mobile-nav-btn').forEach(btn => btn.addEventListener('click', () => openView(btn.dataset.view)));
+      document.querySelectorAll('[data-open]').forEach(card => card.addEventListener('click', () => openView(card.dataset.open)));
+
+      ['p1','p23','p3'].forEach(k => {
+        document.getElementById(k+'Search').addEventListener('input', window['render'+k.charAt(0).toUpperCase()+k.slice(1)+'List']);
+        document.getElementById(k+'Filters').querySelectorAll('.chip').forEach(btn => {
+          btn.addEventListener('click', () => {
+            appState.filters[k] = btn.dataset.tag;
+            btn.parentElement.querySelectorAll('.chip').forEach(x => x.classList.remove('active'));
             btn.classList.add('active');
-            openView(btn.dataset.view);
+            window['render'+k.charAt(0).toUpperCase()+k.slice(1)+'List']();
+          });
         });
-    });
+      });
 
-    // Mock functions (retain original functions, but ensure they don't break apple layout)
-    document.getElementById('mockStartBtn').addEventListener('click', () => {
-        document.getElementById('mockStartBtn').classList.add('hidden');
-        document.getElementById('mockStage').textContent = "Part 1";
-        // ... original mock logic
-    });
+      document.getElementById('p1PlayBtn').addEventListener('click', playP1Question);
+      document.getElementById('p1RecBtn').addEventListener('click', toggleP1Recording);
+      document.getElementById('p1NextBtn').addEventListener('click', nextP1Question);
+
+      document.getElementById('switchP2Btn').addEventListener('click', () => switchP23('p2'));
+      document.getElementById('switchP3Btn').addEventListener('click', () => switchP23('p3'));
+      document.getElementById('p23PlayBtn').addEventListener('click', playP23Question);
+      document.getElementById('p23RecBtn').addEventListener('click', toggleP23Recording);
+      document.getElementById('p23NextBtn').addEventListener('click', nextP23Question);
+
+      document.getElementById('p3PlayBtn').addEventListener('click', playP3Question);
+      document.getElementById('p3RecBtn').addEventListener('click', toggleP3Recording);
+      document.getElementById('p3NextBtn').addEventListener('click', nextP3Question);
+
+      document.getElementById('mockStartBtn').addEventListener('click', startMock);
+      document.getElementById('mockReplayBtn').addEventListener('click', replayMock);
+      document.getElementById('mockSkipBtn').addEventListener('click', skipMock);
+    }
+
+    bindEvents(); renderP1List(); renderP23List(); renderP3List();
+    if(P1_BANK.length) selectP1(0); if(P23_BANK.length){ selectP23(0); selectP3(0); }
   </script>
 </body>
 </html>
